@@ -44,7 +44,7 @@
     {
       "home": "Brazil",
       "away": "Morocco",
-      "homeScore": null,
+      "homeScore": 1,
       "awayScore": null,
       "state": "NS",
       "minute": null
