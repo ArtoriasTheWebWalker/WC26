@@ -886,6 +886,11 @@ const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after ki
 
 /* ---- LIVE SCORES from scores.json (written by the GitHub Action) ----
    We never call the API from here; we just read the static file. */
+/* ====== LIVE DATA SOURCE ======
+   Paste your Cloudflare Worker URL here (e.g. "https://wc26-scores.<you>.workers.dev").
+   Leave as "" to use the local scores.json (GitHub Action) instead. */
+const SCORES_URL = "";
+
 let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
 
 /* second-half timing: remember when each match resumed after half-time, and
@@ -945,7 +950,13 @@ const norm = s => {
 
 async function loadScores(){
   try{
-    const res = await fetch('scores.json?_='+Date.now(), {cache:'no-store'});
+    /* Live data comes from the Cloudflare Worker (polls football-data.org every
+       minute, key stays server-side). Set SCORES_URL to your Worker URL.
+       If it's left blank, we fall back to the local scores.json file. */
+    const url = SCORES_URL
+      ? SCORES_URL + (SCORES_URL.includes('?')?'&':'?') + '_=' + Date.now()
+      : 'scores.json?_=' + Date.now();
+    const res = await fetch(url, {cache:'no-store'});
     if(!res.ok) return;
     const data = await res.json();
     const map = {};
