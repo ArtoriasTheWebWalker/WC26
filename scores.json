@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-13T13:51:22.917Z",
+  "updated": "2026-06-13T14:15:21.671Z",
   "matches": [],
-  "error": "API 403 for /api/v1/sport/football/events/live"
+  "error": "API 403 for /football-current-live"
 }
