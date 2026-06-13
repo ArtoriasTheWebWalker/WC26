@@ -4,7 +4,7 @@ on:
   schedule:
     # Runs every 5 minutes. GitHub cron is UTC. During match windows this keeps
     # scores.json fresh; outside windows it's cheap (one tiny API call).
-    - cron: "*/5 * * * *"
+    - cron: "*/2 * * * *"
   workflow_dispatch: {}   # lets you trigger a manual refresh from the Actions tab
 
 permissions:
