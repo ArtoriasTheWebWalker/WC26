@@ -1043,7 +1043,7 @@ function tick(){
         const st = lv.state;
         if(st==="LIVE"||st==="ET"||st==="PEN"){
           live=true; done=false;
-          if(st==="ET"){ liveTag = (LANG==="ar"?AR_UI.et:"EXTRA TIME"); }
+         if(st==="ET"){ liveTag = lv.minute ? lv.minute+"'" : (LANG==="ar"?AR_UI.et:"EXTRA TIME"); }
           else if(st==="PEN"){ liveTag = (LANG==="ar"?AR_UI.pen:"PENALTIES"); }
           else {
             /* use the API minute only; if absent show LIVE (no guessed clock) */
