@@ -184,6 +184,9 @@ h1{
 }
 .half.win .tname{color:var(--gold);font-weight:600}
 .ktime.score{letter-spacing:.12em}
+.ktime.clock-only{font-size:1.02rem;letter-spacing:.04em}
+.match.live .ktime.clock-only{color:#FF7B6B;text-shadow:0 0 12px rgba(255,90,90,.5)}
+.match.ht .ktime.clock-only{color:#E3C567}
 .ktime.score small{display:block;font-size:.56rem;color:var(--sand);letter-spacing:.22em;font-weight:500;margin-top:1px}
 /* ---------- GOLDEN CONFETTI ---------- */
 .confetti-piece{
@@ -616,13 +619,12 @@ ca:`<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d=
 mx:`<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`
 };
 
-/* ============ FINAL RESULTS ============
-   Add a line here after each match ends:  "DAY-HOME-AWAY":[homeGoals, awayGoals]
+/* ============ MANUAL RESULTS (optional fallback) ============
+   The live API drives scores automatically. This object is an optional manual
+   override: add "DAY-HOME-AWAY":[homeGoals, awayGoals] only if you ever need to
+   force a result the API didn't supply. Live API data takes priority over these.
    The winner's side automatically gets the gold ring. Draws get no ring. */
 const RESULTS={
-"11-MEX-RSA":[2,0],
-"12-KOR-CZE":[2,1],
-"12-CAN-BIH":[1,1]
 };
 
 /* team name + helper text for the current language */
@@ -704,35 +706,41 @@ function deriveGroups(){
 }
 const GROUPS = deriveGroups();
 
-/* collect every finished match score as {a,b,ha,hb} from RESULTS + LIVE */
+/* collect every match score as {a,b,ha,hb,live} — live/finished API data
+   takes priority over the built-in RESULTS seeds for the same pairing. */
 function collectFinished(){
   const fixtures=[];
-  /* built-in RESULTS keyed "DD-AAA-BBB" */
-  for(const key in RESULTS){
-    const m=key.match(/^\d+-([A-Z]+)-([A-Z]+)$/);
-    if(!m) continue;
-    const [ha,hb]=RESULTS[key];
-    fixtures.push({a:m[1], b:m[2], ha, hb});
-  }
-  /* finished matches from live data (match by team name -> code) */
   const liveData = (typeof LIVE !== "undefined" && LIVE) ? LIVE : {};
-  const code = (name)=>{
-    const n=norm(name);
-    for(const c in N){ if(norm(N[c][0])===n) return c; }
-    return null;
-  };
+  const code = (typeof codeFromName === "function")
+    ? codeFromName
+    : (name)=>{ const n=norm(name); for(const c in N){ if(norm(N[c][0])===n) return c; } return null; };
+
+  /* 1) API live/finished matches first (these win) */
   for(const key in liveData){
     const lv=liveData[key];
     if(lv._flipped) continue; /* skip the reversed duplicate */
-    if(lv.homeScore==null) continue;
     const ca=code(lv.home), cb=code(lv.away);
     if(!ca||!cb) continue;
     const finished = (lv.state==="FT"||lv.state==="AET"||lv.state==="AP");
     const inPlay   = (lv.state==="LIVE"||lv.state==="HT"||lv.state==="ET"||lv.state==="PEN");
     if(!finished && !inPlay) continue;
-    /* avoid double-count if already in RESULTS */
+    /* a live match with no goals yet arrives as null/null → treat as 0-0 */
+    const ha = (lv.homeScore==null) ? 0 : lv.homeScore;
+    const hb = (lv.awayScore==null) ? 0 : lv.awayScore;
+    /* finished match must have a real score; in-play may legitimately be 0-0 */
+    if(finished && lv.homeScore==null && lv.awayScore==null) continue;
     if(fixtures.some(f=>(f.a===ca&&f.b===cb)||(f.a===cb&&f.b===ca))) continue;
-    fixtures.push({a:ca, b:cb, ha:lv.homeScore, hb:lv.awayScore, live:inPlay});
+    fixtures.push({a:ca, b:cb, ha, hb, live:inPlay});
+  }
+
+  /* 2) built-in RESULTS seeds — only if the API has nothing for that pairing */
+  for(const key in RESULTS){
+    const m=key.match(/^\d+-([A-Z]+)-([A-Z]+)$/);
+    if(!m) continue;
+    const a=m[1], b=m[2];
+    if(fixtures.some(f=>(f.a===a&&f.b===b)||(f.a===b&&f.b===a))) continue;
+    const [ha,hb]=RESULTS[key];
+    fixtures.push({a, b, ha, hb});
   }
   return fixtures;
 }
@@ -880,21 +888,43 @@ const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after ki
    We never call the API from here; we just read the static file. */
 let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
 
-/* normalise team names so SofaScore's naming lines up with ours
-   (e.g. "Korea Republic" -> "south korea", "USA" -> "united states") */
+/* normalise team names so the API's naming lines up with ours.
+   football-data.org and most feeds use these variants; we map them all to
+   the exact string used in the N[] table (lower-cased). */
 const NAME_ALIASES = {
-  "korea republic":"south korea", "republic of korea":"south korea",
-  "usa":"united states", "united states":"united states", "us":"united states",
-  "ivory coast":"ivory coast", "cote d'ivoire":"ivory coast", "côte d'ivoire":"ivory coast",
-  "czech republic":"czechia", "turkiye":"türkiye", "turkey":"türkiye",
+  // East Asia
+  "korea republic":"south korea", "republic of korea":"south korea", "south korea":"south korea",
+  "korea dpr":"north korea", "japan":"japan",
+  // North America
+  "usa":"united states", "united states of america":"united states", "us":"united states",
+  "united states":"united states", "mexico":"mexico", "canada":"canada",
+  // accents / punctuation variants
+  "cote d'ivoire":"ivory coast", "côte d'ivoire":"ivory coast", "ivory coast":"ivory coast",
+  "czech republic":"czechia", "czechia":"czechia",
+  "turkiye":"türkiye", "türkiye":"türkiye", "turkey":"türkiye",
+  "curacao":"curaçao", "curaçao":"curaçao",
+  "cape verde":"cape verde", "cabo verde":"cape verde",
+  // long / short forms
   "bosnia & herz.":"bosnia & herzegovina", "bosnia and herzegovina":"bosnia & herzegovina",
-  "dr congo":"dr congo", "congo dr":"dr congo", "iran":"iran", "ir iran":"iran",
-  "cape verde":"cape verde", "cabo verde":"cape verde", "curacao":"curaçao"
+  "bosnia-herzegovina":"bosnia & herzegovina", "bosnia & herzegovina":"bosnia & herzegovina",
+  "dr congo":"dr congo", "congo dr":"dr congo", "democratic republic of congo":"dr congo",
+  "congo democratic republic":"dr congo",
+  "iran":"iran", "ir iran":"iran", "islamic republic of iran":"iran",
+  "south africa":"south africa", "new zealand":"new zealand", "saudi arabia":"saudi arabia",
+  "united kingdom scotland":"scotland", "scotland":"scotland"
 };
+/* map an arbitrary feed name to the canonical key used by the schedule.
+   1) lower/trim/space-collapse, 2) alias table, 3) accent-strip fallback so
+   e.g. "Türkiye" still equals "turkiye". */
+function stripAccents(s){ return s.normalize("NFD").replace(/[\u0300-\u036f]/g,""); }
 const norm = s => {
-  let x = (s||"").toLowerCase().trim();
-  x = x.replace(/\s+/g," ");
-  return NAME_ALIASES[x] || x;
+  let x = (s||"").toLowerCase().trim().replace(/\s+/g," ");
+  if(NAME_ALIASES[x]) return NAME_ALIASES[x];
+  const xa = stripAccents(x);
+  if(NAME_ALIASES[xa]) return NAME_ALIASES[xa];
+  /* compare accent-stripped against alias keys too */
+  for(const k in NAME_ALIASES){ if(stripAccents(k)===xa) return NAME_ALIASES[k]; }
+  return xa; /* canonical = accent-stripped lower-case */
 };
 
 async function loadScores(){
@@ -910,9 +940,22 @@ async function loadScores(){
                      _flipped:true}; /* allow lookup in either order */
     }
     LIVE = map;
-    /* recompute standings with any newly-finished matches */
+    /* diagnostic: warn about any live match whose teams don't match our schedule,
+       so unmatched API names are easy to spot in the browser console */
+    for(const m of (data.matches||[])){
+      const ca = codeFromName(m.home), cb = codeFromName(m.away);
+      if(!ca) console.warn('[WC26] Unmatched team name from API:', JSON.stringify(m.home));
+      if(!cb) console.warn('[WC26] Unmatched team name from API:', JSON.stringify(m.away));
+    }
+    /* recompute standings with any newly-finished/live matches */
     if(typeof renderGroups === "function") renderGroups();
   }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
+}
+/* resolve a feed name to our team code, or null if unknown */
+function codeFromName(name){
+  const n=norm(name);
+  for(const c in N){ if(norm(N[c][0])===n) return c; }
+  return null;
 }
 /* refresh every 60s; scores.json itself updates on the Action's schedule */
 loadScores();
@@ -931,6 +974,7 @@ const fmt = n => String(n).padStart(2,'0');
 /* update a match row's center block.
    scoreText: e.g. "2 – 1"; liveTag: "HALF-TIME"/"45'"/etc (in-play);
    ftTag: "FT"/"AET"/"AP" (finished). If scoreText is null, restores kickoff time. */
+const CLOCK_ONLY = Symbol('clock-only');
 function setMid(m, scoreText, liveTag, ftTag){
   const mid = m.querySelector('.mid');
   const grp = mid.querySelector('.grp');
@@ -940,6 +984,9 @@ function setMid(m, scoreText, liveTag, ftTag){
     kt = `<div class="ktime">${m.dataset.kick}</div>`;
   }else if(ftTag){
     kt = `<div class="ktime score">${scoreText}<small>${ftTag}</small></div>`;
+  }else if(scoreText===CLOCK_ONLY){
+    /* no score available (no API) — show the running clock in place of the time */
+    kt = `<div class="ktime clock-only">${liveTag||'LIVE'}</div>`;
   }else{
     kt = `<div class="ktime">${scoreText}<span class="live-tag">${liveTag||'LIVE'}</span></div>`;
   }
@@ -950,6 +997,18 @@ function tick(){
   const now = Date.now();
   const t = meccaToday();
   const inJune26 = (t.y===2026 && t.mo===5);
+
+  /* derive a match clock from kickoff when the API gives no minute.
+     0–45' first half, ~15min half-time break, 45–90' second half, then 90'+ */
+  function clockFromKickoff(ko){
+    const elapsedMin = Math.floor((now - ko)/60000);
+    if(elapsedMin < 0) return {label:null, ht:false};
+    if(elapsedMin <= 45) return {label:elapsedMin+"'", ht:false};
+    if(elapsedMin < 60)  return {label:null, ht:true};   /* half-time window */
+    const second = elapsedMin - 15;                       /* subtract the break */
+    if(second <= 90) return {label:second+"'", ht:false};
+    return {label:"90'+", ht:false};
+  }
 
   let todayCard = null;
 
@@ -983,9 +1042,12 @@ function tick(){
         const st = lv.state;
         if(st==="LIVE"||st==="ET"||st==="PEN"){
           live=true; done=false;
-          liveTag = st==="ET" ? (LANG==="ar"?AR_UI.et:"EXTRA TIME")
-                  : st==="PEN" ? (LANG==="ar"?AR_UI.pen:"PENALTIES")
-                  : (lv.minute? lv.minute+"'" : (LANG==="ar"?AR_UI.live:"LIVE"));
+          if(st==="ET"){ liveTag = (LANG==="ar"?AR_UI.et:"EXTRA TIME"); }
+          else if(st==="PEN"){ liveTag = (LANG==="ar"?AR_UI.pen:"PENALTIES"); }
+          else {
+            /* prefer the API minute; otherwise compute the clock from kickoff */
+            liveTag = lv.minute ? lv.minute+"'" : (clockFromKickoff(ko).label || (LANG==="ar"?AR_UI.live:"LIVE"));
+          }
         }else if(st==="HT"){
           live=false; done=false; ht=true; liveTag=(LANG==="ar"?AR_UI.ht:"HALF-TIME");
         }else if(st==="FT"||st==="AET"||st==="AP"){
@@ -993,9 +1055,22 @@ function tick(){
           finalScore = {h:lv.homeScore, a:lv.awayScore,
                         tag: st==="AP"?"AP":st==="AET"?"AET":(LANG==="ar"?"انتهت":"FT")};
         }
-        /* live score line while in play / HT */
-        if((live||ht) && lv.homeScore!=null){
-          setMid(m, `${lv.homeScore} – ${lv.awayScore}`, liveTag);
+        /* live score line while in play / HT (null scores = 0 for a goalless live match) */
+        if(live||ht){
+          const hs = (lv.homeScore==null)?0:lv.homeScore;
+          const as = (lv.awayScore==null)?0:lv.awayScore;
+          setMid(m, `${hs} – ${as}`, liveTag);
+        }
+      }else if(live){
+        /* no API data, but kickoff time has passed → show a running match clock */
+        const clk = clockFromKickoff(ko);
+        if(clk.ht){ live=false; ht=true; liveTag=(LANG==="ar"?AR_UI.ht:"HALF-TIME"); }
+        else { liveTag = clk.label || (LANG==="ar"?AR_UI.live:"LIVE"); }
+        /* keep the existing score if RESULTS has one; otherwise replace the
+           kickoff time with the running clock (no score available without API) */
+        const existing = m.querySelector('.ktime.score');
+        if(!existing){
+          setMid(m, CLOCK_ONLY, liveTag);
         }
       }
 
