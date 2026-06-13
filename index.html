@@ -943,6 +943,7 @@ async function loadScores(){
     /* diagnostic: warn about any live match whose teams don't match our schedule,
        so unmatched API names are easy to spot in the browser console */
     for(const m of (data.matches||[])){
+      if(!m.home || !m.away) continue; /* skip feed entries with blank names */
       const ca = codeFromName(m.home), cb = codeFromName(m.away);
       if(!ca) console.warn('[WC26] Unmatched team name from API:', JSON.stringify(m.home));
       if(!cb) console.warn('[WC26] Unmatched team name from API:', JSON.stringify(m.away));
