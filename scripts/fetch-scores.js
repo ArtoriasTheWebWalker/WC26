@@ -1,63 +1,52 @@
 /*
  * fetch-scores.js  —  runs on GitHub's servers, never in the browser.
- * Calls API-Football (via RapidAPI), fetches all World Cup 2026 matches for
- * today (live and finished), and writes a small scores.json the front-end reads.
- * The API key comes from the RAPIDAPI_KEY repo secret.
+ * Calls football-data.org (free API), fetches all World Cup 2026 matches
+ * (live, finished, and scheduled), and writes scores.json the front-end reads.
+ * The API key comes from the RAPIDAPI_KEY repo secret (reusing the env var name).
  *
- * API-Football by-date endpoint returns: { response: [ { league, fixture, teams,
- * goals, status.short (FT/HT/1H/2H/ET/P/AET/PEN/LIVE/NS), ... } ] }
+ * football-data.org response: { matches: [ { utcDate, status, homeTeam, awayTeam,
+ * score: { fullTime, halfTime, winner }, ... } ] }
  */
 
 const fs = require("fs");
 
-const KEY  = process.env.RAPIDAPI_KEY;
-const HOST = process.env.RAPIDAPI_HOST || "free-api-live-football-data.p.rapidapi.com";
+const API_KEY = process.env.RAPIDAPI_KEY;  // reuse this env var for football-data.org key
 
-if (!KEY) {
-  console.error("Missing RAPIDAPI_KEY secret.");
+if (!API_KEY) {
+  console.error("Missing API key in RAPIDAPI_KEY secret.");
   process.exit(1);
 }
 
-/* ---- Get today's date in Mecca time (UTC+3), format as YYYYMMDD ---- */
-function getMeccaDateString() {
-  const meccaOffset = 3 * 3600000;
-  const now = new Date(Date.now() + meccaOffset);
-  const y = now.getUTCFullYear();
-  const m = String(now.getUTCMonth() + 1).padStart(2, '0');
-  const d = String(now.getUTCDate()).padStart(2, '0');
-  return `${y}${m}${d}`;
-}
-
-/* ---- which match is the World Cup 2026 ---- */
-const isWorldCup = (match) => {
-  const league = match?.league?.name || "";
-  return /2026|world cup/i.test(league);
-};
-
-/* ---- map API-Football status.short to our state ---- */
+/* ---- map football-data.org status to our state ---- */
 function mapState(match) {
-  const short = match?.fixture?.status?.short || "NS";
+  const status = match?.status || "SCHEDULED";
+  const score = match?.score || {};
 
-  if (short === "FT") return "FT";
-  if (short === "AET") return "AET";  // after extra time
-  if (short === "PEN" || short === "P") return "AP";  // after penalties
-  if (short === "HT") return "HT";
-  if (short === "ET") return "ET";
-  if (short === "LIVE" || short === "1H" || short === "2H") return "LIVE";
-  return "NS";
+  if (status === "FINISHED") {
+    // Check if it went to extra time or penalties
+    if (score.duration === "PENALTY") return "AP";    // after penalties
+    if (score.duration === "EXTRA_TIME") return "AET"; // after extra time
+    return "FT";
+  }
+  if (status === "LIVE" || status === "IN_PLAY") return "LIVE";
+  if (status === "PAUSED") return "HT";  // halftime or pause
+  return "NS"; // not started (SCHEDULED, POSTPONED, CANCELLED, AWARDED, etc.)
 }
 
-/* extract live minute */
+/* extract minute from utcDate and compare to now (rough estimate) */
 function liveMinute(match) {
-  const elapsed = match?.fixture?.status?.elapsed;
-  return elapsed ? Math.round(elapsed) : null;
+  if (match?.status !== "LIVE" && match?.status !== "IN_PLAY") return null;
+  const kickoff = new Date(match?.utcDate);
+  const now = new Date();
+  const elapsedMs = now - kickoff;
+  const elapsedMin = Math.round(elapsedMs / 60000);
+  return elapsedMin > 0 ? elapsedMin : null;
 }
 
 async function getJSON(path) {
-  const res = await fetch(`https://${HOST}${path}`, {
+  const res = await fetch(`https://api.football-data.org/v4${path}`, {
     headers: {
-      "x-rapidapi-key": KEY,
-      "x-rapidapi-host": HOST,
+      "X-Auth-Token": API_KEY,
     },
   });
   if (!res.ok) throw new Error(`API ${res.status} for ${path}`);
@@ -68,23 +57,20 @@ async function main() {
   let out = { updated: new Date().toISOString(), matches: [] };
 
   try {
-    const dateStr = getMeccaDateString();
-    const path = `/football-get-matches-by-date?date=${dateStr}`;
-    const data = await getJSON(path);
-    const matches = Array.isArray(data?.response) ? data.response : [];
+    // Fetch all World Cup 2026 matches (live + finished + scheduled)
+    const data = await getJSON("/competitions/WC/matches?status=SCHEDULED,LIVE,FINISHED");
+    const matches = Array.isArray(data?.matches) ? data.matches : [];
 
-    const wc = matches.filter(isWorldCup);
-
-    out.matches = wc.map((m) => ({
-      home:      m?.teams?.home?.name ?? "",
-      away:      m?.teams?.away?.name ?? "",
-      homeScore: m?.goals?.home ?? null,
-      awayScore: m?.goals?.away ?? null,
+    out.matches = matches.map((m) => ({
+      home:      m?.homeTeam?.name ?? "",
+      away:      m?.awayTeam?.name ?? "",
+      homeScore: m?.score?.fullTime?.home ?? null,
+      awayScore: m?.score?.fullTime?.away ?? null,
       state:     mapState(m),
       minute:    liveMinute(m),
     }));
 
-    console.log(`Found ${matches.length} matches on ${dateStr}, ${wc.length} World Cup 2026.`);
+    console.log(`Found ${matches.length} World Cup 2026 matches.`);
   } catch (err) {
     console.error("Fetch failed:", err.message);
     out.error = err.message;
