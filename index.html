@@ -1046,8 +1046,8 @@ function tick(){
           if(st==="ET"){ liveTag = (LANG==="ar"?AR_UI.et:"EXTRA TIME"); }
           else if(st==="PEN"){ liveTag = (LANG==="ar"?AR_UI.pen:"PENALTIES"); }
           else {
-            /* prefer the API minute; otherwise compute the clock from kickoff */
-            liveTag = lv.minute ? lv.minute+"'" : (clockFromKickoff(ko).label || (LANG==="ar"?AR_UI.live:"LIVE"));
+            /* use the API minute only; if absent show LIVE (no guessed clock) */
+            liveTag = lv.minute ? lv.minute+"'" : (LANG==="ar"?AR_UI.live:"LIVE");
           }
         }else if(st==="HT"){
           live=false; done=false; ht=true; liveTag=(LANG==="ar"?AR_UI.ht:"HALF-TIME");
