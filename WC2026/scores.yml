@@ -1,0 +1,46 @@
+name: Update live scores
+
+on:
+  schedule:
+    # Runs every 5 minutes. GitHub cron is UTC. During match windows this keeps
+    # scores.json fresh; outside windows it's cheap (one tiny API call).
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}   # lets you trigger a manual refresh from the Actions tab
+
+permissions:
+  contents: write          # needed so the action can commit scores.json
+
+concurrency:
+  group: live-scores
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch scores
+        env:
+          RAPIDAPI_KEY: ${{ secrets.RAPIDAPI_KEY }}
+          RAPIDAPI_HOST: ${{ secrets.RAPIDAPI_HOST }}
+        run: node scripts/fetch-scores.js
+
+      - name: Commit updated scores.json
+        run: |
+          git config user.name "score-bot"
+          git config user.email "score-bot@users.noreply.github.com"
+          # Only commit if the file actually changed, to avoid empty commits
+          if ! git diff --quiet -- scores.json; then
+            git add scores.json
+            git commit -m "Update live scores [skip ci]"
+            git push
+          else
+            echo "No score changes."
+          fi

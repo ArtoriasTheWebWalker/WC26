@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Cup 2026 — Group Stage · Mecca Time</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root{
+  --night:#0B1020; --panel:#111A2E; --panel-2:#0E1526; --line:#22304F;
+  --ink:#F2EFE6; --sand:#C9B896; --gold:#E3C567; --gold-deep:#B98A2E;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:#0B1020;
+  background-image:
+    radial-gradient(1400px 700px at 50% -250px, #1A2440 0%, transparent 70%),
+    radial-gradient(2px 2px at 20% 30%, rgba(227,197,103,.25) 50%, transparent 51%),
+    radial-gradient(2px 2px at 80% 15%, rgba(227,197,103,.18) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 60% 60%, rgba(242,239,230,.12) 50%, transparent 51%);
+  background-attachment:fixed;
+  color:var(--ink); font-family:'Outfit',system-ui,sans-serif; font-weight:300; line-height:1.45;
+  position:relative;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:44px 22px 90px;position:relative;z-index:1}
+/* ---------- DESCENDING WORLD CUP BALL ---------- */
+#wc-ball{
+  position:fixed;left:0;top:0;z-index:0;pointer-events:none;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.55)) drop-shadow(0 0 18px rgba(227,197,103,.18));
+  will-change:transform;opacity:.9;
+}
+#wc-ball svg{animation:ballspin 6s linear infinite}
+@keyframes ballspin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#wc-ball svg{animation:none}}
+
+/* ---------- HERO ---------- */
+header{text-align:center;padding:18px 0 36px}
+.eyebrow{font-weight:600;font-size:.72rem;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+h1{
+  font-family:'Cinzel',serif;font-weight:900;font-size:clamp(2.1rem,5.5vw,3.8rem);
+  letter-spacing:.06em;line-height:1.05;
+  background:linear-gradient(180deg,#F7ECCB 0%,var(--gold) 55%,var(--gold-deep) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{margin-top:12px;color:var(--sand);font-size:.92rem;letter-spacing:.08em;font-weight:400}
+.sub b{color:var(--ink);font-weight:600}
+.tz-badge{
+  display:inline-flex;align-items:center;gap:10px;margin-top:18px;border:1px solid var(--gold-deep);
+  border-radius:999px;padding:8px 22px;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;
+  font-weight:600;color:var(--gold);background:rgba(227,197,103,.06);
+}
+.tz-badge::before,.tz-badge::after{content:"✦";font-size:.68rem;color:var(--gold-deep)}
+.hosts-line{margin-top:14px;display:flex;justify-content:center;gap:14px}
+.hosts-line img{height:20px;border-radius:2px;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+
+/* ---------- VERTICAL GRID ---------- */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(440px,1fr));
+  gap:22px; align-items:start;
+}
+.grid .day{width:100%}
+
+/* ---------- DAY CARD ---------- */
+.day{
+  border:1px solid rgba(185,138,46,.4);border-radius:14px;overflow:hidden;
+  background:linear-gradient(180deg,#111A2E 0%,#0E1526 100%);
+  box-shadow:0 18px 44px -22px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.02);
+}
+.band{display:none}
+.day-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  padding:14px 18px 10px;border-bottom:1px solid var(--line);
+}
+.date-block{display:flex;align-items:baseline;gap:11px}
+.date-num{font-family:'Cinzel',serif;font-weight:700;font-size:1.7rem;color:var(--gold);line-height:1}
+.weekday{font-weight:600;font-size:.88rem;letter-spacing:.12em;text-transform:uppercase;display:block}
+.month{color:var(--sand);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase}
+.motif{display:none}
+.motif::before{content:"◆ ";color:var(--gold-deep);font-size:.55rem}
+
+/* ---------- MATCH ROW ---------- */
+.match{border-bottom:1px solid rgba(34,48,79,.6);padding:10px 12px 9px;position:relative}
+.match:last-child{border-bottom:none}
+.match:hover{background:rgba(227,197,103,.04)}
+.match.sa{box-shadow:inset 3px 0 0 var(--gold);background:linear-gradient(90deg,rgba(22,93,49,.14),transparent 30%,transparent 70%,rgba(22,93,49,.14))}
+.m-row{display:flex;align-items:center;gap:6px}
+
+/* team halves with cultural pattern fading from outer edge */
+.half{
+  flex:1;display:flex;align-items:center;gap:8px;min-width:0;
+  position:relative;padding:7px 9px;border-radius:8px;overflow:hidden;
+}
+.half::before{
+  content:"";position:absolute;inset:0;background:var(--pbg);
+  -webkit-mask-image:linear-gradient(to right,#000 0%,rgba(0,0,0,.5) 55%,transparent 100%);
+  mask-image:linear-gradient(to right,#000 0%,rgba(0,0,0,.5) 55%,transparent 100%);
+  pointer-events:none;
+}
+.half.right{flex-direction:row-reverse;text-align:right}
+.half.right::before{
+  -webkit-mask-image:linear-gradient(to left,#000 0%,rgba(0,0,0,.5) 55%,transparent 100%);
+  mask-image:linear-gradient(to left,#000 0%,rgba(0,0,0,.5) 55%,transparent 100%);
+}
+.half img{height:16px;width:24px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 4px rgba(0,0,0,.55);position:relative}
+.tname{font-weight:500;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+
+/* center: 24h time + group */
+.mid{flex:none;width:74px;text-align:center}
+.ktime{font-weight:600;color:var(--gold);font-size:1.02rem;font-variant-numeric:tabular-nums;letter-spacing:.03em}
+.grp{
+  display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;
+  border:1px solid var(--gold-deep);color:var(--gold);font-weight:600;font-size:.62rem;
+  font-family:'Cinzel',serif;margin-top:3px;
+}
+.loc{
+  text-align:center;color:var(--sand);font-size:.68rem;letter-spacing:.05em;margin-top:5px;font-weight:400;
+}
+.loc b{color:#A7B4D0;font-weight:500}
+
+/* ---------- DAY BAND PATTERNS ---------- */
+.p-sadu{background:
+  repeating-linear-gradient(45deg,transparent 0 10px,rgba(11,16,32,.55) 10px 12px),
+  repeating-linear-gradient(90deg,#8E1F1F 0 16px,#C9B896 16px 22px,#0B1020 22px 26px,#165D31 26px 42px,#0B1020 42px 46px,#C9B896 46px 52px);}
+.p-aztec{background:
+  repeating-linear-gradient(45deg,transparent 0 6px,rgba(11,16,32,.4) 6px 8px),
+  repeating-linear-gradient(90deg,#006847 0 18px,#F4EFDF 18px 23px,#CE1126 23px 41px,#F4EFDF 41px 46px);}
+.p-maple{background:repeating-linear-gradient(135deg,#D80621 0 16px,#F4EFDF 16px 21px,#D80621 21px 37px,#0B1020 37px 40px);}
+.p-stars{background:
+  radial-gradient(circle at 7px 5px,#F4EFDF 1.4px,transparent 2px),
+  linear-gradient(90deg,#3C3B6E 0 38%,#B22234 62%,#8E1F2C 100%);
+  background-size:22px 9px,100% 100%;}
+.p-samba{background:repeating-linear-gradient(45deg,#009C3B 0 16px,#FFDF00 16px 26px,#002776 26px 30px);}
+.p-iberia{background:repeating-linear-gradient(90deg,#AA151B 0 22px,#F1BF00 22px 34px);}
+.p-albi{background:repeating-linear-gradient(90deg,#75AADB 0 18px,#F4EFDF 18px 36px);}
+.p-kente{background:
+  repeating-linear-gradient(45deg,transparent 0 9px,rgba(11,16,32,.45) 9px 11px),
+  repeating-linear-gradient(90deg,#E5B80B 0 18px,#006B3F 18px 26px,#CE1126 26px 34px,#0B1020 34px 38px);}
+.p-hosts{background:linear-gradient(90deg,#006847 0%,#F4EFDF 18%,#CE1126 33%,#B22234 50%,#F4EFDF 60%,#3C3B6E 75%,#D80621 100%);}
+.p-zellige{background:repeating-conic-gradient(from 45deg,#C1272D 0 25%,#006233 0 50%) 0 0/16px 16px;}
+.p-checker{background:repeating-conic-gradient(#C8102E 0 25%,#F4EFDF 0 50%) 0 0/14px 14px;}
+.p-lions{background:repeating-linear-gradient(90deg,#F4EFDF 0 26px,#C8102E 26px 36px);}
+.p-hino{background:radial-gradient(circle at 13px 4.5px,#BC002D 3.6px,transparent 4.2px),#F4EFDF;background-size:30px 9px;}
+.p-gold{background:repeating-linear-gradient(45deg,#E3C567 0 14px,#B98A2E 14px 22px,#7A5A1B 22px 26px);}
+
+/* ---------- LIVE APP STATES ---------- */
+.day.past, .day.future{opacity:.72;filter:saturate(.78);transition:opacity .3s,filter .3s}
+.day.past:hover, .day.future:hover{opacity:1;filter:none}
+.half.win::after{
+  content:"";position:absolute;inset:0;border:1.5px solid var(--gold);border-radius:8px;
+  box-shadow:0 0 14px -3px rgba(227,197,103,.65), inset 0 0 16px -8px rgba(227,197,103,.55);
+  pointer-events:none;
+}
+.half.win .tname{color:var(--gold);font-weight:600}
+.ktime.score{letter-spacing:.12em}
+.ktime.score small{display:block;font-size:.56rem;color:var(--sand);letter-spacing:.22em;font-weight:500;margin-top:1px}
+/* ---------- GOLDEN CONFETTI ---------- */
+.confetti-piece{
+  position:absolute;width:7px;height:11px;will-change:transform,opacity;
+  pointer-events:none;z-index:5;border-radius:1px;
+}
+.match{position:relative}
+/* ---------- HOST-NATION LOCATION TOUCH ---------- */
+.loc{display:flex;align-items:center;justify-content:center;gap:7px}
+.host-mark{flex:none;display:inline-flex;opacity:.85}
+.host-mark svg{display:block}
+.loc.us-loc{color:#9FB0D4}
+.loc.ca-loc b, .loc.ca-loc{}
+.host-us .host-mark{color:#6E86C6}
+.host-ca .host-mark{color:#E66A6A}
+.host-mx .host-mark{color:#E3C567}
+.day.today{
+  border-color:var(--gold-deep);
+  box-shadow:0 0 0 1px rgba(227,197,103,.4),0 0 42px -4px rgba(227,197,103,.4),0 18px 40px -24px rgba(0,0,0,.8);
+  position:relative;
+}
+.day.today .date-num{text-shadow:0 0 18px rgba(227,197,103,.8)}
+.today-badge{
+  display:inline-flex;align-items:center;gap:6px;border:1px solid var(--gold-deep);border-radius:999px;
+  padding:3px 12px;font-size:.6rem;letter-spacing:.26em;text-transform:uppercase;font-weight:700;color:var(--gold);
+  background:rgba(227,197,103,.1);
+}
+.today-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.cd{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:9px 18px;border-bottom:1px solid var(--line);
+  background:linear-gradient(90deg,rgba(227,197,103,.08),transparent 60%);
+  font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);font-weight:600;
+}
+.cd b{color:var(--gold);font-size:1.02rem;font-variant-numeric:tabular-nums;letter-spacing:.08em;font-weight:600}
+.match.next{background:rgba(227,197,103,.08)}
+.match.next .ktime{text-shadow:0 0 14px rgba(227,197,103,.7)}
+.match.live{background:rgba(255,90,90,.08)}
+.match.live .ktime{color:#FF7B6B}
+.match.live .ktime .live-tag{
+  display:block;font-size:.54rem;letter-spacing:.18em;font-weight:600;margin-top:1px;
+  color:#FF7B6B;animation:pulse 1.4s infinite;
+}
+.match.ht .ktime{color:#E3C567}
+.match.ht .ktime .live-tag{display:block;font-size:.54rem;letter-spacing:.18em;font-weight:600;margin-top:1px;color:#E3C567}
+.match.ht{background:rgba(227,197,103,.07)}
+.match.done{opacity:.5}
+
+footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+
+/* ---------- KNOCKOUT SECTION ---------- */
+.ko{margin-top:54px}
+.ko-title{
+  text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.08em;
+  background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+  -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px;
+}
+.ko-sub{text-align:center;color:var(--sand);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px}
+.ko-r32{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:40px;
+}
+.ko-match{
+  border:1px solid rgba(185,138,46,.34);border-radius:10px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(17,26,46,.92),rgba(14,21,38,.94));
+}
+.ko-match .ko-side{
+  display:flex;align-items:center;gap:9px;padding:9px 13px;font-size:.86rem;color:var(--ink);
+}
+.ko-match .ko-side:first-child{border-bottom:1px solid rgba(34,48,79,.7)}
+.ko-side .seed{
+  flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-size:.62rem;font-weight:600;color:var(--gold);border:1px solid var(--gold-deep);
+}
+.ko-side.tbd{color:var(--sand);font-style:italic;opacity:.8}
+.ko-tag{
+  display:flex;justify-content:space-between;padding:5px 13px;background:rgba(227,197,103,.06);
+  font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sand);font-weight:600;
+}
+/* bracket skeleton */
+.bracket-wrap{overflow-x:auto;padding-bottom:12px}
+.bracket{display:flex;gap:20px;min-width:760px}
+.round{display:flex;flex-direction:column;justify-content:space-around;gap:10px;flex:1}
+.round h4{
+  text-align:center;color:var(--gold);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:600;margin-bottom:4px;font-family:'Outfit';
+}
+.slot{
+  border:1px solid rgba(34,48,79,.8);border-radius:7px;background:rgba(14,21,38,.7);
+  padding:7px 9px;font-size:.66rem;color:var(--sand);min-height:34px;display:flex;
+  flex-direction:column;justify-content:center;gap:3px;
+}
+.slot .s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot.final-slot{border-color:var(--gold-deep);background:rgba(227,197,103,.05)}
+.trophy{text-align:center;color:var(--gold);font-size:1.1rem;margin-top:8px}
+
+@media (max-width:920px){ .grid{grid-template-columns:1fr} }
+@media (max-width:520px){
+  .wrap{padding:30px 12px 70px}
+  .tname{font-size:.76rem}
+  .mid{width:58px}
+  .ktime{font-size:.92rem}
+  h1{font-size:1.9rem}
+  .day-head{padding:12px 13px 9px}
+  .match{padding:9px 9px 8px}
+  .half{padding:6px 7px;gap:6px}
+  .loc{font-size:.62rem}
+  .ko-title{font-size:1.25rem}
+  .bracket{min-width:620px}
+  #wc-ball{opacity:.75}
+  #wc-ball svg{width:38px;height:38px}
+}
+@media (max-width:380px){
+  .tname{font-size:.7rem}
+  .mid{width:50px}
+  .half img{width:20px;height:14px}
+}
+</style>
+</head>
+<body>
+<div id="wc-ball" aria-hidden="true">
+<svg viewBox="0 0 100 100" width="50" height="50">
+<defs>
+<radialGradient id="ballsphere" cx="38%" cy="32%" r="74%">
+<stop offset="0%" stop-color="#ffffff"/>
+<stop offset="58%" stop-color="#F4F6FA"/>
+<stop offset="100%" stop-color="#C2CAD8"/>
+</radialGradient>
+<clipPath id="ballclip"><circle cx="50" cy="50" r="47"/></clipPath>
+</defs>
+<circle cx="50" cy="50" r="47" fill="url(#ballsphere)" stroke="#9AA3B5" stroke-width="1"/>
+<g clip-path="url(#ballclip)">
+  <path d="M50 50 C40 36,30 30,14 30 C20 44,22 52,38 60 C44 56,48 54,50 50Z" fill="#C8102E" opacity="0.95"/>
+  <path d="M50 50 C60 36,70 30,86 30 C80 44,78 52,62 60 C56 56,52 54,50 50Z" fill="#1A7A3C" opacity="0.95"/>
+  <path d="M50 50 C44 62,42 74,48 92 C52 92,56 82,56 74 C54 64,52 56,50 50Z" fill="#0A4DA6" opacity="0.95"/>
+  <path d="M50 50 C40 36,30 30,14 30 C20 44,22 52,38 60 C44 56,48 54,50 50Z" fill="none" stroke="#E3C567" stroke-width="1.3"/>
+  <path d="M50 50 C60 36,70 30,86 30 C80 44,78 52,62 60 C56 56,52 54,50 50Z" fill="none" stroke="#E3C567" stroke-width="1.3"/>
+  <path d="M50 50 C44 62,42 74,48 92 C52 92,56 82,56 74 C54 64,52 56,50 50Z" fill="none" stroke="#E3C567" stroke-width="1.3"/>
+  <path d="M38 60 C30 70,26 80,28 96" fill="none" stroke="#C9CFDA" stroke-width="0.8"/>
+  <path d="M62 60 C70 70,74 80,72 96" fill="none" stroke="#C9CFDA" stroke-width="0.8"/>
+  <path d="M14 30 C8 40,6 50,8 64" fill="none" stroke="#C9CFDA" stroke-width="0.8"/>
+  <path d="M86 30 C92 40,94 50,92 64" fill="none" stroke="#C9CFDA" stroke-width="0.8"/>
+  <circle cx="50" cy="50" r="4.4" fill="#E3C567"/>
+  <circle cx="50" cy="50" r="2.2" fill="#fff"/>
+</g>
+<circle cx="50" cy="50" r="47" fill="none" stroke="#7A8294" stroke-width="0.6"/>
+<ellipse cx="38" cy="30" rx="16" ry="9" fill="#ffffff" opacity="0.22"/>
+</svg>
+</div>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">FIFA World Cup · Mexico – Canada – United States</div>
+  <h1>WORLD CUP 2026</h1>
+  <div class="sub"><b>GROUP STAGE</b> · 72 Matches · 12 Groups · June 11 – 28</div>
+  <div class="hosts-line">
+    <img src="https://flagcdn.com/h24/mx.png" alt="Mexico">
+    <img src="https://flagcdn.com/h24/ca.png" alt="Canada">
+    <img src="https://flagcdn.com/h24/us.png" alt="United States">
+  </div>
+  <div class="tz-badge">All times in Mecca Time · AST · GMT+3 · 24h</div>
+</header>
+
+<div class="grid" id="schedule"></div>
+
+<section class="ko">
+  <div class="ko-title">KNOCKOUT STAGE</div>
+  <div class="ko-sub">Round of 32 · Begins 28th June · Final 19th July</div>
+  <div class="bracket-wrap"><div class="bracket" id="bracket"></div></div>
+</section>
+
+<footer>Group Stage · Road to the Final — MetLife Stadium · July 19, 2026</footer>
+</div>
+
+<script>
+/* nation: [name, flagcdn code, pattern-background] */
+const g=(c1,c2)=>`linear-gradient(90deg, rgba(${c1},.35), rgba(${c2},.35))`;
+const N={
+/* Saudi Arabia - Sadu weave with Islamic geometric star pattern */
+MEX:["Mexico","mx","repeating-linear-gradient(45deg, transparent 0 8px, rgba(0,104,71,.25) 8px 9px, transparent 9px 17px), repeating-linear-gradient(135deg, rgba(206,17,38,.28) 0 6px, transparent 6px 12px), repeating-conic-gradient(from 45deg at 50% 50%, rgba(244,239,223,.2) 0deg 90deg, transparent 90deg 180deg) 0 0/24px 24px"],
+RSA:["South Africa","za","repeating-linear-gradient(90deg, rgba(0,119,73,.25) 0 6px, rgba(252,184,37,.2) 6px 9px, rgba(206,17,38,.25) 9px 15px), repeating-linear-gradient(0deg, transparent 0 10px, rgba(0,0,0,.08) 10px 11px)"],
+KOR:["South Korea","kr","radial-gradient(circle at 30% 40%, rgba(205,46,58,.3) 0%, transparent 50%), repeating-linear-gradient(90deg, rgba(0,71,160,.2) 0 8px, rgba(205,46,58,.2) 8px 16px)"],
+CZE:["Czechia","cz","repeating-linear-gradient(45deg, rgba(215,20,26,.28) 0 10px, rgba(17,69,126,.28) 10px 20px), repeating-linear-gradient(135deg, transparent 0 5px, rgba(255,255,255,.12) 5px 6px)"],
+CAN:["Canada","ca","repeating-linear-gradient(0deg, rgba(216,6,33,.3) 0 9px, rgba(244,239,223,.25) 9px 13px, rgba(216,6,33,.3) 13px 22px), radial-gradient(circle at 50% 50%, rgba(244,239,223,.2) 0%, transparent 60%)"],
+BIH:["Bosnia & Herz.","ba","repeating-conic-gradient(from 45deg at 50% 50%, rgba(0,46,122,.3) 0deg 45deg, rgba(252,196,49,.25) 45deg 90deg) 0 0/20px 20px, repeating-linear-gradient(90deg, transparent 0 3px, rgba(0,0,0,.08) 3px 4px)"],
+USA:["USA","us","repeating-linear-gradient(0deg, rgba(60,59,110,.28) 0 6px, rgba(178,34,52,.28) 6px 12px), radial-gradient(circle at 15% 20%, rgba(244,239,223,.15) 0%, transparent 50%)"],
+PAR:["Paraguay","py","repeating-linear-gradient(45deg, rgba(213,43,30,.26) 0 9px, rgba(0,56,168,.26) 9px 18px), repeating-linear-gradient(135deg, transparent 0 6px, rgba(255,255,255,.1) 6px 7px)"],
+QAT:["Qatar","qa","repeating-linear-gradient(90deg, rgba(138,21,56,.28) 0 8px, rgba(244,239,223,.2) 8px 11px, transparent 11px 22px), repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,0,0,.06) 4px 5px)"],
+SUI:["Switzerland","ch","repeating-linear-gradient(90deg, rgba(218,41,28,.26) 0 12px, rgba(244,239,223,.22) 12px 16px), repeating-conic-gradient(from 0deg at 50% 50%, rgba(218,41,28,.15) 0deg 90deg, transparent 90deg 180deg) 0 0/28px 28px"],
+BRA:["Brazil","br","repeating-linear-gradient(45deg, rgba(0,156,59,.28) 0 12px, rgba(255,223,0,.22) 12px 20px), repeating-linear-gradient(135deg, transparent 0 8px, rgba(2,2,118,.1) 8px 9px)"],
+MAR:["Morocco","ma","repeating-conic-gradient(from 45deg at 50% 50%, rgba(193,39,45,.32) 0deg 90deg, rgba(0,98,51,.32) 90deg 180deg, rgba(255,255,255,.15) 180deg 270deg) 0 0/18px 18px, repeating-linear-gradient(90deg, transparent 0 2px, rgba(0,0,0,.1) 2px 3px)"],
+HAI:["Haiti","ht","repeating-linear-gradient(0deg, rgba(0,32,159,.28) 0 8px, rgba(210,16,52,.28) 8px 16px), radial-gradient(circle at 30% 40%, rgba(255,200,0,.2) 0%, transparent 50%)"],
+SCO:["Scotland","gb-sct","repeating-linear-gradient(45deg, rgba(0,93,164,.25) 0 6px, rgba(255,255,255,.15) 6px 7px, transparent 7px 12px), repeating-linear-gradient(135deg, transparent 0 6px, rgba(0,93,164,.15) 6px 7px)"],
+AUS:["Australia","au","repeating-linear-gradient(90deg, rgba(0,132,61,.26) 0 8px, rgba(255,205,0,.22) 8px 12px), radial-gradient(circle at 40% 40%, rgba(0,132,61,.15) 0%, transparent 55%)"],
+TUR:["Türkiye","tr","repeating-linear-gradient(45deg, transparent 0 8px, rgba(227,10,23,.2) 8px 10px), repeating-conic-gradient(from 30deg at 50% 50%, rgba(244,239,223,.2) 0deg 60deg, transparent 60deg 120deg) 0 0/20px 20px"],
+GER:["Germany","de","repeating-linear-gradient(0deg, rgba(221,0,0,.26) 0 8px, rgba(255,206,0,.2) 8px 16px), repeating-linear-gradient(90deg, transparent 0 4px, rgba(0,0,0,.08) 4px 5px)"],
+CUW:["Curaçao","cw","repeating-linear-gradient(90deg, rgba(0,42,143,.28) 0 10px, rgba(249,225,1,.22) 10px 14px), repeating-linear-gradient(45deg, transparent 0 5px, rgba(255,255,255,.1) 5px 6px)"],
+NED:["Netherlands","nl","repeating-linear-gradient(0deg, rgba(255,79,0,.26) 0 10px, rgba(33,70,139,.26) 10px 20px), radial-gradient(circle at 50% 50%, rgba(255,255,255,.1) 0%, transparent 60%)"],
+JPN:["Japan","jp","repeating-linear-gradient(0deg, transparent 0 8px, rgba(188,0,45,.25) 8px 12px), repeating-linear-gradient(45deg, rgba(244,239,223,.15) 0 3px, transparent 3px 6px)"],
+CIV:["Ivory Coast","ci","repeating-linear-gradient(0deg, rgba(247,126,0,.26) 0 10px, rgba(255,255,255,.15) 10px 12px, rgba(0,154,68,.26) 12px 22px)"],
+ECU:["Ecuador","ec","repeating-linear-gradient(0deg, rgba(255,221,0,.25) 0 8px, rgba(0,114,206,.25) 8px 16px), repeating-linear-gradient(90deg, transparent 0 5px, rgba(0,0,0,.08) 5px 6px)"],
+SWE:["Sweden","se","repeating-linear-gradient(90deg, rgba(0,106,167,.26) 0 12px, rgba(254,204,0,.22) 12px 18px), repeating-linear-gradient(45deg, transparent 0 6px, rgba(255,255,255,.1) 6px 7px)"],
+TUN:["Tunisia","tn","repeating-linear-gradient(45deg, rgba(231,0,19,.26) 0 8px, rgba(244,239,223,.2) 8px 11px), repeating-conic-gradient(from 0deg at 50% 50%, rgba(231,0,19,.15) 0deg 90deg, transparent 90deg 180deg) 0 0/22px 22px"],
+ESP:["Spain","es","repeating-linear-gradient(0deg, rgba(170,21,27,.28) 0 8px, rgba(241,191,0,.2) 8px 16px), repeating-linear-gradient(45deg, transparent 0 4px, rgba(0,0,0,.08) 4px 5px)"],
+CPV:["Cape Verde","cv","repeating-linear-gradient(0deg, rgba(0,58,135,.26) 0 6px, rgba(247,209,22,.22) 6px 9px, rgba(0,0,0,.1) 9px 18px)"],
+BEL:["Belgium","be","repeating-linear-gradient(0deg, rgba(237,41,57,.26) 0 10px, rgba(250,224,66,.2) 10px 20px), repeating-linear-gradient(90deg, transparent 0 3px, rgba(0,0,0,.08) 3px 4px)"],
+EGY:["Egypt","eg","repeating-linear-gradient(45deg, rgba(206,17,38,.26) 0 10px, rgba(192,154,62,.22) 10px 20px), repeating-conic-gradient(from 45deg at 50% 50%, rgba(206,17,38,.12) 0deg 90deg, transparent 90deg 180deg) 0 0/24px 24px"],
+KSA:["Saudi Arabia","sa","repeating-linear-gradient(45deg, transparent 0 6px, rgba(142,31,31,.25) 6px 8px, transparent 8px 14px), repeating-linear-gradient(135deg, rgba(201,184,150,.2) 0 4px, transparent 4px 8px), repeating-conic-gradient(from 0deg at 50% 50%, rgba(22,93,49,.24) 0deg 45deg, transparent 45deg 90deg) 0 0/20px 20px"],
+URU:["Uruguay","uy","repeating-linear-gradient(0deg, rgba(0,56,168,.26) 0 7px, rgba(252,209,22,.2) 7px 10px, rgba(0,0,0,.08) 10px 14px), repeating-linear-gradient(90deg, transparent 0 5px, rgba(255,255,255,.1) 5px 6px)"],
+IRN:["Iran","ir","repeating-linear-gradient(0deg, rgba(35,159,64,.26) 0 8px, rgba(255,255,255,.12) 8px 10px, rgba(218,0,0,.26) 10px 18px), repeating-linear-gradient(45deg, transparent 0 4px, rgba(0,0,0,.08) 4px 5px)"],
+NZL:["New Zealand","nz","repeating-linear-gradient(90deg, rgba(40,40,46,.26) 0 10px, rgba(160,168,180,.22) 10px 16px), repeating-linear-gradient(45deg, transparent 0 5px, rgba(255,255,255,.1) 5px 6px)"],
+FRA:["France","fr","repeating-linear-gradient(0deg, rgba(0,85,164,.28) 0 8px, rgba(255,255,255,.1) 8px 10px, rgba(239,65,53,.28) 10px 18px)"],
+SEN:["Senegal","sn","repeating-linear-gradient(0deg, rgba(0,133,62,.26) 0 9px, rgba(253,239,19,.2) 9px 13px, rgba(206,17,38,.26) 13px 22px), repeating-linear-gradient(45deg, transparent 0 3px, rgba(0,0,0,.08) 3px 4px)"],
+IRQ:["Iraq","iq","repeating-linear-gradient(0deg, rgba(206,17,38,.26) 0 8px, rgba(0,0,0,.1) 8px 9px, rgba(0,122,61,.26) 9px 17px), repeating-linear-gradient(45deg, transparent 0 6px, rgba(255,255,255,.1) 6px 7px)"],
+NOR:["Norway","no","repeating-linear-gradient(0deg, rgba(186,12,47,.26) 0 10px, rgba(244,239,223,.15) 10px 14px, rgba(0,32,91,.26) 14px 24px), repeating-linear-gradient(90deg, transparent 0 4px, rgba(0,0,0,.08) 4px 5px)"],
+ARG:["Argentina","ar","repeating-linear-gradient(0deg, rgba(117,170,219,.26) 0 9px, rgba(244,239,223,.2) 9px 12px), repeating-linear-gradient(45deg, transparent 0 5px, rgba(0,0,0,.08) 5px 6px)"],
+ALG:["Algeria","dz","repeating-linear-gradient(0deg, rgba(0,98,51,.26) 0 8px, rgba(255,255,255,.12) 8px 10px, rgba(210,16,52,.26) 10px 18px), repeating-conic-gradient(from 45deg at 50% 50%, rgba(0,98,51,.15) 0deg 90deg, transparent 90deg 180deg) 0 0/20px 20px"],
+AUT:["Austria","at","repeating-linear-gradient(0deg, rgba(237,41,57,.28) 0 8px, rgba(244,239,223,.15) 8px 11px), repeating-linear-gradient(45deg, transparent 0 4px, rgba(237,41,57,.12) 4px 5px)"],
+JOR:["Jordan","jo","repeating-linear-gradient(0deg, rgba(0,122,61,.26) 0 9px, rgba(206,17,38,.26) 9px 18px), repeating-linear-gradient(45deg, transparent 0 6px, rgba(255,200,100,.1) 6px 7px)"],
+POR:["Portugal","pt","repeating-linear-gradient(90deg, rgba(0,102,0,.26) 0 10px, rgba(255,0,0,.26) 10px 20px), repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,0,0,.08) 4px 5px)"],
+COD:["DR Congo","cd","repeating-linear-gradient(0deg, rgba(0,127,255,.26) 0 9px, rgba(255,255,255,.12) 9px 11px, rgba(247,214,5,.2) 11px 20px)"],
+ENG:["England","gb-eng","repeating-linear-gradient(90deg, rgba(200,16,46,.28) 0 14px, rgba(244,239,223,.15) 14px 18px), repeating-linear-gradient(45deg, transparent 0 5px, rgba(0,0,0,.08) 5px 6px)"],
+CRO:["Croatia","hr","repeating-conic-gradient(rgba(200,16,46,.32) 0 25%, rgba(244,239,223,.22) 0 50%) 0 0/14px 14px, repeating-linear-gradient(45deg, transparent 0 3px, rgba(0,0,0,.1) 3px 4px)"],
+GHA:["Ghana","gh","repeating-linear-gradient(0deg, rgba(229,184,11,.26) 0 8px, rgba(0,107,63,.26) 8px 16px, rgba(206,17,38,.26) 16px 24px), repeating-linear-gradient(90deg, transparent 0 3px, rgba(0,0,0,.08) 3px 4px)"],
+PAN:["Panama","pa","repeating-linear-gradient(0deg, rgba(0,56,168,.26) 0 10px, rgba(255,255,255,.1) 10px 12px, rgba(210,16,52,.26) 12px 22px)"],
+UZB:["Uzbekistan","uz","repeating-conic-gradient(from 45deg at 50% 50%, rgba(0,153,181,.28) 0deg 90deg, rgba(30,181,58,.28) 90deg 180deg) 0 0/18px 18px, repeating-linear-gradient(90deg, transparent 0 2px, rgba(0,0,0,.1) 2px 3px)"],
+COL:["Colombia","co","repeating-linear-gradient(0deg, rgba(252,209,22,.25) 0 9px, rgba(0,56,168,.25) 9px 18px), repeating-linear-gradient(45deg, transparent 0 4px, rgba(0,0,0,.08) 4px 5px)"]
+};
+
+const L={
+LA:["SoFi Stadium · Inglewood","California, USA"], SC:["Levi's Stadium · Santa Clara","California, USA"],
+NJ:["MetLife Stadium · E. Rutherford","New Jersey, USA"], FOX:["Gillette Stadium · Foxborough","Massachusetts, USA"],
+HOU:["NRG Stadium · Houston","Texas, USA"], ARL:["AT&T Stadium · Arlington","Texas, USA"],
+PHI:["Lincoln Financial Field","Philadelphia, Pennsylvania, USA"], ATL:["Mercedes-Benz Stadium","Atlanta, Georgia, USA"],
+SEA:["Lumen Field · Seattle","Washington, USA"], MIA:["Hard Rock Stadium · Miami","Florida, USA"],
+KC:["Arrowhead Stadium","Kansas City, Missouri, USA"], TOR:["BMO Field · Toronto","Ontario, Canada"],
+VAN:["BC Place · Vancouver","British Columbia, Canada"], CDMX:["Estadio Azteca","Mexico City, Mexico"],
+ZAP:["Estadio Akron · Zapopan","Jalisco, Mexico"], GDL:["Estadio Monterrey · Guadalupe","Nuevo León, Mexico"]
+};
+
+const DAYS=[
+{w:"Thursday",d:11,band:"p-aztec",motif:"Aztec step-fret · Mexico open the Cup",m:[
+ ["22:00","MEX","RSA","A","CDMX"]]},
+{w:"Friday",d:12,band:"p-maple",motif:"Maple red · Canada's opening night",m:[
+ ["05:00","KOR","CZE","A","ZAP"],
+ ["22:00","CAN","BIH","B","TOR"]]},
+{w:"Saturday",d:13,band:"p-stars",motif:"Stars & stripes · USA enter the stage",m:[
+ ["04:00","USA","PAR","D","LA"],
+ ["22:00","QAT","SUI","B","SC"]]},
+{w:"Sunday",d:14,band:"p-samba",motif:"Verde-amarela · Brazil's first dance",m:[
+ ["01:00","BRA","MAR","C","NJ"],
+ ["04:00","HAI","SCO","C","FOX"],
+ ["07:00","AUS","TUR","D","VAN"],
+ ["20:00","GER","CUW","E","HOU"],
+ ["23:00","NED","JPN","F","ARL"]]},
+{w:"Monday",d:15,band:"p-iberia",motif:"Iberian gold · Spain begin in Atlanta",m:[
+ ["02:00","CIV","ECU","E","PHI"],
+ ["05:00","SWE","TUN","F","GDL"],
+ ["19:00","ESP","CPV","H","ATL"],
+ ["22:00","BEL","EGY","G","SEA"]]},
+{w:"Tuesday",d:16,band:"p-sadu",motif:"Sadu weave · Saudi Arabia's opening night",m:[
+ ["01:00","KSA","URU","H","MIA"],
+ ["04:00","IRN","NZL","G","LA"],
+ ["22:00","FRA","SEN","I","NJ"]]},
+{w:"Wednesday",d:17,band:"p-albi",motif:"Albiceleste · the champions arrive",m:[
+ ["01:00","IRQ","NOR","I","FOX"],
+ ["04:00","ARG","ALG","J","KC"],
+ ["07:00","AUT","JOR","J","SC"],
+ ["20:00","POR","COD","K","HOU"],
+ ["23:00","ENG","CRO","L","ARL"]]},
+{w:"Thursday",d:18,band:"p-kente",motif:"Kente cloth · Ghana on the board",m:[
+ ["02:00","GHA","PAN","L","TOR"],
+ ["05:00","UZB","COL","K","CDMX"],
+ ["19:00","CZE","RSA","A","ATL"],
+ ["22:00","SUI","BIH","B","LA"]]},
+{w:"Friday",d:19,band:"p-hosts",motif:"Three hosts · Mexico, Canada & USA all play",m:[
+ ["01:00","CAN","QAT","B","VAN"],
+ ["04:00","MEX","KOR","A","ZAP"],
+ ["22:00","USA","AUS","D","SEA"]]},
+{w:"Saturday",d:20,band:"p-zellige",motif:"Zellige mosaic · Morocco face Scotland",m:[
+ ["01:00","SCO","MAR","C","FOX"],
+ ["03:30","BRA","HAI","C","PHI"],
+ ["06:00","TUR","PAR","D","SC"],
+ ["20:00","NED","SWE","F","HOU"],
+ ["23:00","GER","CIV","E","TOR"]]},
+{w:"Sunday",d:21,band:"p-sadu",motif:"Sadu weave · Saudi Arabia vs Spain",m:[
+ ["03:00","ECU","CUW","E","KC"],
+ ["07:00","TUN","JPN","F","GDL"],
+ ["19:00","ESP","KSA","H","ATL"],
+ ["22:00","BEL","IRN","G","LA"]]},
+{w:"Monday",d:22,band:"p-albi",motif:"Albiceleste · Argentina vs Austria",m:[
+ ["01:00","URU","CPV","H","MIA"],
+ ["04:00","NZL","EGY","G","VAN"],
+ ["20:00","ARG","AUT","J","ARL"]]},
+{w:"Tuesday",d:23,band:"p-lions",motif:"Three Lions · England face Ghana",m:[
+ ["00:00","FRA","IRQ","I","PHI"],
+ ["03:00","NOR","SEN","I","TOR"],
+ ["06:00","JOR","ALG","J","SC"],
+ ["20:00","POR","UZB","K","HOU"],
+ ["23:00","ENG","GHA","L","FOX"]]},
+{w:"Wednesday",d:24,band:"p-checker",motif:"Šahovnica · Croatia's checkerboard day",m:[
+ ["02:00","PAN","CRO","L","FOX"],
+ ["05:00","COL","COD","K","ZAP"],
+ ["22:00","SUI","CAN","B","VAN"],
+ ["22:00","BIH","QAT","B","SEA"]]},
+{w:"Thursday",d:25,band:"p-aztec",motif:"Aztec step-fret · Mexico's decisive night",m:[
+ ["01:00","MAR","HAI","C","ATL"],
+ ["01:00","SCO","BRA","C","MIA"],
+ ["04:00","RSA","KOR","A","GDL"],
+ ["04:00","CZE","MEX","A","CDMX"],
+ ["23:00","CUW","CIV","E","PHI"],
+ ["23:00","ECU","GER","E","NJ"]]},
+{w:"Friday",d:26,band:"p-hino",motif:"Hinomaru · Japan's all-or-nothing finale",m:[
+ ["02:00","TUN","NED","F","KC"],
+ ["02:00","JPN","SWE","F","ARL"],
+ ["05:00","TUR","USA","D","LA"],
+ ["05:00","PAR","AUS","D","SC"],
+ ["22:00","NOR","FRA","I","FOX"],
+ ["22:00","SEN","IRQ","I","TOR"]]},
+{w:"Saturday",d:27,band:"p-sadu",motif:"Sadu weave · Saudi fight for the knockouts",m:[
+ ["03:00","CPV","KSA","H","HOU"],
+ ["03:00","URU","ESP","H","ZAP"],
+ ["06:00","NZL","BEL","G","VAN"],
+ ["06:00","EGY","IRN","G","SEA"]]},
+{w:"Sunday",d:28,band:"p-gold",motif:"Final whistle · the last group-stage night",m:[
+ ["00:00","PAN","ENG","L","NJ"],
+ ["00:00","CRO","GHA","L","PHI"],
+ ["02:30","COL","POR","K","MIA"],
+ ["02:30","COD","UZB","K","ATL"],
+ ["05:00","ALG","AUT","J","KC"],
+ ["05:00","JOR","ARG","J","ARL"]]}
+];
+
+const flag=c=>`<img src="https://flagcdn.com/h24/${c}.png" alt="" loading="lazy" onerror="this.style.display='none'">`;
+const ord=d=>{const s=["th","st","nd","rd"],v=d%100;return d+(s[(v-20)%10]||s[v]||s[0]);};
+const HOSTMARK={
+us:`<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4 7.3 13.6 2.2 9l6.9-.7z"/></svg>`,
+ca:`<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.4 4.3 3.3-2.1-.9 4.6 4.2-1-2.8 3.6 4.6 1.5-4.6 1.5 2.8 3.6-4.2-1 .9 4.6-3.3-2.1L12 22l-1.4-4.3-3.3 2.1.9-4.6-4.2 1 2.8-3.6L2 13.5l4.6-1.5-2.8-3.6 4.2 1-.9-4.6 3.3 2.1z"/></svg>`,
+mx:`<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`
+};
+
+/* ============ FINAL RESULTS ============
+   Add a line here after each match ends:  "DAY-HOME-AWAY":[homeGoals, awayGoals]
+   The winner's side automatically gets the gold ring. Draws get no ring. */
+const RESULTS={
+"11-MEX-RSA":[2,0],
+"12-KOR-CZE":[2,1],
+"12-CAN-BIH":[1,1]
+};
+
+let html="";
+for(const day of DAYS){
+  html+=`<section class="day" id="day-${day.d}" data-day="${day.d}">
+    <div class="band ${day.band}"></div>
+    <div class="day-head">
+      <div class="date-block">
+        <div class="date-num">${day.d}</div>
+        <div><span class="weekday">${day.w}</span><span class="month">June</span></div>
+      </div>
+      <span class="head-extra"></span>
+    </div>`;
+  for(const [t,a,b,grp,v] of day.m){
+    const A=N[a],B=N[b];
+    const sa=(a==="KSA"||b==="KSA")?" sa":"";
+    const [hh,mm]=t.split(":").map(Number);
+    const utc=Date.UTC(2026,5,day.d,hh-3,mm); /* Mecca wall time = UTC+3 */
+    const res=RESULTS[`${day.d}-${a}-${b}`];
+    const winA=res&&res[0]>res[1], winB=res&&res[1]>res[0];
+    const mid=res
+      ? `<div class="ktime score">${res[0]} – ${res[1]}<small>FT</small></div>`
+      : `<div class="ktime">${t}</div>`;
+    const region=L[v][1];
+    const host = region.endsWith("USA") ? "us" : region.endsWith("Canada") ? "ca" : "mx";
+    html+=`<div class="match${sa}" data-utc="${utc}" data-home="${A[0]}" data-away="${B[0]}" data-kick="${t}">
+      <div class="m-row">
+        <div class="half left${winA?' win':''}" style="--pbg:${A[2]}">
+          ${flag(A[1])}<span class="tname">${A[0]}</span>
+        </div>
+        <div class="mid">${mid}<span class="grp">${grp}</span></div>
+        <div class="half right${winB?' win':''}" style="--pbg:${B[2]}">
+          ${flag(B[1])}<span class="tname">${B[0]}</span>
+        </div>
+      </div>
+      <div class="loc host-${host}"><span class="host-mark">${HOSTMARK[host]}</span><b>${L[v][0]}</b> — ${region}</div>
+    </div>`;
+  }
+  html+=`</section>`;
+}
+document.getElementById('schedule').innerHTML=html;
+
+/* ============ KNOCKOUT BRACKET DIAGRAM (R32 -> Final) ============ */
+const ROUNDS=[
+  ["Round of 32",16],["Round of 16",8],["Quarter-finals",4],["Semi-finals",2],["Final",1]
+];
+let bhtml="";
+for(const [name,count] of ROUNDS){
+  let slots="";
+  for(let i=0;i<count;i++){
+    const isFinal=(count===1);
+    slots+=`<div class="slot${isFinal?' final-slot':''}"><span class="s">TBD</span><span class="s">TBD</span></div>`;
+  }
+  bhtml+=`<div class="round"><h4>${name}</h4>${slots}${name==='Final'?'<div class="trophy">🏆</div>':''}</div>`;
+}
+document.getElementById('bracket').innerHTML=bhtml;
+
+/* ============ GOLDEN CONFETTI ============ */
+const GOLDS=['#E3C567','#F7ECC4','#B98A2E','#D9B65A','#FFE9A8'];
+function burst(matchEl){
+  const winHalf=matchEl.querySelector('.half.win');
+  if(!winHalf) return;
+  const mr=matchEl.getBoundingClientRect();
+  const hr=winHalf.getBoundingClientRect();
+  const originX=(hr.left-mr.left)+hr.width/2;
+  const originY=(hr.top-mr.top)+hr.height/2;
+  const N=22;
+  for(let i=0;i<N;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.background=GOLDS[i%GOLDS.length];
+    p.style.left=originX+'px';
+    p.style.top=originY+'px';
+    matchEl.appendChild(p);
+    const ang=(Math.PI*2)*(i/N)+ (Math.random()*0.5);
+    const vel=40+Math.random()*70;
+    const dx=Math.cos(ang)*vel;
+    const dy=Math.sin(ang)*vel - (30+Math.random()*40);
+    const rot=(Math.random()*720-360);
+    const dur=750+Math.random()*650;
+    p.animate([
+      {transform:`translate(0,0) rotate(0deg)`,opacity:1},
+      {transform:`translate(${dx}px,${dy+60}px) rotate(${rot}deg)`,opacity:0}
+    ],{duration:dur,easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'});
+    setTimeout(()=>p.remove(),dur+50);
+  }
+}
+/* hover (desktop) + tap (mobile) on a finished winner replays confetti */
+let lastTap=0;
+document.querySelectorAll('.match').forEach(m=>{
+  if(!m.querySelector('.half.win')) return;
+  m.addEventListener('mouseenter',()=>burst(m));
+});
+
+/* ================= LIVE MATCHDAY ENGINE ================= */
+/* Everything is computed in Mecca time (UTC+3), no matter where the page is opened. */
+const MECCA_OFFSET = 3*3600000;
+const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after kickoff */
+
+/* ---- LIVE SCORES from scores.json (written by the GitHub Action) ----
+   We never call the API from here; we just read the static file. */
+let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
+
+/* normalise team names so SofaScore's naming lines up with ours
+   (e.g. "Korea Republic" -> "south korea", "USA" -> "united states") */
+const NAME_ALIASES = {
+  "korea republic":"south korea", "republic of korea":"south korea",
+  "usa":"united states", "united states":"united states", "us":"united states",
+  "ivory coast":"ivory coast", "cote d'ivoire":"ivory coast", "côte d'ivoire":"ivory coast",
+  "czech republic":"czechia", "turkiye":"türkiye", "turkey":"türkiye",
+  "bosnia & herz.":"bosnia & herzegovina", "bosnia and herzegovina":"bosnia & herzegovina",
+  "dr congo":"dr congo", "congo dr":"dr congo", "iran":"iran", "ir iran":"iran",
+  "cape verde":"cape verde", "cabo verde":"cape verde", "curacao":"curaçao"
+};
+const norm = s => {
+  let x = (s||"").toLowerCase().trim();
+  x = x.replace(/\s+/g," ");
+  return NAME_ALIASES[x] || x;
+};
+
+async function loadScores(){
+  try{
+    const res = await fetch('scores.json?_='+Date.now(), {cache:'no-store'});
+    if(!res.ok) return;
+    const data = await res.json();
+    const map = {};
+    for(const m of (data.matches||[])){
+      const a = norm(m.home), b = norm(m.away);
+      map[a+"|"+b] = m;
+      map[b+"|"+a] = {...m, homeScore:m.awayScore, awayScore:m.homeScore,
+                     _flipped:true}; /* allow lookup in either order */
+    }
+    LIVE = map;
+  }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
+}
+/* refresh every 60s; scores.json itself updates on the Action's schedule */
+loadScores();
+setInterval(loadScores, 60000);
+
+function meccaNow(){ return new Date(Date.now() + MECCA_OFFSET); } /* read with getUTC* */
+
+function meccaToday(){
+  const m = meccaNow();
+  return {y:m.getUTCFullYear(), mo:m.getUTCMonth(), d:m.getUTCDate()};
+}
+
+const dayCards = [...document.querySelectorAll('.day')];
+const fmt = n => String(n).padStart(2,'0');
+
+/* update a match row's center block.
+   scoreText: e.g. "2 – 1"; liveTag: "HALF-TIME"/"45'"/etc (in-play);
+   ftTag: "FT"/"AET"/"AP" (finished). If scoreText is null, restores kickoff time. */
+function setMid(m, scoreText, liveTag, ftTag){
+  const mid = m.querySelector('.mid');
+  const grp = mid.querySelector('.grp');
+  const grpHtml = grp ? grp.outerHTML : '';
+  let kt;
+  if(scoreText==null){
+    kt = `<div class="ktime">${m.dataset.kick}</div>`;
+  }else if(ftTag){
+    kt = `<div class="ktime score">${scoreText}<small>${ftTag}</small></div>`;
+  }else{
+    kt = `<div class="ktime">${scoreText}<span class="live-tag">${liveTag||'LIVE'}</span></div>`;
+  }
+  mid.innerHTML = kt + grpHtml;
+}
+
+function tick(){
+  const now = Date.now();
+  const t = meccaToday();
+  const inJune26 = (t.y===2026 && t.mo===5);
+
+  let todayCard = null;
+
+  for(const card of dayCards){
+    const d = +card.dataset.day;
+    const matches = [...card.querySelectorAll('.match')];
+    const lastEnd = Math.max(...matches.map(m=>+m.dataset.utc)) + MATCH_LEN;
+    const firstKo = Math.min(...matches.map(m=>+m.dataset.utc));
+
+    /* today detection (Mecca calendar) */
+    const isToday = inJune26 && d===t.d;
+    card.classList.toggle('today', isToday);
+    if(isToday) todayCard = card;
+
+    /* past-day fade once its last match ends; future-day fade before its first kickoff */
+    card.classList.toggle('past', now > lastEnd && !isToday);
+    card.classList.toggle('future', now < firstKo && !isToday);
+
+    /* per-match states */
+    let nextSet = false;
+    for(const m of matches){
+      const ko = +m.dataset.utc;
+      const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
+
+      /* time-based fallback when no API data is present */
+      let live = now>=ko && now<ko+MATCH_LEN;
+      let done = now>=ko+MATCH_LEN;
+      let ht=false, finalScore=null, liveTag=null;
+
+      if(lv){
+        const st = lv.state;
+        if(st==="LIVE"||st==="ET"||st==="PEN"){
+          live=true; done=false;
+          liveTag = st==="ET" ? "EXTRA TIME" : st==="PEN" ? "PENALTIES"
+                  : (lv.minute? lv.minute+"'" : "LIVE");
+        }else if(st==="HT"){
+          live=false; done=false; ht=true; liveTag="HALF-TIME";
+        }else if(st==="FT"||st==="AET"||st==="AP"){
+          live=false; done=true;
+          finalScore = {h:lv.homeScore, a:lv.awayScore,
+                        tag: st==="AP"?"AP":st==="AET"?"AET":"FT"};
+        }
+        /* live score line while in play / HT */
+        if((live||ht) && lv.homeScore!=null){
+          setMid(m, `${lv.homeScore} – ${lv.awayScore}`, liveTag);
+        }
+      }
+
+      m.classList.toggle('live', live);
+      m.classList.toggle('ht', ht);
+      m.classList.toggle('done', done);
+      m.classList.toggle('next', false);
+
+      /* apply API final score + winner ring if the match has ended live */
+      if(finalScore){
+        setMid(m, `${finalScore.h} – ${finalScore.a}`, null, finalScore.tag);
+        const halves=m.querySelectorAll('.half');
+        if(finalScore.h>finalScore.a){halves[0].classList.add('win');halves[1].classList.remove('win');}
+        else if(finalScore.a>finalScore.h){halves[1].classList.add('win');halves[0].classList.remove('win');}
+      }
+
+      if(isToday && !live && !done && !ht && !nextSet){ m.classList.add('next'); nextSet=true; }
+    }
+
+    /* countdown bar lives ONLY inside today's card */
+    let cd = card.querySelector('.cd');
+    if(isToday){
+      if(!cd){
+        cd = document.createElement('div');
+        cd.className = 'cd';
+        card.querySelector('.day-head').after(cd);
+        card.querySelector('.head-extra').innerHTML = '<span class="today-badge">Today</span>';
+      }
+      const upcoming = matches.map(m=>+m.dataset.utc).filter(ko=>ko>now).sort((a,b)=>a-b)[0];
+      const liveOne  = matches.find(m=>m.classList.contains('live'));
+      if(liveOne && !upcoming){
+        cd.innerHTML = `<span>Match in play</span><b>LIVE</b>`;
+      }else if(upcoming){
+        let s = Math.floor((upcoming-now)/1000);
+        const h=Math.floor(s/3600); s-=h*3600;
+        const mi=Math.floor(s/60); const se=s-mi*60;
+        cd.innerHTML = `<span>${liveOne?'Match in play · next kick-off':'Next kick-off'}</span><b>${fmt(h)}:${fmt(mi)}:${fmt(se)}</b>`;
+      }else{
+        cd.innerHTML = `<span>Matchday complete</span><b>—</b>`;
+      }
+    }else if(cd){
+      cd.remove();
+      card.querySelector('.head-extra').innerHTML = '';
+    }
+  }
+  return todayCard;
+}
+
+const firstToday = tick();
+setInterval(tick, 1000);
+
+/* ============ DESCENDING ZIG-ZAG BALL ============ */
+(function(){
+  const ball=document.getElementById('wc-ball');
+  if(!ball) return;
+  const W=()=>window.innerWidth, H=()=>window.innerHeight;
+  let target=0, current=0;
+  function compute(){
+    const max=Math.max(1, document.documentElement.scrollHeight - H());
+    target=Math.min(1, Math.max(0, window.scrollY / max));
+  }
+  function frame(){
+    current += (target-current)*0.08; /* smoothing */
+    const p=current;
+    const vy = p*(H()-70) + 12;                 /* descend down the viewport */
+    const amp = Math.min(W()*0.34, 260);        /* zig-zag width */
+    const cx = W()/2 - 23;
+    const vx = cx + Math.sin(p*Math.PI*5)*amp;   /* 2.5 full sweeps top→bottom */
+    ball.style.transform=`translate(${vx}px,${vy}px)`;
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('scroll',compute,{passive:true});
+  window.addEventListener('resize',compute);
+  compute(); frame();
+})();
+
+/* auto-scroll vertically so today's card is centered on load */
+if(firstToday){
+  setTimeout(()=>firstToday.scrollIntoView({behavior:'smooth', block:'center'}), 400);
+  /* celebrate today's already-decided winners */
+  const todayWins=[...firstToday.querySelectorAll('.match')].filter(m=>m.querySelector('.half.win'));
+  todayWins.forEach((m,i)=>setTimeout(()=>burst(m), 900+i*450));
+}
+</script>
+</body>
+</html>
