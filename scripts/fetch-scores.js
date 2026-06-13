@@ -58,7 +58,7 @@ async function main() {
 
   try {
     // Fetch all World Cup 2026 matches (live + finished + scheduled)
-    const data = await getJSON("/competitions/WC/matches?status=SCHEDULED,LIVE,FINISHED");
+    const data = await getJSON("/competitions/WC/matches");
     const matches = Array.isArray(data?.matches) ? data.matches : [];
 
     out.matches = matches.map((m) => ({
