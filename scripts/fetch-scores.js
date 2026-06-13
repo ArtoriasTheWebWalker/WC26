@@ -1,10 +1,10 @@
 /*
  * fetch-scores.js  —  runs on GitHub's servers, never in the browser.
- * Calls API-Football (via RapidAPI), filters to the 2026 World Cup, and writes
- * a small scores.json the front-end reads. The API key comes from the
- * RAPIDAPI_KEY repo secret and is never written into the output.
+ * Calls API-Football (via RapidAPI), fetches all World Cup 2026 matches for
+ * today (live and finished), and writes a small scores.json the front-end reads.
+ * The API key comes from the RAPIDAPI_KEY repo secret.
  *
- * API-Football live endpoint returns: { response: [ { league, fixture, teams,
+ * API-Football by-date endpoint returns: { response: [ { league, fixture, teams,
  * goals, status.short (FT/HT/1H/2H/ET/P/AET/PEN/LIVE/NS), ... } ] }
  */
 
@@ -18,16 +18,23 @@ if (!KEY) {
   process.exit(1);
 }
 
-/* ---- which match is the World Cup 2026 ----
-   API-Football returns league.name like "World Cup". Match on that. */
+/* ---- Get today's date in Mecca time (UTC+3), format as YYYYMMDD ---- */
+function getMeccaDateString() {
+  const meccaOffset = 3 * 3600000;
+  const now = new Date(Date.now() + meccaOffset);
+  const y = now.getUTCFullYear();
+  const m = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const d = String(now.getUTCDate()).padStart(2, '0');
+  return `${y}${m}${d}`;
+}
+
+/* ---- which match is the World Cup 2026 ---- */
 const isWorldCup = (match) => {
   const league = match?.league?.name || "";
   return /2026|world cup/i.test(league);
 };
 
-/* ---- map API-Football status.short to our state ----
-   API-Football status.short: FT, HT, 1H, 2H, ET, P, AET, PEN, LIVE, NS
-   We simplify to: FT, HT, LIVE, ET, AET, AP (after penalties), NS */
+/* ---- map API-Football status.short to our state ---- */
 function mapState(match) {
   const short = match?.fixture?.status?.short || "NS";
 
@@ -40,7 +47,7 @@ function mapState(match) {
   return "NS";
 }
 
-/* extract live minute from elapsed time */
+/* extract live minute */
 function liveMinute(match) {
   const elapsed = match?.fixture?.status?.elapsed;
   return elapsed ? Math.round(elapsed) : null;
@@ -61,7 +68,9 @@ async function main() {
   let out = { updated: new Date().toISOString(), matches: [] };
 
   try {
-    const data = await getJSON("/football-current-live");
+    const dateStr = getMeccaDateString();
+    const path = `/football-get-matches-by-date?date=${dateStr}`;
+    const data = await getJSON(path);
     const matches = Array.isArray(data?.response) ? data.response : [];
 
     const wc = matches.filter(isWorldCup);
@@ -75,10 +84,8 @@ async function main() {
       minute:    liveMinute(m),
     }));
 
-    console.log(`Found ${matches.length} live football matches, ${wc.length} World Cup 2026.`);
+    console.log(`Found ${matches.length} matches on ${dateStr}, ${wc.length} World Cup 2026.`);
   } catch (err) {
-    /* On any error, keep the file valid but mark stale. We DON'T overwrite
-       with garbage; the front-end falls back to its built-in RESULTS. */
     console.error("Fetch failed:", err.message);
     out.error = err.message;
   }
