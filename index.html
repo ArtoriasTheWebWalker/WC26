@@ -24,18 +24,6 @@ body{
   position:relative;
 }
 .wrap{max-width:1180px;margin:0 auto;padding:44px 22px 90px;position:relative;z-index:1}
-#lang-toggle{
-  position:absolute;top:0;right:0;z-index:5;
-  background:linear-gradient(180deg,rgba(227,197,103,.16),rgba(185,138,46,.1));
-  border:1px solid rgba(227,197,103,.5);color:var(--gold);
-  font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.04em;
-  padding:7px 16px;border-radius:8px;cursor:pointer;transition:all .2s;
-  backdrop-filter:blur(4px);
-}
-#lang-toggle:hover{background:linear-gradient(180deg,rgba(227,197,103,.28),rgba(185,138,46,.18));box-shadow:0 0 16px rgba(227,197,103,.3)}
-body.ar #lang-toggle{font-family:'Outfit',sans-serif;font-weight:600}
-body.ar h1,body.ar .ko-title,body.ar .date-num{font-family:'Outfit',sans-serif}
-body.ar{font-family:'Outfit','Segoe UI',Tahoma,sans-serif}
 /* ---------- DESCENDING WORLD CUP BALL ---------- */
 #wc-ball{
   position:fixed;left:0;top:0;z-index:0;pointer-events:none;
@@ -225,67 +213,42 @@ footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-s
   -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px;
 }
 .ko-sub{text-align:center;color:var(--sand);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px}
-/* group standings tables */
-.groups-wrap{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:30px;
+.ko-r32{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;margin-bottom:40px;
 }
-.group-card{
-  border:1px solid rgba(185,138,46,.34);border-radius:12px;overflow:hidden;
-  background:linear-gradient(180deg,#111A2E 0%,#0E1526 100%);
-  box-shadow:0 14px 36px -22px rgba(0,0,0,.85);
+.ko-match{
+  border:1px solid rgba(185,138,46,.34);border-radius:10px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(17,26,46,.92),rgba(14,21,38,.94));
 }
-.group-head{
-  display:flex;align-items:center;gap:10px;padding:11px 14px;
-  background:linear-gradient(90deg,rgba(227,197,103,.12),transparent);
-  border-bottom:1px solid rgba(34,48,79,.8);
+.ko-match .ko-side{
+  display:flex;align-items:center;gap:9px;padding:9px 13px;font-size:.86rem;color:var(--ink);
 }
-.group-letter{
-  flex:none;width:30px;height:30px;border-radius:7px;display:grid;place-items:center;
-  font-family:'Cinzel',serif;font-weight:700;font-size:1rem;color:var(--night);
-  background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+.ko-match .ko-side:first-child{border-bottom:1px solid rgba(34,48,79,.7)}
+.ko-side .seed{
+  flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-size:.62rem;font-weight:600;color:var(--gold);border:1px solid var(--gold-deep);
 }
-.group-title{font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.1em;color:var(--sand);text-transform:uppercase}
-.gtable{width:100%;border-collapse:collapse;font-size:.78rem}
-.gtable thead th{
-  font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sand);font-weight:600;
-  padding:6px 4px;text-align:center;border-bottom:1px solid rgba(34,48,79,.6);
+.ko-side.tbd{color:var(--sand);font-style:italic;opacity:.8}
+.ko-tag{
+  display:flex;justify-content:space-between;padding:5px 13px;background:rgba(227,197,103,.06);
+  font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sand);font-weight:600;
 }
-.gtable thead th.team-col{text-align:left;padding-left:13px}
-.gtable tbody td{padding:7px 4px;text-align:center;border-bottom:1px solid rgba(34,48,79,.35)}
-.gtable tbody tr:last-child td{border-bottom:none}
-.gtable .team-cell{display:flex;align-items:center;gap:8px;text-align:left;padding-left:13px}
-.gtable .team-cell img{width:22px;height:15px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
-.gtable .team-cell .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;color:var(--ink)}
-.gtable .pts{font-family:'Cinzel',serif;font-weight:700;color:var(--gold)}
-.gtable tr.q1,.gtable tr.q2{background:rgba(227,197,103,.06)}
-.gtable tr.q1 .rank,.gtable tr.q2 .rank{color:var(--gold);font-weight:700}
-.gtable .rank{color:var(--sand);font-size:.66rem;width:18px}
-/* W-D-L mini indicator */
-.wdl{display:inline-flex;gap:2px;justify-content:center}
-.wdl i{width:7px;height:7px;border-radius:50%;display:inline-block}
-.wdl .w{background:#4ED38A}
-.wdl .d{background:var(--sand)}
-.wdl .l{background:#E0566B}
-/* ---- live (provisional) standings cues ---- */
-.group-card.card-live{
-  border-color:rgba(255,123,107,.6);
-  box-shadow:0 14px 36px -22px rgba(0,0,0,.85), 0 0 22px -4px rgba(255,90,90,.35);
+/* bracket skeleton */
+.bracket-wrap{overflow-x:auto;padding-bottom:12px}
+.bracket{display:flex;gap:20px;min-width:760px}
+.round{display:flex;flex-direction:column;justify-content:space-around;gap:10px;flex:1}
+.round h4{
+  text-align:center;color:var(--gold);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+  font-weight:600;margin-bottom:4px;font-family:'Outfit';
 }
-.live-pill{
-  margin-left:auto;font-size:.56rem;letter-spacing:.16em;font-weight:700;color:#FF7B6B;
-  border:1px solid rgba(255,123,107,.5);border-radius:20px;padding:2px 9px;
-  display:inline-flex;align-items:center;gap:5px;
+.slot{
+  border:1px solid rgba(34,48,79,.8);border-radius:7px;background:rgba(14,21,38,.7);
+  padding:7px 9px;font-size:.66rem;color:var(--sand);min-height:34px;display:flex;
+  flex-direction:column;justify-content:center;gap:3px;
 }
-.live-pill::before{content:"";width:6px;height:6px;border-radius:50%;background:#FF7B6B;animation:pulse 1.3s infinite}
-.gtable tr.row-live{background:rgba(255,90,90,.07)}
-.gtable tr.row-live .nm{color:#FFD9D2}
-.row-live-dot{flex:none;width:7px;height:7px;border-radius:50%;background:#FF7B6B;animation:pulse 1.3s infinite}
-.gtable .pts-live{color:#FF7B6B}
-.gtable tr.row-live.q1,.gtable tr.row-live.q2{background:rgba(255,120,90,.1)}
-/* provisional W/D/L dots (live match) get a ring */
-.wdl .wl{background:#4ED38A;box-shadow:0 0 0 2px rgba(78,211,138,.3)}
-.wdl .dl{background:var(--sand);box-shadow:0 0 0 2px rgba(201,184,150,.3)}
-.wdl .ll{background:#E0566B;box-shadow:0 0 0 2px rgba(224,86,107,.3)}
+.slot .s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.slot.final-slot{border-color:var(--gold-deep);background:rgba(227,197,103,.05)}
+.trophy{text-align:center;color:var(--gold);font-size:1.1rem;margin-top:8px}
 
 @media (max-width:920px){ .grid{grid-template-columns:1fr} }
 @media (max-width:520px){
@@ -299,7 +262,7 @@ footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-s
   .half{padding:6px 7px;gap:6px}
   .loc{font-size:.62rem}
   .ko-title{font-size:1.25rem}
-  .groups-wrap{grid-template-columns:1fr}
+  .bracket{min-width:620px}
   #wc-ball{opacity:.75}
   #wc-ball svg{width:38px;height:38px}
 }
@@ -343,95 +306,29 @@ footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-s
 <div class="wrap">
 
 <header>
-  <button id="lang-toggle" aria-label="Switch language">العربية</button>
-  <div class="eyebrow" id="t-eyebrow">FIFA World Cup · Mexico – Canada – United States</div>
-  <h1 id="t-h1">WORLD CUP 2026</h1>
-  <div class="sub" id="t-sub"><b>GROUP STAGE</b> · 72 Matches · 12 Groups · June 11 – 28</div>
+  <div class="eyebrow">FIFA World Cup · Mexico – Canada – United States</div>
+  <h1>WORLD CUP 2026</h1>
+  <div class="sub"><b>GROUP STAGE</b> · 72 Matches · 12 Groups · June 11 – 28</div>
   <div class="hosts-line">
     <img src="https://flagcdn.com/h24/mx.png" alt="Mexico">
     <img src="https://flagcdn.com/h24/ca.png" alt="Canada">
     <img src="https://flagcdn.com/h24/us.png" alt="United States">
   </div>
-  <div class="tz-badge" id="t-tz">All times in Mecca Time · AST · GMT+3 · 24h</div>
+  <div class="tz-badge">All times in Mecca Time · AST · GMT+3 · 24h</div>
 </header>
 
 <div class="grid" id="schedule"></div>
 
 <section class="ko">
-  <div class="ko-title" id="t-ko-title">GROUPS &amp; STANDINGS</div>
-  <div class="ko-sub" id="t-ko-sub">12 Groups · Points update as matches are played</div>
-  <div class="groups-wrap" id="groups"></div>
+  <div class="ko-title">KNOCKOUT STAGE</div>
+  <div class="ko-sub">Round of 32 · Begins 28th June · Final 19th July</div>
+  <div class="bracket-wrap"><div class="bracket" id="bracket"></div></div>
 </section>
 
-<footer id="t-footer">Group Stage · Road to the Final — MetLife Stadium · July 19, 2026</footer>
+<footer>Group Stage · Road to the Final — MetLife Stadium · July 19, 2026</footer>
 </div>
 
 <script>
-/* ============ i18n: Arabic (Saudi / Najdi) translation layer ============
-   Country, venue, weekday, motif, and UI strings. Western numerals kept;
-   layout stays LTR so the calendar grid and bracket read the same. */
-const AR_TEAM={
-  MEX:"المكسيك", RSA:"جنوب أفريقيا", KOR:"كوريا الجنوبية", CZE:"تشيكيا",
-  CAN:"كندا", BIH:"البوسنة والهرسك", USA:"أمريكا", PAR:"باراغواي",
-  QAT:"قطر", SUI:"سويسرا", BRA:"البرازيل", MAR:"المغرب",
-  HAI:"هايتي", SCO:"اسكتلندا", AUS:"أستراليا", TUR:"تركيا",
-  GER:"ألمانيا", CUW:"كوراساو", NED:"هولندا", JPN:"اليابان",
-  CIV:"ساحل العاج", ECU:"الإكوادور", SWE:"السويد", TUN:"تونس",
-  ESP:"إسبانيا", CPV:"الرأس الأخضر", BEL:"بلجيكا", EGY:"مصر",
-  KSA:"السعودية", URU:"الأوروغواي", IRN:"إيران", NZL:"نيوزيلندا",
-  FRA:"فرنسا", SEN:"السنغال", IRQ:"العراق", NOR:"النرويج",
-  ARG:"الأرجنتين", ALG:"الجزائر", AUT:"النمسا", JOR:"الأردن",
-  POR:"البرتغال", COD:"الكونغو الديمقراطية", ENG:"إنجلترا", CRO:"كرواتيا",
-  GHA:"غانا", PAN:"بنما", UZB:"أوزبكستان", COL:"كولومبيا"
-};
-/* host country names appearing in venue region strings */
-const AR_REGION={ "USA":"أمريكا", "Canada":"كندا", "Mexico":"المكسيك" };
-const AR_DAY={
-  Sunday:"الأحد", Monday:"الإثنين", Tuesday:"الثلاثاء", Wednesday:"الأربعاء",
-  Thursday:"الخميس", Friday:"الجمعة", Saturday:"السبت"
-};
-/* editorial motif lines, rewritten naturally for a Saudi reader */
-const AR_MOTIF={
-  "Aztec step-fret · Mexico open the Cup":"زخرفة الأزتك · المكسيك تفتتح المونديال",
-  "Maple red · Canada's opening night":"أحمر القيقب · ليلة كندا الأولى",
-  "Stars & stripes · USA enter the stage":"النجوم والخطوط · أمريكا تدخل المونديال",
-  "Verde-amarela · Brazil's first dance":"الأصفر والأخضر · أول ظهور للبرازيل",
-  "Iberian gold · Spain begin in Atlanta":"الذهب الإسباني · إسبانيا تبدأ في أتلانتا",
-  "Sadu weave · Saudi Arabia's opening night":"نقش السدو · ليلة الأخضر الأولى",
-  "Albiceleste · the champions arrive":"الألبيسيليستي · حاملة اللقب تجي",
-  "Kente cloth · Ghana on the board":"قماش الكنتي · غانا تدخل المونديال",
-  "Three hosts · Mexico, Canada & USA all play":"الدول الثلاث المنظمة · المكسيك وكندا وأمريكا كلهم يلعبون",
-  "Zellige mosaic · Morocco face Scotland":"فسيفساء الزليج · المغرب تواجه اسكتلندا",
-  "Sadu weave · Saudi Arabia vs Spain":"نقش السدو · السعودية ضد إسبانيا",
-  "Albiceleste · Argentina vs Austria":"الألبيسيليستي · الأرجنتين ضد النمسا",
-  "Three Lions · England face Ghana":"الأسود الثلاثة · إنجلترا تواجه غانا",
-  "Šahovnica · Croatia's checkerboard day":"رقعة الشطرنج · يوم كرواتيا",
-  "Aztec step-fret · Mexico's decisive night":"زخرفة الأزتك · ليلة المكسيك الحاسمة",
-  "Hinomaru · Japan's all-or-nothing finale":"الهينومارو · اليابان في مباراة المصير",
-  "Sadu weave · Saudi fight for the knockouts":"نقش السدو · الأخضر يقاتل عشان الدور القادم",
-  "Final whistle · the last group-stage night":"الصفارة الأخيرة · آخر ليلة في دور المجموعات"
-};
-/* fixed UI chrome */
-const AR_UI={
-  eyebrow:"كأس العالم · المكسيك – كندا – أمريكا",
-  h1:"كأس العالم 2026",
-  sub:"<b>دور المجموعات</b> · 72 مباراة · 12 مجموعة · 11 – 28 يونيو",
-  tz:"كل الأوقات بتوقيت مكة المكرمة · GMT+3 · نظام 24 ساعة",
-  ko_title:"المجموعات والترتيب",
-  ko_sub:"12 مجموعة · النقاط تتحدث مع كل مباراة",
-  footer:"دور المجموعات · الطريق إلى النهائي — ملعب ميت لايف · 19 يوليو 2026",
-  month:"يونيو",
-  today:"اليوم",
-  next_ko:"المباراة الجاية",
-  in_play_next:"مباراة شغالة · المباراة الجاية",
-  in_play:"مباراة شغالة",
-  done:"خلصت مباريات اليوم",
-  live:"مباشر", ht:"بين الشوطين", et:"وقت إضافي", pen:"ركلات ترجيح",
-  r_32:"دور الـ32", r_16:"دور الـ16", r_qf:"ربع النهائي", r_sf:"نصف النهائي", r_final:"النهائي",
-  toggle_to_ar:"العربية", toggle_to_en:"English"
-};
-let LANG = "en";
-
 /* nation: [name, flagcdn code, pattern-background] */
 const g=(c1,c2)=>`linear-gradient(90deg, rgba(${c1},.35), rgba(${c2},.35))`;
 const N={
@@ -607,194 +504,60 @@ const RESULTS={
 "12-CAN-BIH":[1,1]
 };
 
-/* team name + helper text for the current language */
-const teamName = (code) => LANG==="ar" ? (AR_TEAM[code]||N[code][0]) : N[code][0];
-const dayName  = (w) => LANG==="ar" ? (AR_DAY[w]||w) : w;
-const motifText= (m) => LANG==="ar" ? (AR_MOTIF[m]||m) : m;
-const regionText = (r) => {
-  if(LANG!=="ar") return r;
-  /* swap the trailing host-country word into Arabic, keep the rest */
-  for(const [en,ar] of Object.entries(AR_REGION)){
-    if(r.endsWith(en)) return r.slice(0, -en.length) + ar;
-  }
-  return r;
-};
-
-function renderSchedule(){
-  let html="";
-  for(const day of DAYS){
-    html+=`<section class="day" id="day-${day.d}" data-day="${day.d}">
-      <div class="band ${day.band}"></div>
-      <div class="day-head">
-        <div class="date-block">
-          <div class="date-num">${day.d}</div>
-          <div><span class="weekday">${dayName(day.w)}</span><span class="month">${LANG==="ar"?AR_UI.month:"June"}</span></div>
-        </div>
-        <span class="head-extra"></span>
-      </div>`;
-    for(const [t,a,b,grp,v] of day.m){
-      const A=N[a],B=N[b];
-      const sa=(a==="KSA"||b==="KSA")?" sa":"";
-      const [hh,mm]=t.split(":").map(Number);
-      const utc=Date.UTC(2026,5,day.d,hh-3,mm); /* Mecca wall time = UTC+3 */
-      const res=RESULTS[`${day.d}-${a}-${b}`];
-      const winA=res&&res[0]>res[1], winB=res&&res[1]>res[0];
-      const ftLabel = LANG==="ar" ? "انتهت" : "FT";
-      const mid=res
-        ? `<div class="ktime score">${res[0]} – ${res[1]}<small>${ftLabel}</small></div>`
-        : `<div class="ktime">${t}</div>`;
-      const region=L[v][1];
-      const host = region.endsWith("USA") ? "us" : region.endsWith("Canada") ? "ca" : "mx";
-      html+=`<div class="match${sa}" data-utc="${utc}" data-home="${A[0]}" data-away="${B[0]}" data-kick="${t}">
-        <div class="m-row">
-          <div class="half left${winA?' win':''}" style="--pbg:${A[2]}">
-            ${flag(A[1])}<span class="tname">${teamName(a)}</span>
-          </div>
-          <div class="mid">${mid}<span class="grp">${grp}</span></div>
-          <div class="half right${winB?' win':''}" style="--pbg:${B[2]}">
-            ${flag(B[1])}<span class="tname">${teamName(b)}</span>
-          </div>
-        </div>
-        <div class="loc host-${host}"><span class="host-mark">${HOSTMARK[host]}</span><b>${L[v][0]}</b> — ${regionText(region)}</div>
-      </div>`;
-    }
-    html+=`</section>`;
-  }
-  document.getElementById('schedule').innerHTML=html;
-}
-renderSchedule();
-
-/* ============ GROUPS & STANDINGS ============
-   Groups (A–L) are derived from the match schedule: every match carries its
-   group letter, so we collect the 4 teams per group automatically. Standings
-   (P/W/D/L/GD/Pts) compute from finished results — both the built-in RESULTS
-   and any finished matches in LIVE (scores.json). */
-
-/* derive {A:[codes], B:[codes], ...} from DAYS */
-function deriveGroups(){
-  const groups={};
-  for(const day of DAYS){
-    for(const [t,a,b,grp,v] of day.m){
-      if(!groups[grp]) groups[grp]=new Set();
-      groups[grp].add(a); groups[grp].add(b);
-    }
-  }
-  /* Set -> array, sorted by group letter */
-  const out={};
-  Object.keys(groups).sort().forEach(g=>{ out[g]=[...groups[g]]; });
-  return out;
-}
-const GROUPS = deriveGroups();
-
-/* collect every finished match score as {a,b,ha,hb} from RESULTS + LIVE */
-function collectFinished(){
-  const fixtures=[];
-  /* built-in RESULTS keyed "DD-AAA-BBB" */
-  for(const key in RESULTS){
-    const m=key.match(/^\d+-([A-Z]+)-([A-Z]+)$/);
-    if(!m) continue;
-    const [ha,hb]=RESULTS[key];
-    fixtures.push({a:m[1], b:m[2], ha, hb});
-  }
-  /* finished matches from live data (match by team name -> code) */
-  const liveData = (typeof LIVE !== "undefined" && LIVE) ? LIVE : {};
-  const code = (name)=>{
-    const n=norm(name);
-    for(const c in N){ if(norm(N[c][0])===n) return c; }
-    return null;
-  };
-  for(const key in liveData){
-    const lv=liveData[key];
-    if(lv._flipped) continue; /* skip the reversed duplicate */
-    if(lv.homeScore==null) continue;
-    const ca=code(lv.home), cb=code(lv.away);
-    if(!ca||!cb) continue;
-    const finished = (lv.state==="FT"||lv.state==="AET"||lv.state==="AP");
-    const inPlay   = (lv.state==="LIVE"||lv.state==="HT"||lv.state==="ET"||lv.state==="PEN");
-    if(!finished && !inPlay) continue;
-    /* avoid double-count if already in RESULTS */
-    if(fixtures.some(f=>(f.a===ca&&f.b===cb)||(f.a===cb&&f.b===ca))) continue;
-    fixtures.push({a:ca, b:cb, ha:lv.homeScore, hb:lv.awayScore, live:inPlay});
-  }
-  return fixtures;
-}
-
-/* set of team codes currently in a live (in-play) match */
-function liveTeamCodes(){
-  const set=new Set();
-  collectFinished().forEach(f=>{ if(f.live){ set.add(f.a); set.add(f.b); } });
-  return set;
-}
-
-/* compute standings for a set of team codes given finished + live fixtures */
-function computeStandings(codes){
-  const tbl={};
-  codes.forEach(c=>{ tbl[c]={code:c,P:0,W:0,D:0,L:0,GF:0,GA:0,Pts:0,seq:[],live:false}; });
-  const fx=collectFinished();
-  for(const f of fx){
-    if(!(f.a in tbl) || !(f.b in tbl)) continue; /* only matches within this group */
-    const A=tbl[f.a], B=tbl[f.b];
-    A.P++; B.P++; A.GF+=f.ha; A.GA+=f.hb; B.GF+=f.hb; B.GA+=f.ha;
-    if(f.live){ A.live=true; B.live=true; }
-    const wTag = f.live ? 'wl' : 'w';   /* 'wl' = provisional win dot */
-    const dTag = f.live ? 'dl' : 'd';
-    const lTag = f.live ? 'll' : 'l';
-    if(f.ha>f.hb){ A.W++; B.L++; A.Pts+=3; A.seq.push(wTag); B.seq.push(lTag); }
-    else if(f.hb>f.ha){ B.W++; A.L++; B.Pts+=3; B.seq.push(wTag); A.seq.push(lTag); }
-    else { A.D++; B.D++; A.Pts++; B.Pts++; A.seq.push(dTag); B.seq.push(dTag); }
-  }
-  const rows=Object.values(tbl);
-  rows.forEach(r=>r.GD=r.GF-r.GA);
-  /* sort: points, then GD, then GF, then name */
-  rows.sort((x,y)=> y.Pts-x.Pts || y.GD-x.GD || y.GF-x.GF || N[x.code][0].localeCompare(N[y.code][0]));
-  return rows;
-}
-
-function renderGroups(){
-  const ar = LANG==="ar";
-  const head = ar
-    ? {team:"المنتخب", p:"ل", w:"ف", d:"ت", l:"خ", gd:"الفارق", pts:"نقاط"}
-    : {team:"Team", p:"P", w:"W", d:"D", l:"L", gd:"GD", pts:"Pts"};
-  const grpWord = ar ? "المجموعة" : "Group";
-  let html="";
-  const liveLabel = ar ? "مباشر" : "LIVE";
-  for(const g of Object.keys(GROUPS)){
-    const rows=computeStandings(GROUPS[g]);
-    const groupLive = rows.some(r=>r.live);
-    let body="";
-    rows.forEach((r,i)=>{
-      const qcls = i===0?'q1':i===1?'q2':'';
-      const live = r.live ? ' row-live' : '';
-      const gd = (r.GD>0?'+':'') + r.GD;
-      const wdl = r.seq.map(s=>`<i class="${s}"></i>`).join('');
-      const ptsCls = r.live ? 'pts pts-live' : 'pts';
-      body+=`<tr class="${qcls}${live}">
-        <td class="rank">${i+1}</td>
-        <td><div class="team-cell">${flag(N[r.code][1])}<span class="nm">${teamName(r.code)}</span>${r.live?'<span class="row-live-dot"></span>':''}</div></td>
-        <td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td>
-        <td>${gd}</td><td class="${ptsCls}">${r.Pts}</td>
-      </tr>`;
-    });
-    html+=`<div class="group-card${groupLive?' card-live':''}">
-      <div class="group-head">
-        <span class="group-letter">${g}</span>
-        <span class="group-title">${grpWord} ${g}</span>
-        ${groupLive?`<span class="live-pill">${liveLabel}</span>`:''}
+let html="";
+for(const day of DAYS){
+  html+=`<section class="day" id="day-${day.d}" data-day="${day.d}">
+    <div class="band ${day.band}"></div>
+    <div class="day-head">
+      <div class="date-block">
+        <div class="date-num">${day.d}</div>
+        <div><span class="weekday">${day.w}</span><span class="month">June</span></div>
       </div>
-      <table class="gtable">
-        <thead><tr>
-          <th class="rank"></th><th class="team-col">${head.team}</th>
-          <th>${head.p}</th><th>${head.w}</th><th>${head.d}</th><th>${head.l}</th>
-          <th>${head.gd}</th><th>${head.pts}</th>
-        </tr></thead>
-        <tbody>${body}</tbody>
-      </table>
+      <span class="head-extra"></span>
+    </div>`;
+  for(const [t,a,b,grp,v] of day.m){
+    const A=N[a],B=N[b];
+    const sa=(a==="KSA"||b==="KSA")?" sa":"";
+    const [hh,mm]=t.split(":").map(Number);
+    const utc=Date.UTC(2026,5,day.d,hh-3,mm); /* Mecca wall time = UTC+3 */
+    const res=RESULTS[`${day.d}-${a}-${b}`];
+    const winA=res&&res[0]>res[1], winB=res&&res[1]>res[0];
+    const mid=res
+      ? `<div class="ktime score">${res[0]} – ${res[1]}<small>FT</small></div>`
+      : `<div class="ktime">${t}</div>`;
+    const region=L[v][1];
+    const host = region.endsWith("USA") ? "us" : region.endsWith("Canada") ? "ca" : "mx";
+    html+=`<div class="match${sa}" data-utc="${utc}" data-home="${A[0]}" data-away="${B[0]}" data-kick="${t}">
+      <div class="m-row">
+        <div class="half left${winA?' win':''}" style="--pbg:${A[2]}">
+          ${flag(A[1])}<span class="tname">${A[0]}</span>
+        </div>
+        <div class="mid">${mid}<span class="grp">${grp}</span></div>
+        <div class="half right${winB?' win':''}" style="--pbg:${B[2]}">
+          ${flag(B[1])}<span class="tname">${B[0]}</span>
+        </div>
+      </div>
+      <div class="loc host-${host}"><span class="host-mark">${HOSTMARK[host]}</span><b>${L[v][0]}</b> — ${region}</div>
     </div>`;
   }
-  document.getElementById('groups').innerHTML=html;
+  html+=`</section>`;
 }
-/* initial render happens later via applyLanguage(), after the live-scores
-   layer (norm, LIVE) is defined further down. */
+document.getElementById('schedule').innerHTML=html;
+
+/* ============ KNOCKOUT BRACKET DIAGRAM (R32 -> Final) ============ */
+const ROUNDS=[
+  ["Round of 32",16],["Round of 16",8],["Quarter-finals",4],["Semi-finals",2],["Final",1]
+];
+let bhtml="";
+for(const [name,count] of ROUNDS){
+  let slots="";
+  for(let i=0;i<count;i++){
+    const isFinal=(count===1);
+    slots+=`<div class="slot${isFinal?' final-slot':''}"><span class="s">TBD</span><span class="s">TBD</span></div>`;
+  }
+  bhtml+=`<div class="round"><h4>${name}</h4>${slots}${name==='Final'?'<div class="trophy">🏆</div>':''}</div>`;
+}
+document.getElementById('bracket').innerHTML=bhtml;
 
 /* ============ GOLDEN CONFETTI ============ */
 const GOLDS=['#E3C567','#F7ECC4','#B98A2E','#D9B65A','#FFE9A8'];
@@ -828,15 +591,10 @@ function burst(matchEl){
 }
 /* hover (desktop) + tap (mobile) on a finished winner replays confetti */
 let lastTap=0;
-function reattachConfetti(){
-  document.querySelectorAll('.match').forEach(m=>{
-    if(!m.querySelector('.half.win')) return;
-    if(m.dataset.confetti) return; /* avoid double-binding */
-    m.dataset.confetti = "1";
-    m.addEventListener('mouseenter',()=>burst(m));
-  });
-}
-reattachConfetti();
+document.querySelectorAll('.match').forEach(m=>{
+  if(!m.querySelector('.half.win')) return;
+  m.addEventListener('mouseenter',()=>burst(m));
+});
 
 /* ================= LIVE MATCHDAY ENGINE ================= */
 /* Everything is computed in Mecca time (UTC+3), no matter where the page is opened. */
@@ -877,8 +635,6 @@ async function loadScores(){
                      _flipped:true}; /* allow lookup in either order */
     }
     LIVE = map;
-    /* recompute standings with any newly-finished matches */
-    if(typeof renderGroups === "function") renderGroups();
   }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
 }
 /* refresh every 60s; scores.json itself updates on the Action's schedule */
@@ -950,15 +706,14 @@ function tick(){
         const st = lv.state;
         if(st==="LIVE"||st==="ET"||st==="PEN"){
           live=true; done=false;
-          liveTag = st==="ET" ? (LANG==="ar"?AR_UI.et:"EXTRA TIME")
-                  : st==="PEN" ? (LANG==="ar"?AR_UI.pen:"PENALTIES")
-                  : (lv.minute? lv.minute+"'" : (LANG==="ar"?AR_UI.live:"LIVE"));
+          liveTag = st==="ET" ? "EXTRA TIME" : st==="PEN" ? "PENALTIES"
+                  : (lv.minute? lv.minute+"'" : "LIVE");
         }else if(st==="HT"){
-          live=false; done=false; ht=true; liveTag=(LANG==="ar"?AR_UI.ht:"HALF-TIME");
+          live=false; done=false; ht=true; liveTag="HALF-TIME";
         }else if(st==="FT"||st==="AET"||st==="AP"){
           live=false; done=true;
           finalScore = {h:lv.homeScore, a:lv.awayScore,
-                        tag: st==="AP"?"AP":st==="AET"?"AET":(LANG==="ar"?"انتهت":"FT")};
+                        tag: st==="AP"?"AP":st==="AET"?"AET":"FT"};
         }
         /* live score line while in play / HT */
         if((live||ht) && lv.homeScore!=null){
@@ -989,21 +744,19 @@ function tick(){
         cd = document.createElement('div');
         cd.className = 'cd';
         card.querySelector('.day-head').after(cd);
-        card.querySelector('.head-extra').innerHTML = `<span class="today-badge">${LANG==="ar"?AR_UI.today:"Today"}</span>`;
+        card.querySelector('.head-extra').innerHTML = '<span class="today-badge">Today</span>';
       }
       const upcoming = matches.map(m=>+m.dataset.utc).filter(ko=>ko>now).sort((a,b)=>a-b)[0];
       const liveOne  = matches.find(m=>m.classList.contains('live'));
       if(liveOne && !upcoming){
-        cd.innerHTML = `<span>${LANG==="ar"?AR_UI.in_play:"Match in play"}</span><b>${LANG==="ar"?AR_UI.live:"LIVE"}</b>`;
+        cd.innerHTML = `<span>Match in play</span><b>LIVE</b>`;
       }else if(upcoming){
         let s = Math.floor((upcoming-now)/1000);
         const h=Math.floor(s/3600); s-=h*3600;
         const mi=Math.floor(s/60); const se=s-mi*60;
-        const lbl = liveOne ? (LANG==="ar"?AR_UI.in_play_next:'Match in play · next kick-off')
-                            : (LANG==="ar"?AR_UI.next_ko:'Next kick-off');
-        cd.innerHTML = `<span>${lbl}</span><b>${fmt(h)}:${fmt(mi)}:${fmt(se)}</b>`;
+        cd.innerHTML = `<span>${liveOne?'Match in play · next kick-off':'Next kick-off'}</span><b>${fmt(h)}:${fmt(mi)}:${fmt(se)}</b>`;
       }else{
-        cd.innerHTML = `<span>${LANG==="ar"?AR_UI.done:"Matchday complete"}</span><b>—</b>`;
+        cd.innerHTML = `<span>Matchday complete</span><b>—</b>`;
       }
     }else if(cd){
       cd.remove();
@@ -1012,36 +765,6 @@ function tick(){
   }
   return todayCard;
 }
-
-/* ============ LANGUAGE TOGGLE ============ */
-function applyLanguage(){
-  const ar = LANG==="ar";
-  document.body.classList.toggle('ar', ar);
-  document.documentElement.lang = ar ? "ar" : "en";
-  /* static chrome */
-  const set=(id,txt)=>{const el=document.getElementById(id); if(el) el.innerHTML=txt;};
-  set('t-eyebrow', ar?AR_UI.eyebrow:"FIFA World Cup · Mexico – Canada – United States");
-  set('t-h1',      ar?AR_UI.h1:"WORLD CUP 2026");
-  set('t-sub',     ar?AR_UI.sub:"<b>GROUP STAGE</b> · 72 Matches · 12 Groups · June 11 – 28");
-  set('t-tz',      ar?AR_UI.tz:"All times in Mecca Time · AST · GMT+3 · 24h");
-  set('t-ko-title',ar?AR_UI.ko_title:"GROUPS &amp; STANDINGS");
-  set('t-ko-sub',  ar?AR_UI.ko_sub:"12 Groups · Points update as matches are played");
-  set('t-footer',  ar?AR_UI.footer:"Group Stage · Road to the Final — MetLife Stadium · July 19, 2026");
-  const btn=document.getElementById('lang-toggle');
-  if(btn) btn.textContent = ar?AR_UI.toggle_to_en:AR_UI.toggle_to_ar;
-  /* re-render dynamic content in the new language */
-  renderSchedule();
-  renderGroups();
-  reattachConfetti();
-  tick(); /* refresh live states/countdown text immediately */
-}
-
-document.getElementById('lang-toggle').addEventListener('click', ()=>{
-  LANG = (LANG==="en") ? "ar" : "en";
-  applyLanguage();
-});
-
-applyLanguage(); /* set initial EN labels + button text */
 
 const firstToday = tick();
 setInterval(tick, 1000);
