@@ -1295,9 +1295,9 @@ function tick(){
      0–45' first half, ~15min half-time break, 45–90' second half, then 90'+ */
   function clockFromKickoff(ko){
     const elapsedMin = Math.floor((now - ko)/60000);
-    if(elapsedMin < 0) return {label:null, ht:false};
+    if(elapsedMin < 0) return {label:"1'", ht:false};
     if(elapsedMin <= 45) return {label:elapsedMin+"'", ht:false};
-    if(elapsedMin < 60)  return {label:null, ht:true};   /* half-time window */
+    if(elapsedMin < 60)  return {label:"45'+", ht:true};   /* half-time window */
     const second = elapsedMin - 15;                       /* subtract the break */
     if(second <= 90) return {label:second+"'", ht:false};
     return {label:"90'+", ht:false};
