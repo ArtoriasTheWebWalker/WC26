@@ -5,64 +5,102 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>World Cup 2026 — Group Stage · Mecca Time</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&family=Changa:wght@400;500;600;700&display=swap');
 
 :root{
   --night:#0B1020; --panel:#111A2E; --panel-2:#0E1526; --line:#22304F;
   --ink:#F2EFE6; --sand:#C9B896; --gold:#E3C567; --gold-deep:#B98A2E;
+  /* themeable surface tokens (night defaults) */
+  --bg:#0B1020;
+  --card-top:#111A2E; --card-bot:#0E1526;
+  --card-border:rgba(185,138,46,.4);
+  --row-line:rgba(34,48,79,.6);
+  --row-line-soft:rgba(34,48,79,.35);
+  --head-grad:linear-gradient(90deg,rgba(227,197,103,.12),transparent);
+  --gold-grad:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+  --letter-ink:var(--night);
+  --q-row:rgba(227,197,103,.06);
+  --loc-ink:#A7B4D0;
+}
+body.light{
+  /* Calacatta ceramic + antique gold + warm espresso */
+  --ink:#2E2823; --sand:#8A7A5C; --gold:#B8902F; --gold-deep:#8A6A1E;
+  --bg:#F4F0E8;
+  --card-top:#ECE6D9; --card-bot:#E6DFD0;
+  --card-border:rgba(184,144,47,.45);
+  --row-line:rgba(138,122,92,.3);
+  --row-line-soft:rgba(138,122,92,.2);
+  --head-grad:linear-gradient(90deg,rgba(184,144,47,.16),transparent);
+  --gold-grad:linear-gradient(180deg,#E8CE82,var(--gold) 55%,var(--gold-deep));
+  --letter-ink:#FBF8F1;
+  --q-row:rgba(184,144,47,.08);
+  --loc-ink:#6B6052;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{
-  background:#0B1020;
-  background-image:
-    radial-gradient(1400px 700px at 50% -250px, #1A2440 0%, transparent 70%),
-    radial-gradient(2px 2px at 20% 30%, rgba(227,197,103,.25) 50%, transparent 51%),
-    radial-gradient(2px 2px at 80% 15%, rgba(227,197,103,.18) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 60% 60%, rgba(242,239,230,.12) 50%, transparent 51%);
-  background-attachment:fixed;
+  background:var(--bg);
   color:var(--ink); font-family:'Outfit',system-ui,sans-serif; font-weight:300; line-height:1.45;
   position:relative;
+  transition:background-color .45s, color .45s;
 }
+/* ===== MARBLE BACKDROP (organic turbulence-warped veins) ===== */
+#marble-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#marble-bg svg{width:100%;height:100%;display:block}
+#marble-bg .m-night{display:block}
+#marble-bg .m-light{display:none}
+body.light #marble-bg .m-night{display:none}
+body.light #marble-bg .m-light{display:block}
 .wrap{max-width:1180px;margin:0 auto;padding:44px 22px 90px;position:relative;z-index:1}
-#lang-toggle{
-  position:absolute;top:0;right:0;z-index:5;
-  background:linear-gradient(180deg,rgba(227,197,103,.16),rgba(185,138,46,.1));
-  border:1px solid rgba(227,197,103,.5);color:var(--gold);
-  font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.04em;
-  padding:7px 16px;border-radius:8px;cursor:pointer;transition:all .2s;
-  backdrop-filter:blur(4px);
-}
-#lang-toggle:hover{background:linear-gradient(180deg,rgba(227,197,103,.28),rgba(185,138,46,.18));box-shadow:0 0 16px rgba(227,197,103,.3)}
 /* floating "jump to today" button */
 #jump-today{
   position:fixed;right:20px;bottom:22px;z-index:40;
   display:inline-flex;align-items:center;gap:8px;
   padding:11px 18px;border-radius:30px;cursor:pointer;
   font-family:'Cinzel',serif;font-weight:700;font-size:.82rem;letter-spacing:.05em;
-  color:var(--night);border:none;
-  background:linear-gradient(180deg,#F7ECCB,var(--gold) 55%,var(--gold-deep));
+  color:var(--letter-ink);border:none;
+  background:var(--gold-grad);
   box-shadow:0 8px 26px -6px rgba(0,0,0,.7), 0 0 0 1px rgba(227,197,103,.4);
   transition:transform .2s, box-shadow .2s, opacity .35s;
   animation:fabIn .4s ease;
 }
 #jump-today:hover{transform:translateY(-3px);box-shadow:0 14px 32px -6px rgba(0,0,0,.75), 0 0 22px -2px rgba(227,197,103,.55)}
 #jump-today:active{transform:translateY(-1px) scale(.97)}
-#jump-today svg{stroke:var(--night)}
+#jump-today svg{stroke:var(--letter-ink)}
 @keyframes fabIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-body.ar #jump-today{font-family:'IBM Plex Sans Arabic',sans-serif}
+body.ar #jump-today{font-family:'Changa',sans-serif}
+/* floating left cluster: theme + language, always visible, follows scroll */
+#fab-left{
+  position:fixed;left:20px;bottom:22px;z-index:40;
+  display:flex;flex-direction:column;gap:10px;align-items:flex-start;
+}
+.fab-btn{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;
+  padding:10px 16px;border-radius:30px;
+  font-family:'Cinzel',serif;font-weight:700;font-size:.78rem;letter-spacing:.05em;
+  color:var(--letter-ink);background:var(--gold-grad);
+  box-shadow:0 8px 26px -6px rgba(0,0,0,.7), 0 0 0 1px rgba(227,197,103,.4);
+  transition:transform .2s, box-shadow .2s;
+  animation:fabIn .4s ease;
+}
+.fab-btn:hover{transform:translateY(-3px);box-shadow:0 14px 32px -6px rgba(0,0,0,.75), 0 0 22px -2px rgba(227,197,103,.55)}
+.fab-btn:active{transform:translateY(-1px) scale(.97)}
+.fab-btn svg{stroke:var(--letter-ink)}
+body.ar .fab-btn{font-family:'Changa',sans-serif}
 @media (max-width:520px){
   #jump-today{right:14px;bottom:16px;padding:10px 15px;font-size:.76rem}
+  #fab-left{left:14px;bottom:16px;gap:8px}
+  .fab-btn{padding:9px 13px;font-size:.72rem}
 }
-@media (prefers-reduced-motion: reduce){ #jump-today{animation:none} }
-body.ar #lang-toggle{font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:600}
-body.ar h1{font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700}
-body.ar .ko-title{font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:600}
+@media (prefers-reduced-motion: reduce){ #jump-today,.fab-btn{animation:none} }
+body.ar #lang-toggle{font-family:'Changa',sans-serif;font-weight:600}
+body.ar h1{font-family:'Changa',sans-serif;font-weight:700}
+body.ar .ko-title{font-family:'Changa',sans-serif;font-weight:600}
 body.ar .weekday,body.ar .group-title,body.ar .tname,body.ar .nm,body.ar .eyebrow,
 body.ar .sub,body.ar .tz-badge,body.ar .ko-sub,body.ar .cd,body.ar .today-badge,
 body.ar .month,body.ar footer,body.ar .live-pill,body.ar .gtable th{
-  font-family:'IBM Plex Sans Arabic','Outfit',sans-serif;
+  font-family:'Changa','Outfit',sans-serif;
 }
-body.ar{font-family:'IBM Plex Sans Arabic','Segoe UI',Tahoma,sans-serif}
+body.ar{font-family:'Changa','Segoe UI',Tahoma,sans-serif}
 /* keep the date number and all digits in the Latin (Outfit) face in both languages */
 .date-num{font-family:'Cinzel',serif}
 body.ar .date-num{font-family:'Outfit',sans-serif;font-weight:700}
@@ -110,7 +148,7 @@ h1{
 /* ---------- DAY CARD ---------- */
 .day{
   border:1px solid rgba(185,138,46,.4);border-radius:14px;overflow:hidden;
-  background:linear-gradient(180deg,#111A2E 0%,#0E1526 100%);
+  background:linear-gradient(180deg,var(--card-top) 0%,var(--card-bot) 100%);
   box-shadow:0 18px 44px -22px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.02);
 }
 .band{display:none}
@@ -142,7 +180,7 @@ h1{
 .ds-status.played{color:var(--gold)}
 .ds-status.played::before{
   content:"";width:13px;height:13px;flex:none;
-  background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+  background:var(--gold-grad);
   -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M4 12.5l5 5L20 6'/></svg>") center/contain no-repeat;
   mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M4 12.5l5 5L20 6'/></svg>") center/contain no-repeat;
 }
@@ -163,7 +201,7 @@ h1{
 .motif::before{content:"◆ ";color:var(--gold-deep);font-size:.55rem}
 
 /* ---------- MATCH ROW ---------- */
-.match{border-bottom:1px solid rgba(34,48,79,.6);padding:10px 12px 9px;position:relative}
+.match{border-bottom:1px solid var(--row-line);padding:10px 12px 9px;position:relative}
 .match:last-child{border-bottom:none}
 .match:hover{background:rgba(227,197,103,.04)}
 .match.sa{box-shadow:inset 3px 0 0 var(--gold);background:linear-gradient(90deg,rgba(22,93,49,.14),transparent 30%,transparent 70%,rgba(22,93,49,.14))}
@@ -205,7 +243,7 @@ h1{
 .loc{
   text-align:center;color:var(--sand);font-size:.68rem;letter-spacing:.05em;margin-top:5px;font-weight:400;
 }
-.loc b{color:#A7B4D0;font-weight:500}
+.loc b{color:var(--loc-ink);font-weight:500}
 /* ---- expandable goal timeline ---- */
 .match.expandable{cursor:pointer}
 .match.expandable .m-row{position:relative}
@@ -350,7 +388,7 @@ footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-s
 .ko{margin-top:54px}
 .ko-title{
   text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.08em;
-  background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+  background:var(--gold-grad);
   -webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px;
 }
 .ko-sub{text-align:center;color:var(--sand);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px}
@@ -368,17 +406,17 @@ footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-s
 .stab:hover{color:var(--ink)}
 .stab.active{
   color:var(--night);
-  background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+  background:var(--gold-grad);
   box-shadow:0 4px 14px -4px rgba(227,197,103,.5);
 }
-body.ar .stab{font-family:'IBM Plex Sans Arabic',sans-serif}
+body.ar .stab{font-family:'Changa',sans-serif}
 /* top scorers list */
 .scorers-wrap{max-width:560px;margin:0 auto 30px;display:flex;flex-direction:column;gap:7px}
 .groups-wrap[hidden], .scorers-wrap[hidden]{display:none !important}
 .scorer-row{
   display:flex;align-items:center;gap:12px;padding:10px 14px;
   border:1px solid rgba(34,48,79,.7);border-radius:10px;
-  background:linear-gradient(180deg,#111A2E,#0E1526);
+  background:linear-gradient(180deg,var(--card-top),var(--card-bot));
 }
 .scorer-row .s-rank{
   flex:none;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
@@ -386,7 +424,7 @@ body.ar .stab{font-family:'IBM Plex Sans Arabic',sans-serif}
   border:1px solid rgba(34,48,79,.9);
 }
 .scorer-row:nth-child(1) .s-rank,.scorer-row:nth-child(2) .s-rank,.scorer-row:nth-child(3) .s-rank{
-  color:var(--night);border:none;background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+  color:var(--letter-ink);border:none;background:var(--gold-grad);
 }
 .scorer-row .s-flag{flex:none;width:26px;height:18px;object-fit:cover;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5)}
 .scorer-row .s-name{flex:1;min-width:0;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -402,33 +440,33 @@ body.ar .stab{font-family:'IBM Plex Sans Arabic',sans-serif}
 }
 .group-card{
   border:1px solid rgba(185,138,46,.34);border-radius:12px;overflow:hidden;
-  background:linear-gradient(180deg,#111A2E 0%,#0E1526 100%);
+  background:linear-gradient(180deg,var(--card-top) 0%,var(--card-bot) 100%);
   box-shadow:0 14px 36px -22px rgba(0,0,0,.85);
 }
 .group-head{
   display:flex;align-items:center;gap:10px;padding:11px 14px;
-  background:linear-gradient(90deg,rgba(227,197,103,.12),transparent);
-  border-bottom:1px solid rgba(34,48,79,.8);
+  background:var(--head-grad);
+  border-bottom:1px solid var(--row-line);
 }
 .group-letter{
   flex:none;width:30px;height:30px;border-radius:7px;display:grid;place-items:center;
-  font-family:'Cinzel',serif;font-weight:700;font-size:1rem;color:var(--night);
-  background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+  font-family:'Cinzel',serif;font-weight:700;font-size:1rem;color:var(--letter-ink);
+  background:var(--gold-grad);
 }
 .group-title{font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.1em;color:var(--sand);text-transform:uppercase}
 .gtable{width:100%;border-collapse:collapse;font-size:.78rem}
 .gtable thead th{
   font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--sand);font-weight:600;
-  padding:6px 4px;text-align:center;border-bottom:1px solid rgba(34,48,79,.6);
+  padding:6px 4px;text-align:center;border-bottom:1px solid var(--row-line);
 }
 .gtable thead th.team-col{text-align:left;padding-left:13px}
-.gtable tbody td{padding:7px 4px;text-align:center;border-bottom:1px solid rgba(34,48,79,.35)}
+.gtable tbody td{padding:7px 4px;text-align:center;border-bottom:1px solid var(--row-line-soft)}
 .gtable tbody tr:last-child td{border-bottom:none}
 .gtable .team-cell{display:flex;align-items:center;gap:8px;text-align:left;padding-left:13px}
 .gtable .team-cell img{width:22px;height:15px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
 .gtable .team-cell .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;color:var(--ink)}
 .gtable .pts{font-family:'Cinzel',serif;font-weight:700;color:var(--gold)}
-.gtable tr.q1,.gtable tr.q2{background:rgba(227,197,103,.06)}
+.gtable tr.q1,.gtable tr.q2{background:var(--q-row)}
 .gtable tr.q1 .rank,.gtable tr.q2 .rank{color:var(--gold);font-weight:700}
 .gtable .rank{color:var(--sand);font-size:.66rem;width:18px}
 /* W-D-L mini indicator */
@@ -482,6 +520,77 @@ body.ar .stab{font-family:'IBM Plex Sans Arabic',sans-serif}
 </style>
 </head>
 <body>
+<div id="marble-bg" aria-hidden="true">
+<svg viewBox="0 0 1000 1600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="mwarp" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.018" numOctaves="4" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="90" xChannelSelector="R" yChannelSelector="G"/>
+      <feGaussianBlur stdDeviation="0.4"/>
+    </filter>
+    <filter id="mwarp2" x="-20%" y="-20%" width="140%" height="140%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.03" numOctaves="3" seed="22" result="n2"/>
+      <feDisplacementMap in="SourceGraphic" in2="n2" scale="55" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="msoft"><feGaussianBlur stdDeviation="30"/></filter>
+    <filter id="mglow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ============ NIGHT MARBLE ============ -->
+  <g class="m-night">
+    <rect width="1000" height="1600" fill="#0B1020"/>
+    <g filter="url(#msoft)" opacity="0.55">
+      <ellipse cx="760" cy="260" rx="280" ry="180" fill="#1A2440"/>
+      <ellipse cx="170" cy="980" rx="250" ry="190" fill="#16203A"/>
+      <ellipse cx="560" cy="1360" rx="270" ry="160" fill="#1C2647"/>
+      <ellipse cx="900" cy="760" rx="210" ry="170" fill="#141C33"/>
+    </g>
+    <g filter="url(#mwarp)">
+      <g filter="url(#mglow)" fill="none" stroke-linecap="round">
+        <path d="M-20 420 Q 250 380 480 490 T 1020 470" stroke="#C9A23E" stroke-width="6" opacity="0.7"/>
+        <path d="M-20 400 Q 260 360 470 480 T 1020 450" stroke="#E3C567" stroke-width="2.5" opacity="0.8"/>
+        <path d="M-20 900 Q 300 840 520 990 T 1020 1030" stroke="#B98A2E" stroke-width="5" opacity="0.65"/>
+        <path d="M-20 920 Q 320 880 540 1000 T 1020 1050" stroke="#E3C567" stroke-width="1.8" opacity="0.7"/>
+        <path d="M620 -20 Q 700 330 560 660 T 700 1620" stroke="#C9A23E" stroke-width="4" opacity="0.55"/>
+      </g>
+    </g>
+    <g filter="url(#mwarp2)" fill="none" stroke-linecap="round">
+      <path d="M-20 220 Q 300 280 600 200 T 1020 260" stroke="#46578A" stroke-width="1.4" opacity="0.4"/>
+      <path d="M-20 1180 Q 360 1120 640 1220 T 1020 1160" stroke="#3E4E7C" stroke-width="1.2" opacity="0.35"/>
+      <path d="M300 -20 Q 360 440 280 880 T 360 1620" stroke="#46578A" stroke-width="1" opacity="0.3"/>
+    </g>
+    <g fill="#E3C567">
+      <circle cx="200" cy="320" r="1.6" opacity="0.25"/><circle cx="800" cy="180" r="1.6" opacity="0.2"/>
+      <circle cx="600" cy="700" r="1.3" opacity="0.16"/><circle cx="120" cy="600" r="1.3" opacity="0.18"/>
+      <circle cx="880" cy="1080" r="1.5" opacity="0.2"/><circle cx="420" cy="1240" r="1.3" opacity="0.16"/>
+    </g>
+  </g>
+
+  <!-- ============ LIGHT (CALACATTA) MARBLE ============ -->
+  <g class="m-light">
+    <rect width="1000" height="1600" fill="#F4F0E8"/>
+    <g filter="url(#msoft)" opacity="0.5">
+      <ellipse cx="760" cy="260" rx="280" ry="170" fill="#8B8B95"/>
+      <ellipse cx="180" cy="1000" rx="240" ry="180" fill="#9A9AA4"/>
+      <ellipse cx="560" cy="1360" rx="260" ry="150" fill="#8E8E99"/>
+    </g>
+    <g filter="url(#mwarp)" fill="none" stroke-linecap="round">
+      <path d="M-20 420 Q 250 380 480 490 T 1020 470" stroke="#9A7322" stroke-width="6" opacity="0.55"/>
+      <path d="M-20 400 Q 260 360 470 480 T 1020 450" stroke="#C49B43" stroke-width="2.5" opacity="0.5"/>
+      <path d="M-20 900 Q 300 840 520 990 T 1020 1030" stroke="#8A6A1E" stroke-width="5" opacity="0.5"/>
+      <path d="M-20 920 Q 320 880 540 1000 T 1020 1050" stroke="#B8902F" stroke-width="2" opacity="0.45"/>
+      <path d="M620 -20 Q 700 330 560 660 T 700 1620" stroke="#9A7322" stroke-width="4" opacity="0.4"/>
+    </g>
+    <g filter="url(#mwarp2)" fill="none" stroke-linecap="round">
+      <path d="M-20 220 Q 300 280 600 200 T 1020 260" stroke="#6E6E78" stroke-width="1.4" opacity="0.35"/>
+      <path d="M-20 1180 Q 360 1120 640 1220 T 1020 1160" stroke="#6E6E78" stroke-width="1.2" opacity="0.3"/>
+      <path d="M300 -20 Q 360 440 280 880 T 360 1620" stroke="#6E6E78" stroke-width="1" opacity="0.28"/>
+    </g>
+  </g>
+</svg>
+</div>
 <div id="wc-ball" aria-hidden="true">
 <svg viewBox="0 0 100 100" width="50" height="50">
 <defs>
@@ -514,7 +623,6 @@ body.ar .stab{font-family:'IBM Plex Sans Arabic',sans-serif}
 <div class="wrap">
 
 <header>
-  <button id="lang-toggle" aria-label="Switch language">العربية</button>
   <div class="eyebrow" id="t-eyebrow">FIFA World Cup · Mexico – Canada – United States</div>
   <h1 id="t-h1">WORLD CUP 2026</h1>
   <div class="sub" id="t-sub"><b>GROUP STAGE</b> · 72 Matches · 12 Groups · June 11 – 28</div>
@@ -547,6 +655,13 @@ body.ar .stab{font-family:'IBM Plex Sans Arabic',sans-serif}
   </svg>
   <span id="jump-today-label">Today</span>
 </button>
+<div id="fab-left">
+  <button id="theme-toggle" class="fab-btn" aria-label="Switch light/night mode">
+    <svg id="theme-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+    <span id="theme-label">Light</span>
+  </button>
+  <button id="lang-toggle" class="fab-btn" aria-label="Switch language">العربية</button>
+</div>
 
 <script>
 /* ============ i18n: Arabic (Saudi / Najdi) translation layer ============
@@ -1568,6 +1683,7 @@ function applyLanguage(){
   set('t-footer',  ar?AR_UI.footer:"Group Stage · Road to the Final — MetLife Stadium · July 19, 2026");
   const btn=document.getElementById('lang-toggle');
   if(btn) btn.textContent = ar?AR_UI.toggle_to_en:AR_UI.toggle_to_ar;
+  if(typeof applyTheme === "function") applyTheme(); /* theme label is language-dependent */
   /* re-render dynamic content in the new language */
   renderSchedule();
   DAYS_INIT_DONE = false;  /* DOM rebuilt: let tick() re-apply initial collapse */
@@ -1580,6 +1696,27 @@ document.getElementById('lang-toggle').addEventListener('click', ()=>{
   LANG = (LANG==="en") ? "ar" : "en";
   applyLanguage();
 });
+
+/* ============ LIGHT / NIGHT THEME ============ */
+const SUN = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/>';
+const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>';
+function applyTheme(){
+  const light = document.body.classList.contains('light');
+  const icon = document.getElementById('theme-icon');
+  const label = document.getElementById('theme-label');
+  /* in light mode, offer to go Night (moon); in night mode, offer Light (sun) */
+  if(icon) icon.innerHTML = light ? MOON : SUN;
+  if(label) label.textContent = LANG==="ar" ? (light?"ليلي":"نهاري") : (light?"Night":"Light");
+}
+/* default: follow the device's system setting */
+if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){
+  document.body.classList.add('light');
+}
+document.getElementById('theme-toggle').addEventListener('click', ()=>{
+  document.body.classList.toggle('light');
+  applyTheme();
+});
+applyTheme();
 
 applyLanguage(); /* set initial EN labels + button text */
 
