@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-14T21:48:21.220Z",
+  "updated": "2026-06-14T22:55:15.671Z",
   "matches": [
     {
       "home": "Mexico",
@@ -20,8 +20,8 @@
     {
       "home": "Canada",
       "away": "Bosnia-Herzegovina",
-      "homeScore": 1,
-      "awayScore": 1,
+      "homeScore": null,
+      "awayScore": null,
       "state": "FT",
       "minute": null
     },
@@ -77,9 +77,9 @@
       "home": "Netherlands",
       "away": "Japan",
       "homeScore": 2,
-      "awayScore": 1,
-      "state": "LIVE",
-      "minute": 108
+      "awayScore": 2,
+      "state": "FT",
+      "minute": null
     },
     {
       "home": "Ivory Coast",
