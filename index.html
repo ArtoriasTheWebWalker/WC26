@@ -101,6 +101,19 @@ body.ar .month,body.ar footer,body.ar .live-pill,body.ar .gtable th{
   font-family:'Changa','Outfit',sans-serif;
 }
 body.ar{font-family:'Changa','Segoe UI',Tahoma,sans-serif}
+/* Arabic is cursive — letter-spacing breaks the joins between letters.
+   Force zero spacing on every Arabic element so words connect naturally.
+   Digits/time keep their own spacing via the Latin-numeral rules below. */
+body.ar h1, body.ar .eyebrow, body.ar .sub, body.ar .tz-badge,
+body.ar .weekday, body.ar .month, body.ar .ko-title, body.ar .ko-sub,
+body.ar .group-title, body.ar .tname, body.ar .nm, body.ar .gtable th,
+body.ar .today-badge, body.ar .live-pill, body.ar .cd, body.ar .cd span,
+body.ar .stab, body.ar .fab-btn, body.ar #jump-today, body.ar .ds-status,
+body.ar .ds-count, body.ar footer, body.ar .loc, body.ar .live-tag,
+body.ar .scorer-row, body.ar .s-team{
+  letter-spacing:0 !important;
+  word-spacing:normal;
+}
 /* keep the date number and all digits in the Latin (Outfit) face in both languages */
 .date-num{font-family:'Cinzel',serif}
 body.ar .date-num{font-family:'Outfit',sans-serif;font-weight:700}
