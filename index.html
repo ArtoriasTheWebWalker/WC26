@@ -33,6 +33,27 @@ body{
   backdrop-filter:blur(4px);
 }
 #lang-toggle:hover{background:linear-gradient(180deg,rgba(227,197,103,.28),rgba(185,138,46,.18));box-shadow:0 0 16px rgba(227,197,103,.3)}
+/* floating "jump to today" button */
+#jump-today{
+  position:fixed;right:20px;bottom:22px;z-index:40;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 18px;border-radius:30px;cursor:pointer;
+  font-family:'Cinzel',serif;font-weight:700;font-size:.82rem;letter-spacing:.05em;
+  color:var(--night);border:none;
+  background:linear-gradient(180deg,#F7ECCB,var(--gold) 55%,var(--gold-deep));
+  box-shadow:0 8px 26px -6px rgba(0,0,0,.7), 0 0 0 1px rgba(227,197,103,.4);
+  transition:transform .2s, box-shadow .2s, opacity .35s;
+  animation:fabIn .4s ease;
+}
+#jump-today:hover{transform:translateY(-3px);box-shadow:0 14px 32px -6px rgba(0,0,0,.75), 0 0 22px -2px rgba(227,197,103,.55)}
+#jump-today:active{transform:translateY(-1px) scale(.97)}
+#jump-today svg{stroke:var(--night)}
+@keyframes fabIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+body.ar #jump-today{font-family:'IBM Plex Sans Arabic',sans-serif}
+@media (max-width:520px){
+  #jump-today{right:14px;bottom:16px;padding:10px 15px;font-size:.76rem}
+}
+@media (prefers-reduced-motion: reduce){ #jump-today{animation:none} }
 body.ar #lang-toggle{font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:600}
 body.ar h1{font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:700}
 body.ar .ko-title{font-family:'IBM Plex Sans Arabic',sans-serif;font-weight:600}
@@ -297,6 +318,47 @@ footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-s
 }
 .ko-sub{text-align:center;color:var(--sand);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px}
 /* group standings tables */
+/* stats tab toggle (Groups ⇄ Top Scorers) */
+.stats-tabs{
+  display:flex;width:max-content;gap:4px;margin:0 auto 20px;padding:4px;
+  border:1px solid rgba(185,138,46,.3);border-radius:11px;background:rgba(14,21,38,.6);
+}
+.stab{
+  background:transparent;border:none;cursor:pointer;
+  font-family:'Cinzel',serif;font-weight:600;font-size:.8rem;letter-spacing:.06em;
+  color:var(--sand);padding:8px 20px;border-radius:8px;transition:all .2s;
+}
+.stab:hover{color:var(--ink)}
+.stab.active{
+  color:var(--night);
+  background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+  box-shadow:0 4px 14px -4px rgba(227,197,103,.5);
+}
+body.ar .stab{font-family:'IBM Plex Sans Arabic',sans-serif}
+/* top scorers list */
+.scorers-wrap{max-width:560px;margin:0 auto 30px;display:flex;flex-direction:column;gap:7px}
+.scorer-row{
+  display:flex;align-items:center;gap:12px;padding:10px 14px;
+  border:1px solid rgba(34,48,79,.7);border-radius:10px;
+  background:linear-gradient(180deg,#111A2E,#0E1526);
+}
+.scorer-row .s-rank{
+  flex:none;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-weight:700;font-size:.78rem;color:var(--sand);
+  border:1px solid rgba(34,48,79,.9);
+}
+.scorer-row:nth-child(1) .s-rank,.scorer-row:nth-child(2) .s-rank,.scorer-row:nth-child(3) .s-rank{
+  color:var(--night);border:none;background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+}
+.scorer-row .s-flag{flex:none;width:26px;height:18px;object-fit:cover;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.scorer-row .s-name{flex:1;min-width:0;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scorer-row .s-team{font-size:.7rem;color:var(--sand);font-weight:400;margin-left:6px}
+.scorer-row .s-goals{
+  flex:none;font-family:'Cinzel',serif;font-weight:700;color:var(--gold);font-size:1.05rem;
+  display:flex;align-items:baseline;gap:4px;
+}
+.scorer-row .s-goals small{font-size:.6rem;color:var(--sand);font-weight:400;letter-spacing:.08em}
+.scorers-empty{text-align:center;color:var(--sand);padding:30px;font-size:.9rem}
 .groups-wrap{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:30px;
 }
@@ -431,11 +493,22 @@ footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-s
 <section class="ko">
   <div class="ko-title" id="t-ko-title">GROUPS &amp; STANDINGS</div>
   <div class="ko-sub" id="t-ko-sub">12 Groups · Points update as matches are played</div>
+  <div class="stats-tabs" role="tablist">
+    <button class="stab active" id="tab-groups" data-tab="groups">Groups</button>
+    <button class="stab" id="tab-scorers" data-tab="scorers">Top Scorers</button>
+  </div>
   <div class="groups-wrap" id="groups"></div>
+  <div class="scorers-wrap" id="scorers" hidden></div>
 </section>
 
 <footer id="t-footer">Group Stage · Road to the Final — MetLife Stadium · July 19, 2026</footer>
 </div>
+<button id="jump-today" aria-label="Jump to today's matches" title="Today's matches" hidden>
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+  </svg>
+  <span id="jump-today-label">Today</span>
+</button>
 
 <script>
 /* ============ i18n: Arabic (Saudi / Najdi) translation layer ============
@@ -870,6 +943,95 @@ function renderGroups(){
   }
   document.getElementById('groups').innerHTML=html;
 }
+
+/* ============ TOP SCORERS ============
+   Aggregate goals across all matches in LIVE. Each match's homeGoals belong to
+   the home team, awayGoals to the away team. Own goals are excluded (an OG isn't
+   credited to the scorer as a goal). Players keyed by name+team. */
+function computeTopScorers(){
+  const liveData = (typeof LIVE !== "undefined" && LIVE) ? LIVE : {};
+  const tally = {}; /* "name|teamCode" -> {name, team, goals, pens} */
+  for(const key in liveData){
+    const lv = liveData[key];
+    if(lv._flipped) continue; /* count each match once */
+    const ch = codeFromName(lv.home), ca = codeFromName(lv.away);
+    const add = (goals, teamCode)=>{
+      if(!Array.isArray(goals) || !teamCode) return;
+      for(const g of goals){
+        if(g.og) continue;            /* own goals credit nobody */
+        if(!g.name) continue;
+        const k = g.name+"|"+teamCode;
+        if(!tally[k]) tally[k] = {name:g.name, team:teamCode, goals:0, pens:0};
+        tally[k].goals++;
+        if(g.pen) tally[k].pens++;
+      }
+    };
+    add(lv.homeGoals, ch);
+    add(lv.awayGoals, ca);
+  }
+  const rows = Object.values(tally);
+  rows.sort((a,b)=> b.goals-a.goals || a.name.localeCompare(b.name));
+  return rows.slice(0,10);
+}
+
+function renderScorers(){
+  const ar = LANG==="ar";
+  const rows = computeTopScorers();
+  const el = document.getElementById('scorers');
+  if(!rows.length){
+    el.innerHTML = `<div class="scorers-empty">${ar?"لا توجد أهداف بعد":"No goals yet — check back once matches kick off."}</div>`;
+    return;
+  }
+  const goalWord = ar ? "هدف" : "goals";
+  let html="";
+  rows.forEach((r,i)=>{
+    const code = r.team;
+    const flagCode = N[code] ? N[code][1] : "";
+    const teamNm = teamName(code);
+    html += `<div class="scorer-row">
+      <span class="s-rank">${i+1}</span>
+      <img class="s-flag" src="https://flagcdn.com/h24/${flagCode}.png" alt="${teamNm}">
+      <span class="s-name">${r.name}<span class="s-team">${teamNm}</span></span>
+      <span class="s-goals">${r.goals}<small>${goalWord}</small></span>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+/* tab switching: Groups ⇄ Top Scorers */
+function switchStatsTab(tab){
+  const groupsEl = document.getElementById('groups');
+  const scorersEl = document.getElementById('scorers');
+  const gTab = document.getElementById('tab-groups');
+  const sTab = document.getElementById('tab-scorers');
+  const showScorers = (tab==="scorers");
+  groupsEl.hidden = showScorers;
+  scorersEl.hidden = !showScorers;
+  gTab.classList.toggle('active', !showScorers);
+  sTab.classList.toggle('active', showScorers);
+  if(showScorers) renderScorers();
+}
+document.getElementById('tab-groups').addEventListener('click', ()=>switchStatsTab('groups'));
+document.getElementById('tab-scorers').addEventListener('click', ()=>switchStatsTab('scorers'));
+
+/* floating "jump to today" button: scrolls to today's match card.
+   Visible only when a today card exists, and hidden while it's already on screen. */
+const jumpBtn = document.getElementById('jump-today');
+jumpBtn.addEventListener('click', ()=>{
+  const today = document.querySelector('.day.today');
+  if(today) today.scrollIntoView({behavior:'smooth', block:'center'});
+});
+function updateJumpButton(){
+  const today = document.querySelector('.day.today');
+  if(!today){ jumpBtn.hidden = true; return; }
+  /* hide the button while today's card is already in view */
+  const r = today.getBoundingClientRect();
+  const inView = r.top < window.innerHeight*0.8 && r.bottom > window.innerHeight*0.2;
+  jumpBtn.hidden = inView;
+}
+window.addEventListener('scroll', updateJumpButton, {passive:true});
+window.addEventListener('resize', updateJumpButton, {passive:true});
+
 /* initial render happens later via applyLanguage(), after the live-scores
    layer (norm, LIVE) is defined further down. */
 
@@ -990,7 +1152,6 @@ const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after ki
    Paste your Cloudflare Worker URL here (e.g. "https://wc26-scores.<you>.workers.dev").
    Leave as "" to use the local scores.json (GitHub Action) instead. */
 const SCORES_URL = "https://wc2026-scores.abdulelah12012.workers.dev";
-
 let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
 
 /* second-half timing: remember when each match resumed after half-time, and
@@ -1077,6 +1238,9 @@ async function loadScores(){
     }
     /* recompute standings with any newly-finished/live matches */
     if(typeof renderGroups === "function") renderGroups();
+    /* if the Top Scorers tab is open, refresh it with the new goal data */
+    const sEl = document.getElementById('scorers');
+    if(sEl && !sEl.hidden && typeof renderScorers === "function") renderScorers();
   }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
 }
 /* resolve a feed name to our team code, or null if unknown */
@@ -1285,6 +1449,7 @@ function tick(){
     }
   }
   persistTiming();
+  if(typeof updateJumpButton === "function") updateJumpButton();
   return todayCard;
 }
 
@@ -1301,6 +1466,9 @@ function applyLanguage(){
   /* tz badge now holds the rotating multilingual phrase — set separately, not here */
   set('t-ko-title',ar?AR_UI.ko_title:"GROUPS &amp; STANDINGS");
   set('t-ko-sub',  ar?AR_UI.ko_sub:"12 Groups · Points update as matches are played");
+  set('tab-groups',ar?"المجموعات":"Groups");
+  set('tab-scorers',ar?"الهدافون":"Top Scorers");
+  set('jump-today-label',ar?"اليوم":"Today");
   set('t-footer',  ar?AR_UI.footer:"Group Stage · Road to the Final — MetLife Stadium · July 19, 2026");
   const btn=document.getElementById('lang-toggle');
   if(btn) btn.textContent = ar?AR_UI.toggle_to_en:AR_UI.toggle_to_ar;
