@@ -373,7 +373,9 @@ h1{
 .goal-line .g-min{
   position:relative;z-index:1;font-weight:700;color:var(--gold);
   font-variant-numeric:tabular-nums;min-width:30px;
+  display:flex;flex-wrap:wrap;gap:3px;align-items:center;
 }
+.goal-line .g-sep{color:var(--sand);font-weight:400}
 .goal-line .g-name{position:relative;z-index:1;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .goal-line .g-tag{
   position:relative;z-index:1;font-size:.56rem;letter-spacing:.06em;font-weight:700;
@@ -1377,15 +1379,28 @@ function buildGoalsHTML(m){
   const aPat = N[hb] ? N[hb][2] : "";
   const homeGoals = (lv && lv.homeGoals) ? lv.homeGoals : [];
   const awayGoals = (lv && lv.awayGoals) ? lv.awayGoals : [];
-  const tag = (g)=> g.pen ? '<span class="g-tag pen">PEN</span>'
-                  : g.og ? '<span class="g-tag og">OG</span>' : '';
-  const line = (g, pat)=>`<div class="goal-line">
+ /* group goals by player so a brace/multi-goal scorer shows once,
+     with all their minutes listed horizontally. OG/PEN stay per-goal. */
+  const groupGoals = (goals)=>{
+    const order=[]; const map={};
+    for(const g of goals){
+      const key=(g.name||'')+'|'+(g.og?'og':'');
+      if(!map[key]){ map[key]={name:g.name, og:g.og, mins:[]}; order.push(key); }
+      map[key].mins.push({minute:g.minute||'', pen:g.pen});
+    }
+    return order.map(k=>map[k]);
+  };
+  const line = (p, pat)=>{
+    const mins = p.mins.map(m=>`${m.minute}${m.pen?'<span class="g-tag pen">PEN</span>':''}`).join('<span class="g-sep">,</span>');
+    const ogTag = p.og ? '<span class="g-tag og">OG</span>' : '';
+    return `<div class="goal-line">
       <span class="flagbg" style="--gbg:${pat}"></span>
-      <span class="g-min">${g.minute||''}</span>
-      <span class="g-name">${g.name||''}</span>${tag(g)}
+      <span class="g-min">${mins}</span>
+      <span class="g-name">${p.name||''}</span>${ogTag}
     </div>`;
-  const homeCol = homeGoals.map(g=>line(g,hPat)).join('');
-  const awayCol = awayGoals.map(g=>line(g,aPat)).join('');
+  };
+  const homeCol = groupGoals(homeGoals).map(p=>line(p,hPat)).join('');
+  const awayCol = groupGoals(awayGoals).map(p=>line(p,aPat)).join('');
   return `<div class="goal-col home">${homeCol}</div><div class="goal-col away">${awayCol}</div>`;
 }
 
@@ -1798,10 +1813,17 @@ function tick(){
     const ko=+el.dataset.utc, diff=ko-Date.now();
     if(diff<=0){ el.textContent=''; return; }
     let s=Math.floor(diff/1000);
+    const dd=Math.floor(s/86400); s-=dd*86400;
     const h=Math.floor(s/3600); s-=h*3600;
     const mi=Math.floor(s/60); const se=s-mi*60;
     const f=n=>String(n).padStart(2,'0');
-    el.textContent = ` · ${f(h)}:${f(mi)}:${f(se)}`;
+    const ar=LANG==="ar";
+    if(dd>0){
+      const dayWord = ar ? (dd===1?'يوم':'أيام') : (dd===1?'day':'days');
+      el.textContent = ` · ${dd} ${dayWord} ${f(h)}:${f(mi)}:${f(se)}`;
+    }else{
+      el.textContent = ` · ${f(h)}:${f(mi)}:${f(se)}`;
+    }
   });
   persistTiming();
   if(typeof updateJumpButton === "function") updateJumpButton();
