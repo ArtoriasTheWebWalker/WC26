@@ -125,6 +125,8 @@ body.ar .fav-edit{font-family:'Changa',sans-serif;letter-spacing:0}
 .fav-match .fm-res{font-weight:700;color:var(--gold);font-variant-numeric:lining-nums}
 .fav-match .fm-res small{font-size:.56rem;color:var(--sand);letter-spacing:.1em;margin-left:4px}
 .fav-match.fm-live{border-color:rgba(255,123,107,.5);background:rgba(255,90,90,.06)}
+.fav-match.fm-next{border-color:var(--gold-deep);background:rgba(184,144,47,.06)}
+.fm-cd{color:var(--gold);font-weight:700;font-variant-numeric:lining-nums}
 .fav-match.fm-live .fm-res{color:#FF7B6B}
 .fav-stats{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--ink)}
 .fav-stats b{font-family:'Cinzel',serif;color:var(--gold);font-size:.95rem}
@@ -1792,6 +1794,15 @@ function tick(){
     }
   }
   DAYS_INIT_DONE = true;  /* initial collapse state now set; user taps take over */
+  document.querySelectorAll('.fm-cd').forEach(el=>{
+    const ko=+el.dataset.utc, diff=ko-Date.now();
+    if(diff<=0){ el.textContent=''; return; }
+    let s=Math.floor(diff/1000);
+    const h=Math.floor(s/3600); s-=h*3600;
+    const mi=Math.floor(s/60); const se=s-mi*60;
+    const f=n=>String(n).padStart(2,'0');
+    el.textContent = ` · ${f(h)}:${f(mi)}:${f(se)}`;
+  });
   persistTiming();
   if(typeof updateJumpButton === "function") updateJumpButton();
   return todayCard;
@@ -1940,7 +1951,9 @@ function favMatchesFor(code){
         if(st==="FT"||st==="AET"||st==="AP"){ state='done'; res={us: home?hs:as, them: home?as:hs}; }
         else if(st==="LIVE"||st==="HT"||st==="ET"||st==="PEN"){ state='live'; res={us: home?hs:as, them: home?as:hs}; }
       }
-      out.push({oppCode, home, day:day.d, time:t, grp, state, res});
+      const [hh,mm]=t.split(":").map(Number);
+      const utc=Date.UTC(2026,5,day.d,hh-3,mm); /* Mecca wall time = UTC+3 */
+      out.push({oppCode, home, day:day.d, time:t, grp, state, res, utc});
     }
   }
   return out;
@@ -1984,6 +1997,8 @@ function renderFavorites(){
     const meta = stats ? `${ar?'المجموعة':'Group'} ${stats.grp} · ${stats.Pts} ${ar?'نقطة':'pts'}` : '';
     /* matches block */
     let mHtml='';
+    const now=Date.now();
+    const nextM = matches.filter(m=>m.state==='upcoming' && m.utc>now).sort((a,b)=>a.utc-b.utc)[0];
     for(const m of matches){
       const opp=`${ar?'ضد':'vs'} <img src="https://flagcdn.com/h24/${N[m.oppCode][1]}.png">${teamName(m.oppCode)}`;
       if(m.state==='done'){
@@ -1991,7 +2006,9 @@ function renderFavorites(){
       }else if(m.state==='live'){
         mHtml+=`<div class="fav-match fm-live"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}<small>${ar?'مباشر':'LIVE'}</small></span></div>`;
       }else{
-        mHtml+=`<div class="fav-match"><span class="fm-opp">${opp}</span><span class="fm-res">${ar?'يونيو':'Jun'} ${m.day} · ${m.time}</span></div>`;
+        const isNext = nextM && m.utc===nextM.utc;
+        const cd = isNext ? `<span class="fm-cd" data-utc="${m.utc}"></span>` : '';
+        mHtml+=`<div class="fav-match${isNext?' fm-next':''}"><span class="fm-opp">${opp}</span><span class="fm-res">${ar?'يونيو':'Jun'} ${m.day} · ${m.time}${cd}</span></div>`;
       }
     }
     /* stats block */
@@ -2024,7 +2041,7 @@ function renderFavorites(){
     </div>`;
   }
   document.getElementById('fav-strips').innerHTML = html;
-  document.getElementById('fav-title').textContent = ar?'فِرَقك':'Your Teams';
+  document.getElementById('fav-title').textContent = ar ? (FAVS.length===1?'فريقك':'فِرَقك') : (FAVS.length===1?'Your Team':'Your Teams');
   document.getElementById('fav-edit').innerHTML = ar?'★ تعديل':'★ Edit';
 }
 /* expand/collapse strips (only when 2+, single is always open) */
