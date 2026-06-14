@@ -337,7 +337,6 @@ footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-s
 body.ar .stab{font-family:'IBM Plex Sans Arabic',sans-serif}
 /* top scorers list */
 .scorers-wrap{max-width:560px;margin:0 auto 30px;display:flex;flex-direction:column;gap:7px}
-.groups-wrap[hidden], .scorers-wrap[hidden]{display:none !important}
 .scorer-row{
   display:flex;align-items:center;gap:12px;padding:10px 14px;
   border:1px solid rgba(34,48,79,.7);border-radius:10px;
@@ -1293,25 +1292,42 @@ function tick(){
 
   /* derive a match clock from kickoff when the API gives no minute.
      0–45' first half, ~15min half-time break, 45–90' second half, then 90'+ */
+  /* ---- match clock model ----
+     - count from (scheduled kickoff + 90s) since real kickoffs run a bit late
+     - first half: 1' .. 45', then freeze base at 45 and show 45+1 .. 45+15
+     - half-time window handled by caller via .ht
+     - never let the base exceed 45 (first half) — only the +N grows, capped +15 */
+  const KO_DELAY = 90*1000;            /* 1:30 assumed pre-kickoff delay */
+  const STOPPAGE_CAP = 15;             /* +N never shown above this */
   function clockFromKickoff(ko){
-    const elapsedMin = Math.floor((now - ko)/60000);
-    if(elapsedMin < 0) return {label:"1'", ht:false};
+    const elapsedMin = Math.floor((now - (ko + KO_DELAY))/60000);
+    if(elapsedMin < 1) return {label:"1'", ht:false};
     if(elapsedMin <= 45) return {label:elapsedMin+"'", ht:false};
-    if(elapsedMin < 60)  return {label:"45'+", ht:true};   /* half-time window */
-    const second = elapsedMin - 15;                       /* subtract the break */
+    /* 46–75 min of elapsed real time = first-half stoppage + the break.
+       Hold at 45+N (capped) through here; HT detection switches to HALF-TIME.
+       We only assume the second half once enough time has passed that a normal
+       half + break + restart is plausible (≈ 60 real min in). */
+    if(elapsedMin < 60){
+      const extra = Math.min(elapsedMin - 45, STOPPAGE_CAP);
+      return {label:`45+${extra}`, ht:true};
+    }
+    /* second-half estimate (no anchor): subtract a 15-min break */
+    const second = elapsedMin - 15;
+    if(second < 46) return {label:"46'", ht:false};
     if(second <= 90) return {label:second+"'", ht:false};
-    return {label:"90'+", ht:false};
+    const extra2 = Math.min(second - 90, STOPPAGE_CAP);
+    return {label:`90+${extra2}`, ht:false};
   }
 
   /* second-half clock anchored to the real restart.
-     When we detect a match resuming after half-time, we store the wall-clock
-     moment in HALF2_ANCHOR (persisted), then count 45'+ from there. If we never
-     caught the restart, fall back to the kickoff-based estimate. */
+     46' .. 90', then freeze base at 90 and show 90+1 .. 90+15. */
   function secondHalfLabel(key, ko){
     const anchor = HALF2_ANCHOR[key];
     if(anchor){
       const mins = 45 + Math.floor((now - anchor)/60000);
-      return mins <= 90 ? mins+"'" : "90'+";
+      if(mins <= 90) return mins+"'";
+      const extra = Math.min(mins - 90, STOPPAGE_CAP);
+      return `90+${extra}`;
     }
     return clockFromKickoff(ko).label || (LANG==="ar"?AR_UI.live:"LIVE");
   }
