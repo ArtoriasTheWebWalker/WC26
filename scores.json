@@ -1,5 +1,837 @@
 {
-  "updated": "2026-06-14T19:00:39.432Z",
-  "matches": [],
-  "error": "fetch failed"
+  "updated": "2026-06-14T20:23:10.214Z",
+  "matches": [
+    {
+      "home": "Mexico",
+      "away": "South Africa",
+      "homeScore": 2,
+      "awayScore": 0,
+      "state": "FT",
+      "minute": null
+    },
+    {
+      "home": "South Korea",
+      "away": "Czechia",
+      "homeScore": 2,
+      "awayScore": 1,
+      "state": "FT",
+      "minute": null
+    },
+    {
+      "home": "Canada",
+      "away": "Bosnia-Herzegovina",
+      "homeScore": 1,
+      "awayScore": 1,
+      "state": "FT",
+      "minute": null
+    },
+    {
+      "home": "United States",
+      "away": "Paraguay",
+      "homeScore": 4,
+      "awayScore": 1,
+      "state": "FT",
+      "minute": null
+    },
+    {
+      "home": "Qatar",
+      "away": "Switzerland",
+      "homeScore": 1,
+      "awayScore": 1,
+      "state": "FT",
+      "minute": null
+    },
+    {
+      "home": "Brazil",
+      "away": "Morocco",
+      "homeScore": 1,
+      "awayScore": 1,
+      "state": "FT",
+      "minute": null
+    },
+    {
+      "home": "Haiti",
+      "away": "Scotland",
+      "homeScore": 0,
+      "awayScore": 1,
+      "state": "FT",
+      "minute": null
+    },
+    {
+      "home": "Australia",
+      "away": "Turkey",
+      "homeScore": 2,
+      "awayScore": 0,
+      "state": "FT",
+      "minute": null
+    },
+    {
+      "home": "Germany",
+      "away": "Curaçao",
+      "homeScore": 7,
+      "awayScore": 1,
+      "state": "FT",
+      "minute": null
+    },
+    {
+      "home": "Netherlands",
+      "away": "Japan",
+      "homeScore": 0,
+      "awayScore": 0,
+      "state": "LIVE",
+      "minute": 23
+    },
+    {
+      "home": "Ivory Coast",
+      "away": "Ecuador",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Sweden",
+      "away": "Tunisia",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Spain",
+      "away": "Cape Verde Islands",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Belgium",
+      "away": "Egypt",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Saudi Arabia",
+      "away": "Uruguay",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Iran",
+      "away": "New Zealand",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "France",
+      "away": "Senegal",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Iraq",
+      "away": "Norway",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Argentina",
+      "away": "Algeria",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Austria",
+      "away": "Jordan",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Portugal",
+      "away": "Congo DR",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "England",
+      "away": "Croatia",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Ghana",
+      "away": "Panama",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Uzbekistan",
+      "away": "Colombia",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Czechia",
+      "away": "South Africa",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Switzerland",
+      "away": "Bosnia-Herzegovina",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Canada",
+      "away": "Qatar",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Mexico",
+      "away": "South Korea",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "United States",
+      "away": "Australia",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Scotland",
+      "away": "Morocco",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Brazil",
+      "away": "Haiti",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Turkey",
+      "away": "Paraguay",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Netherlands",
+      "away": "Sweden",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Germany",
+      "away": "Ivory Coast",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Ecuador",
+      "away": "Curaçao",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Tunisia",
+      "away": "Japan",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Spain",
+      "away": "Saudi Arabia",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Belgium",
+      "away": "Iran",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Uruguay",
+      "away": "Cape Verde Islands",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "New Zealand",
+      "away": "Egypt",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Argentina",
+      "away": "Austria",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "France",
+      "away": "Iraq",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Norway",
+      "away": "Senegal",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Jordan",
+      "away": "Algeria",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Portugal",
+      "away": "Uzbekistan",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "England",
+      "away": "Ghana",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Panama",
+      "away": "Croatia",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Colombia",
+      "away": "Congo DR",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Switzerland",
+      "away": "Canada",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Bosnia-Herzegovina",
+      "away": "Qatar",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Morocco",
+      "away": "Haiti",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Scotland",
+      "away": "Brazil",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Czechia",
+      "away": "Mexico",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "South Africa",
+      "away": "South Korea",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Ecuador",
+      "away": "Germany",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Curaçao",
+      "away": "Ivory Coast",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Tunisia",
+      "away": "Netherlands",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Japan",
+      "away": "Sweden",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Turkey",
+      "away": "United States",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Paraguay",
+      "away": "Australia",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Norway",
+      "away": "France",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Senegal",
+      "away": "Iraq",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Uruguay",
+      "away": "Spain",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Cape Verde Islands",
+      "away": "Saudi Arabia",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "New Zealand",
+      "away": "Belgium",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Egypt",
+      "away": "Iran",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Panama",
+      "away": "England",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Croatia",
+      "away": "Ghana",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Colombia",
+      "away": "Portugal",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Congo DR",
+      "away": "Uzbekistan",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Jordan",
+      "away": "Argentina",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "Algeria",
+      "away": "Austria",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    }
+  ]
 }
