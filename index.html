@@ -92,6 +92,79 @@ body.ar .fab-btn{font-family:'Changa',sans-serif}
   .fab-btn{padding:9px 13px;font-size:.72rem}
 }
 @media (prefers-reduced-motion: reduce){ #jump-today,.fab-btn{animation:none} }
+
+/* ============ FAVORITES SECTION ============ */
+#favorites{margin:0 0 30px;border:1px solid var(--card-border);border-radius:14px;overflow:hidden;
+  background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 18px 44px -22px rgba(0,0,0,.6)}
+.fav-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--row-line);
+  background:var(--head-grad)}
+.fav-title{font-family:'Cinzel',serif;font-weight:700;font-size:.92rem;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.ar .fav-title{font-family:'Changa',sans-serif;letter-spacing:0}
+.fav-edit{background:transparent;border:1px solid var(--gold-deep);color:var(--gold);cursor:pointer;
+  font-family:'Cinzel',serif;font-weight:600;font-size:.68rem;letter-spacing:.1em;padding:5px 12px;border-radius:20px;transition:all .2s}
+.fav-edit:hover{background:var(--gold);color:var(--letter-ink)}
+body.ar .fav-edit{font-family:'Changa',sans-serif;letter-spacing:0}
+/* per-team strip */
+.fav-strip{border-bottom:1px solid var(--row-line-soft)}
+.fav-strip:last-child{border-bottom:none}
+.fav-strip-head{display:flex;align-items:center;gap:11px;padding:11px 16px;cursor:pointer;transition:background .2s}
+.fav-strip-head:hover{background:rgba(184,144,47,.06)}
+.fav-strip-head img{width:30px;height:20px;object-fit:cover;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,.5)}
+.fav-strip-name{font-weight:600;font-size:1rem;color:var(--ink);flex:1}
+.fav-strip-meta{font-size:.72rem;color:var(--sand);font-weight:500;font-variant-numeric:lining-nums}
+.fav-strip-chev{width:8px;height:8px;border-right:1.5px solid var(--gold-deep);border-bottom:1.5px solid var(--gold-deep);
+  transform:rotate(45deg);transition:transform .25s;flex:none;margin-left:4px}
+.fav-strip.open .fav-strip-chev{transform:rotate(-135deg)}
+.fav-strip-body{display:none;padding:4px 16px 16px}
+.fav-strip.open .fav-strip-body{display:block;animation:goalsIn .3s ease}
+.fav-block-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sand);font-weight:700;margin:12px 0 7px}
+.fav-match{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--row-line-soft);border-radius:8px;margin-bottom:5px;font-size:.8rem}
+.fav-match .fm-opp{flex:1;color:var(--ink)}
+.fav-match .fm-opp img{width:18px;height:12px;object-fit:cover;border-radius:2px;vertical-align:middle;margin:0 5px}
+.fav-match .fm-res{font-weight:700;color:var(--gold);font-variant-numeric:lining-nums}
+.fav-match .fm-res small{font-size:.56rem;color:var(--sand);letter-spacing:.1em;margin-left:4px}
+.fav-match.fm-live{border-color:rgba(255,123,107,.5);background:rgba(255,90,90,.06)}
+.fav-match.fm-live .fm-res{color:#FF7B6B}
+.fav-stats{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--ink)}
+.fav-stats b{font-family:'Cinzel',serif;color:var(--gold);font-size:.95rem}
+.fav-scorer{font-size:.8rem;color:var(--ink);padding:3px 0}
+.fav-scorer .fs-min{color:var(--gold);font-weight:700;font-variant-numeric:lining-nums;margin-right:6px}
+.fav-empty{color:var(--sand);font-size:.8rem;padding:4px 0}
+
+/* ============ PICKER OVERLAY ============ */
+#picker{position:fixed;inset:0;z-index:200;overflow-y:auto;
+  background:var(--bg);
+  background-image:radial-gradient(1200px 600px at 50% -200px, var(--card-top) 0%, transparent 70%);}
+.picker-inner{max-width:760px;margin:0 auto;padding:40px 20px 110px;min-height:100%}
+.picker-head{text-align:center;margin-bottom:26px}
+#picker-title{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(1.6rem,5vw,2.4rem);letter-spacing:.05em;
+  background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+body.ar #picker-title{font-family:'Changa',sans-serif;letter-spacing:0}
+#picker-sub{color:var(--sand);font-size:.86rem;margin-top:8px;letter-spacing:.04em;font-variant-numeric:lining-nums}
+body.ar #picker-sub{letter-spacing:0}
+.picker-region{margin-bottom:22px}
+.picker-region h3{font-family:'Cinzel',serif;font-weight:600;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold-deep);margin-bottom:12px;border-bottom:1px solid var(--row-line);padding-bottom:6px}
+body.ar .picker-region h3{font-family:'Changa',sans-serif;letter-spacing:0}
+.picker-teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px}
+.pteam{display:flex;flex-direction:column;align-items:center;gap:6px;padding:11px 6px;border-radius:11px;cursor:pointer;
+  border:1.5px solid transparent;background:linear-gradient(180deg,var(--card-top),var(--card-bot));transition:all .18s;position:relative}
+.pteam img{width:46px;height:31px;object-fit:cover;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+.pteam span{font-size:.68rem;font-weight:500;color:var(--ink);text-align:center;line-height:1.2}
+.pteam:hover{border-color:var(--gold-deep);transform:translateY(-2px)}
+.pteam.sel{border-color:var(--gold);box-shadow:0 0 18px -4px rgba(227,197,103,.6),inset 0 0 0 1px var(--gold)}
+.pteam.sel::after{content:"✓";position:absolute;top:5px;right:7px;color:var(--gold);font-weight:800;font-size:.8rem;
+  text-shadow:0 1px 3px rgba(0,0,0,.6)}
+.pteam.dim{opacity:.4;pointer-events:none}
+.picker-actions{position:fixed;left:0;right:0;bottom:0;padding:16px 20px calc(16px + env(safe-area-inset-bottom));
+  background:linear-gradient(0deg,var(--bg) 60%,transparent);display:flex;justify-content:center;z-index:5}
+#picker-confirm{padding:14px 44px;border-radius:30px;border:none;cursor:pointer;
+  font-family:'Cinzel',serif;font-weight:700;font-size:.92rem;letter-spacing:.06em;color:var(--letter-ink);
+  background:var(--gold-grad);box-shadow:0 10px 30px -6px rgba(0,0,0,.6);transition:all .2s}
+body.ar #picker-confirm{font-family:'Changa',sans-serif;letter-spacing:0}
+#picker-confirm:disabled{opacity:.45;cursor:not-allowed}
+#picker-confirm:not(:disabled):hover{transform:translateY(-2px)}
 body.ar #lang-toggle{font-family:'Changa',sans-serif;font-weight:600}
 body.ar h1{font-family:'Changa',sans-serif;font-weight:700}
 body.ar .ko-title{font-family:'Changa',sans-serif;font-weight:600}
@@ -647,6 +720,14 @@ body.ar .stab{font-family:'Changa',sans-serif}
   <div class="tz-badge" id="t-tz"><span id="wc-phrase">World Cup</span></div>
 </header>
 
+<section id="favorites" hidden>
+  <div class="fav-head">
+    <span class="fav-title" id="fav-title">Your Teams</span>
+    <button id="fav-edit" class="fav-edit" aria-label="Edit your teams">★ Edit</button>
+  </div>
+  <div id="fav-strips"></div>
+</section>
+
 <div class="grid" id="schedule"></div>
 
 <section class="ko">
@@ -674,6 +755,20 @@ body.ar .stab{font-family:'Changa',sans-serif}
     <span id="theme-label">Light</span>
   </button>
   <button id="lang-toggle" class="fab-btn" aria-label="Switch language">العربية</button>
+</div>
+
+<!-- ============ FAVORITE TEAM PICKER (full-screen overlay) ============ -->
+<div id="picker" hidden>
+  <div class="picker-inner">
+    <div class="picker-head">
+      <h2 id="picker-title">Choose your teams</h2>
+      <p id="picker-sub">Pick up to 5 teams to follow · <span id="picker-count">0</span>/5</p>
+    </div>
+    <div id="picker-grid"></div>
+    <div class="picker-actions">
+      <button id="picker-confirm" disabled>Confirm</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -795,6 +890,29 @@ PAN:["Panama","pa","repeating-linear-gradient(0deg, rgba(0,56,168,.26) 0 10px, r
 UZB:["Uzbekistan","uz","repeating-conic-gradient(from 45deg at 50% 50%, rgba(0,153,181,.28) 0deg 90deg, rgba(30,181,58,.28) 90deg 180deg) 0 0/18px 18px, repeating-linear-gradient(90deg, transparent 0 2px, rgba(0,0,0,.1) 2px 3px)"],
 COL:["Colombia","co","repeating-linear-gradient(0deg, rgba(252,209,22,.25) 0 9px, rgba(0,56,168,.25) 9px 18px), repeating-linear-gradient(45deg, transparent 0 4px, rgba(0,0,0,.08) 4px 5px)"]
 };
+
+/* confederation/region of each team, for the favorites picker grouping */
+const REGION={
+  /* Europe (UEFA) */
+  ESP:"eu",ENG:"eu",FRA:"eu",GER:"eu",POR:"eu",NED:"eu",CRO:"eu",BEL:"eu",
+  SUI:"eu",AUT:"eu",NOR:"eu",SWE:"eu",CZE:"eu",SCO:"eu",BIH:"eu",
+  /* South America (CONMEBOL) */
+  BRA:"sa",ARG:"sa",URU:"sa",COL:"sa",ECU:"sa",PAR:"sa",
+  /* North/Central America & Caribbean (CONCACAF) */
+  USA:"na",MEX:"na",CAN:"na",PAN:"na",HAI:"na",CUW:"na",
+  /* Africa (CAF) */
+  MAR:"af",SEN:"af",EGY:"af",GHA:"af",CIV:"af",ALG:"af",TUN:"af",RSA:"af",CPV:"af",COD:"af",
+  /* Asia (AFC) */
+  JPN:"as",KOR:"as",IRN:"as",KSA:"as",AUS:"as",QAT:"as",IRQ:"as",JOR:"as",UZB:"as",TUR:"as",
+  /* Oceania (OFC) */
+  NZL:"oc"
+};
+const REGION_LABEL={
+  eu:{en:"Europe",ar:"أوروبا"}, sa:{en:"South America",ar:"أمريكا الجنوبية"},
+  na:{en:"North America",ar:"أمريكا الشمالية"}, af:{en:"Africa",ar:"أفريقيا"},
+  as:{en:"Asia",ar:"آسيا"}, oc:{en:"Oceania",ar:"أوقيانوسيا"}
+};
+const REGION_ORDER=["eu","sa","na","af","as","oc"];
 
 const L={
 LA:["SoFi Stadium · Inglewood","California, USA"], SC:["Levi's Stadium · Santa Clara","California, USA"],
@@ -1426,6 +1544,8 @@ async function loadScores(){
     }
     /* recompute standings with any newly-finished/live matches */
     if(typeof renderGroups === "function") renderGroups();
+    /* refresh favorites strips with new live data */
+    if(typeof renderFavorites === "function") renderFavorites();
     /* if the Top Scorers tab is open, refresh it with the new goal data */
     const sEl = document.getElementById('scorers');
     if(sEl && !sEl.hidden && typeof renderScorers === "function") renderScorers();
@@ -1697,6 +1817,13 @@ function applyLanguage(){
   const btn=document.getElementById('lang-toggle');
   if(btn) btn.textContent = ar?AR_UI.toggle_to_en:AR_UI.toggle_to_ar;
   if(typeof applyTheme === "function") applyTheme(); /* theme label is language-dependent */
+  /* favorites + picker localisation */
+  set('picker-title', ar?"اختر فِرَقك":"Choose your teams");
+  set('picker-sub', ar?'تابع حتى 5 فِرَق · <span id="picker-count">'+(typeof pickerSel!=="undefined"?pickerSel.length:0)+'</span>/5'
+                       :'Pick up to 5 teams to follow · <span id="picker-count">'+(typeof pickerSel!=="undefined"?pickerSel.length:0)+'</span>/5');
+  set('picker-confirm', ar?"تأكيد":"Confirm");
+  if(typeof renderFavorites === "function") renderFavorites();
+  if(typeof buildPickerGrid === "function" && !document.getElementById('picker').hidden) buildPickerGrid();
   /* re-render dynamic content in the new language */
   renderSchedule();
   DAYS_INIT_DONE = false;  /* DOM rebuilt: let tick() re-apply initial collapse */
@@ -1731,10 +1858,190 @@ document.getElementById('theme-toggle').addEventListener('click', ()=>{
 });
 applyTheme();
 
+/* ============ FAVORITE TEAMS ============ */
+let FAVS = [];
+try{ FAVS = JSON.parse(localStorage.getItem('wc26_favs')||'[]'); }catch(e){ FAVS=[]; }
+if(!Array.isArray(FAVS)) FAVS=[];
+function saveFavs(){ try{ localStorage.setItem('wc26_favs', JSON.stringify(FAVS)); }catch(e){} }
+
+/* ---- the picker overlay ---- */
+let pickerSel = [];
+function openPicker(){
+  pickerSel = [...FAVS];
+  buildPickerGrid();
+  document.getElementById('picker').hidden = false;
+  document.body.style.overflow='hidden';
+}
+function closePicker(){
+  document.getElementById('picker').hidden = true;
+  document.body.style.overflow='';
+}
+function buildPickerGrid(){
+  const ar = LANG==="ar";
+  const grid = document.getElementById('picker-grid');
+  let html='';
+  for(const r of REGION_ORDER){
+    const codes = Object.keys(REGION).filter(c=>REGION[c]===r)
+      .sort((a,b)=>teamName(a).localeCompare(teamName(b)));
+    if(!codes.length) continue;
+    html += `<div class="picker-region"><h3>${REGION_LABEL[r][ar?'ar':'en']}</h3><div class="picker-teams">`;
+    for(const c of codes){
+      const sel = pickerSel.includes(c) ? ' sel' : '';
+      html += `<div class="pteam${sel}" data-code="${c}">
+        <img src="https://flagcdn.com/w80/${N[c][1]}.png" alt="${teamName(c)}">
+        <span>${teamName(c)}</span></div>`;
+    }
+    html += `</div></div>`;
+  }
+  grid.innerHTML = html;
+  updatePickerState();
+}
+function updatePickerState(){
+  document.getElementById('picker-count').textContent = pickerSel.length;
+  const full = pickerSel.length>=5;
+  document.querySelectorAll('.pteam').forEach(el=>{
+    const c = el.dataset.code;
+    const sel = pickerSel.includes(c);
+    el.classList.toggle('sel', sel);
+    el.classList.toggle('dim', full && !sel); /* dim unpicked when 5 reached */
+  });
+  document.getElementById('picker-confirm').disabled = pickerSel.length===0;
+}
+document.getElementById('picker-grid').addEventListener('click',(e)=>{
+  const t = e.target.closest('.pteam'); if(!t) return;
+  const c = t.dataset.code;
+  const i = pickerSel.indexOf(c);
+  if(i>=0) pickerSel.splice(i,1);
+  else if(pickerSel.length<5) pickerSel.push(c);
+  updatePickerState();
+});
+document.getElementById('picker-confirm').addEventListener('click', ()=>{
+  FAVS = [...pickerSel];
+  saveFavs();
+  closePicker();
+  renderFavorites();
+});
+document.getElementById('fav-edit').addEventListener('click', openPicker);
+
+/* ---- build each favorite team's collapsible strip ---- */
+function favMatchesFor(code){
+  /* gather this team's fixtures from the schedule, with live/result state */
+  const out=[];
+  for(const day of DAYS){
+    for(const [t,a,b,grp,v] of day.m){
+      if(a!==code && b!==code) continue;
+      const home = a===code, oppCode = home?b:a;
+      const key = norm(N[a][0])+"|"+norm(N[b][0]);
+      const lv = LIVE[key];
+      let res=null, state='upcoming';
+      if(lv){
+        const st=lv.state;
+        const hs=(lv.homeScore==null)?0:lv.homeScore, as=(lv.awayScore==null)?0:lv.awayScore;
+        if(st==="FT"||st==="AET"||st==="AP"){ state='done'; res={us: home?hs:as, them: home?as:hs}; }
+        else if(st==="LIVE"||st==="HT"||st==="ET"||st==="PEN"){ state='live'; res={us: home?hs:as, them: home?as:hs}; }
+      }
+      out.push({oppCode, home, day:day.d, time:t, grp, state, res});
+    }
+  }
+  return out;
+}
+function favStatsFor(code){
+  /* find this team's row in its group standings */
+  let grp=null;
+  for(const g of Object.keys(GROUPS)){ if(GROUPS[g].includes(code)){ grp=g; break; } }
+  if(!grp) return null;
+  const rows=computeStandings(GROUPS[grp]);
+  const idx=rows.findIndex(r=>r.code===code);
+  if(idx<0) return null;
+  return {...rows[idx], pos:idx+1, grp};
+}
+function favScorersFor(code){
+  /* this team's goal scorers across all matches */
+  const liveData=(typeof LIVE!=="undefined"&&LIVE)?LIVE:{};
+  const tally={};
+  for(const key in liveData){
+    const lv=liveData[key]; if(lv._flipped) continue;
+    const ch=codeFromName(lv.home), ca=codeFromName(lv.away);
+    const grab=(goals,tc)=>{ if(tc!==code||!Array.isArray(goals))return;
+      for(const g of goals){ if(g.og||!g.name)continue; tally[g.name]=(tally[g.name]||0)+1; } };
+    grab(lv.homeGoals,ch); grab(lv.awayGoals,ca);
+  }
+  return Object.entries(tally).map(([name,goals])=>({name,goals})).sort((a,b)=>b.goals-a.goals);
+}
+function renderFavorites(){
+  const sec=document.getElementById('favorites');
+  if(!FAVS.length){ sec.hidden=true; return; }
+  sec.hidden=false;
+  const ar=LANG==="ar";
+  const single = FAVS.length===1;
+  let html='';
+  for(const code of FAVS){
+    const matches=favMatchesFor(code);
+    const stats=favStatsFor(code);
+    const scorers=favScorersFor(code);
+    const openCls = single ? ' open' : '';
+    /* meta line: group + points if available */
+    const meta = stats ? `${ar?'المجموعة':'Group'} ${stats.grp} · ${stats.Pts} ${ar?'نقطة':'pts'}` : '';
+    /* matches block */
+    let mHtml='';
+    for(const m of matches){
+      const opp=`${ar?'ضد':'vs'} <img src="https://flagcdn.com/h24/${N[m.oppCode][1]}.png">${teamName(m.oppCode)}`;
+      if(m.state==='done'){
+        mHtml+=`<div class="fav-match"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}<small>${ar?'انتهت':'FT'}</small></span></div>`;
+      }else if(m.state==='live'){
+        mHtml+=`<div class="fav-match fm-live"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}<small>${ar?'مباشر':'LIVE'}</small></span></div>`;
+      }else{
+        mHtml+=`<div class="fav-match"><span class="fm-opp">${opp}</span><span class="fm-res">${ar?'يونيو':'Jun'} ${m.day} · ${m.time}</span></div>`;
+      }
+    }
+    /* stats block */
+    const sHtml = stats ? `<div class="fav-stats">
+      <span>${ar?'المركز':'Pos'} <b>${stats.pos}</b></span>
+      <span>${ar?'لعب':'P'} <b>${stats.P}</b></span>
+      <span>${ar?'فوز':'W'} <b>${stats.W}</b></span>
+      <span>${ar?'تعادل':'D'} <b>${stats.D}</b></span>
+      <span>${ar?'خسارة':'L'} <b>${stats.L}</b></span>
+      <span>${ar?'الفارق':'GD'} <b>${stats.GD>0?'+':''}${stats.GD}</b></span>
+      <span>${ar?'نقاط':'Pts'} <b>${stats.Pts}</b></span>
+    </div>` : `<div class="fav-empty">${ar?'لا توجد بيانات بعد':'No data yet'}</div>`;
+    /* scorers block */
+    let scHtml='';
+    if(scorers.length){ scHtml = scorers.map(s=>`<div class="fav-scorer"><span class="fs-min">${s.goals}×</span>${s.name}</div>`).join(''); }
+    else scHtml = `<div class="fav-empty">${ar?'لا أهداف بعد':'No goals yet'}</div>`;
+
+    html+=`<div class="fav-strip${openCls}" data-code="${code}">
+      <div class="fav-strip-head">
+        <img src="https://flagcdn.com/h24/${N[code][1]}.png" alt="">
+        <span class="fav-strip-name">${teamName(code)}</span>
+        <span class="fav-strip-meta">${meta}</span>
+        ${single?'':'<span class="fav-strip-chev"></span>'}
+      </div>
+      <div class="fav-strip-body">
+        <div class="fav-block-label">${ar?'المباريات':'Matches'}</div>${mHtml}
+        <div class="fav-block-label">${ar?'الإحصائيات':'Stats'}</div>${sHtml}
+        <div class="fav-block-label">${ar?'الهدافون':'Scorers'}</div>${scHtml}
+      </div>
+    </div>`;
+  }
+  document.getElementById('fav-strips').innerHTML = html;
+  document.getElementById('fav-title').textContent = ar?'فِرَقك':'Your Teams';
+  document.getElementById('fav-edit').innerHTML = ar?'★ تعديل':'★ Edit';
+}
+/* expand/collapse strips (only when 2+, single is always open) */
+document.getElementById('fav-strips').addEventListener('click',(e)=>{
+  if(FAVS.length<=1) return;
+  const head=e.target.closest('.fav-strip-head'); if(!head) return;
+  head.closest('.fav-strip').classList.toggle('open');
+});
+
 applyLanguage(); /* set initial EN labels + button text */
 
 const firstToday = tick();
 setInterval(tick, 1000);
+
+/* first-open: if no favorites saved yet, show the picker. Otherwise render them. */
+renderFavorites();
+if(!FAVS.length){ openPicker(); }
 
 /* ============ DESCENDING ZIG-ZAG BALL ============ */
 (function(){
