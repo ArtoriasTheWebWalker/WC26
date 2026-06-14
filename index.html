@@ -122,6 +122,43 @@ h1{
 .date-num{font-family:'Cinzel',serif;font-weight:700;font-size:1.7rem;color:var(--gold);line-height:1}
 .weekday{font-weight:600;font-size:.88rem;letter-spacing:.12em;text-transform:uppercase;display:block}
 .month{color:var(--sand);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase}
+/* ---- collapsible days (past & future collapse; today never) ---- */
+.day.collapsed .day-head{cursor:pointer;border-bottom:none;transition:background .2s}
+.day.collapsed .day-head:hover{background:rgba(227,197,103,.05)}
+.day.collapsed .matches-body{display:none}
+.day .matches-body{display:block}
+.day-summary{
+  display:none;align-items:center;gap:12px;margin-left:auto;
+}
+.day.collapsed .day-summary{display:inline-flex}
+.ds-count{
+  font-family:'Cinzel',serif;font-weight:600;font-size:.74rem;letter-spacing:.06em;color:var(--sand);
+}
+.ds-status{
+  display:inline-flex;align-items:center;gap:6px;font-size:.6rem;letter-spacing:.22em;
+  text-transform:uppercase;font-weight:600;
+}
+/* PLAYED — a thin gold laurel-style double-stroke check */
+.ds-status.played{color:var(--gold)}
+.ds-status.played::before{
+  content:"";width:13px;height:13px;flex:none;
+  background:linear-gradient(180deg,#F7ECCB,var(--gold) 60%,var(--gold-deep));
+  -webkit-mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M4 12.5l5 5L20 6'/></svg>") center/contain no-repeat;
+  mask:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round' d='M4 12.5l5 5L20 6'/></svg>") center/contain no-repeat;
+}
+/* UPCOMING — a faint hollow gold ring */
+.ds-status.upcoming{color:var(--sand);opacity:.85}
+.ds-status.upcoming::before{
+  content:"";width:9px;height:9px;flex:none;border-radius:50%;
+  border:1.5px solid var(--gold-deep);background:transparent;
+}
+/* a subtle chevron showing a collapsed day can open */
+.day.collapsed .day-head::after{
+  content:"";width:8px;height:8px;flex:none;margin-left:4px;
+  border-right:1.5px solid var(--gold-deep);border-bottom:1.5px solid var(--gold-deep);
+  transform:rotate(45deg);opacity:.6;transition:opacity .2s;
+}
+.day.collapsed .day-head:hover::after{opacity:1}
 .motif{display:none}
 .motif::before{content:"◆ ";color:var(--gold-deep);font-size:.55rem}
 
@@ -337,6 +374,7 @@ footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-s
 body.ar .stab{font-family:'IBM Plex Sans Arabic',sans-serif}
 /* top scorers list */
 .scorers-wrap{max-width:560px;margin:0 auto 30px;display:flex;flex-direction:column;gap:7px}
+.groups-wrap[hidden], .scorers-wrap[hidden]{display:none !important}
 .scorer-row{
   display:flex;align-items:center;gap:12px;padding:10px 14px;
   border:1px solid rgba(34,48,79,.7);border-radius:10px;
@@ -766,6 +804,8 @@ const regionText = (r) => {
 function renderSchedule(){
   let html="";
   for(const day of DAYS){
+    const matchCount = day.m.length;
+    const cntWord = LANG==="ar" ? (matchCount===1?"مباراة":"مباريات") : (matchCount===1?"match":"matches");
     html+=`<section class="day" id="day-${day.d}" data-day="${day.d}">
       <div class="band ${day.band}"></div>
       <div class="day-head">
@@ -773,8 +813,10 @@ function renderSchedule(){
           <div class="date-num">${day.d}</div>
           <div><span class="weekday">${dayName(day.w)}</span><span class="month">${LANG==="ar"?AR_UI.month:"June"}</span></div>
         </div>
+        <span class="day-summary"><span class="ds-count">${matchCount} ${cntWord}</span><span class="ds-status"></span></span>
         <span class="head-extra"></span>
-      </div>`;
+      </div>
+      <div class="matches-body">`;
     for(const [t,a,b,grp,v] of day.m){
       const A=N[a],B=N[b];
       const sa=(a==="KSA"||b==="KSA")?" sa":"";
@@ -802,7 +844,7 @@ function renderSchedule(){
         <div class="goals-panel" hidden></div>
       </div>`;
     }
-    html+=`</section>`;
+    html+=`</div></section>`;
   }
   document.getElementById('schedule').innerHTML=html;
 }
@@ -1134,6 +1176,22 @@ document.getElementById('schedule').addEventListener('click',(e)=>{
     }
     return;
   }
+  /* tap a COLLAPSED day's header → expand it (accordion).
+     Only acts on the header, never on match rows, so tapping a match to see
+     scorers won't collapse the day. Tapping an already-open day does nothing
+     (so a near-miss on a match doesn't fold the day away). Today never collapses. */
+  const head = e.target.closest('.day-head');
+  if(head && !e.target.closest('.match')){
+    const day = head.closest('.day');
+    if(day && day.classList.contains('collapsed')){
+      /* collapse any other open NON-today day (accordion) */
+      document.querySelectorAll('.day:not(.collapsed):not(.today)').forEach(d=>{
+        if(d!==day) d.classList.add('collapsed');
+      });
+      day.classList.remove('collapsed');
+    }
+    return; /* never collapse an already-open day by tapping its header */
+  }
   /* otherwise: tap a finished/live match to expand its goal timeline */
   const m=e.target.closest('.match');
   if(!m || !isExpandable(m)) return;
@@ -1144,6 +1202,7 @@ document.getElementById('schedule').addEventListener('click',(e)=>{
 /* ================= LIVE MATCHDAY ENGINE ================= */
 /* Everything is computed in Mecca time (UTC+3), no matter where the page is opened. */
 const MECCA_OFFSET = 3*3600000;
+let DAYS_INIT_DONE = false;  /* initial collapse state set once, then user-controlled */
 const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after kickoff */
 
 /* ---- LIVE SCORES from scores.json (written by the GitHub Action) ----
@@ -1152,6 +1211,7 @@ const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after ki
    Paste your Cloudflare Worker URL here (e.g. "https://wc26-scores.<you>.workers.dev").
    Leave as "" to use the local scores.json (GitHub Action) instead. */
 const SCORES_URL = "https://wc2026-scores.abdulelah12012.workers.dev";
+
 let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
 
 /* second-half timing: remember when each match resumed after half-time, and
@@ -1346,8 +1406,26 @@ function tick(){
     if(isToday) todayCard = card;
 
     /* past-day fade once its last match ends; future-day fade before its first kickoff */
-    card.classList.toggle('past', now > lastEnd && !isToday);
-    card.classList.toggle('future', now < firstKo && !isToday);
+    const isPast = now > lastEnd && !isToday;
+    const isFuture = now < firstKo && !isToday;
+    card.classList.toggle('past', isPast);
+    card.classList.toggle('future', isFuture);
+
+    /* collapsed-day status marker (Played / Upcoming) */
+    const ds = card.querySelector('.ds-status');
+    if(ds){
+      if(isToday){ ds.className = 'ds-status'; ds.textContent=''; }
+      else if(isPast){ ds.className='ds-status played'; ds.textContent = LANG==="ar"?"انتهت":"Played"; }
+      else { ds.className='ds-status upcoming'; ds.textContent = LANG==="ar"?"قادمة":"Upcoming"; }
+    }
+    /* set the INITIAL collapsed state exactly once: past & future collapsed,
+       today always open. After that, the user's taps control it. */
+    if(!DAYS_INIT_DONE){
+      if(isToday) card.classList.remove('collapsed');
+      else card.classList.add('collapsed');
+    }
+    /* today must NEVER be collapsed, even if it became today after a tap */
+    if(isToday) card.classList.remove('collapsed');
 
     /* per-match states */
     let nextSet = false;
@@ -1465,6 +1543,7 @@ function tick(){
       card.querySelector('.head-extra').innerHTML = '';
     }
   }
+  DAYS_INIT_DONE = true;  /* initial collapse state now set; user taps take over */
   persistTiming();
   if(typeof updateJumpButton === "function") updateJumpButton();
   return todayCard;
@@ -1491,6 +1570,7 @@ function applyLanguage(){
   if(btn) btn.textContent = ar?AR_UI.toggle_to_en:AR_UI.toggle_to_ar;
   /* re-render dynamic content in the new language */
   renderSchedule();
+  DAYS_INIT_DONE = false;  /* DOM rebuilt: let tick() re-apply initial collapse */
   renderGroups();
   reattachConfetti();
   tick(); /* refresh live states/countdown text immediately */
