@@ -148,6 +148,56 @@ h1{
   text-align:center;color:var(--sand);font-size:.68rem;letter-spacing:.05em;margin-top:5px;font-weight:400;
 }
 .loc b{color:#A7B4D0;font-weight:500}
+/* ---- expandable goal timeline ---- */
+.match.expandable{cursor:pointer}
+.match.expandable .m-row{position:relative}
+.match.expandable .m-row::after{
+  content:"▾";position:absolute;right:2px;top:50%;transform:translateY(-50%);
+  color:var(--gold-deep);font-size:.7rem;opacity:.5;transition:transform .25s,opacity .2s;
+}
+.match.open .m-row::after{transform:translateY(-50%) rotate(180deg);opacity:.9}
+.goals-panel{
+  overflow:hidden;border-top:1px solid rgba(34,48,79,.5);margin-top:8px;padding-top:9px;
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  animation:goalsIn .3s ease;
+}
+@keyframes goalsIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.goal-col{display:flex;flex-direction:column;gap:5px}
+.goal-col.away{align-items:flex-end}
+.goal-line{
+  position:relative;overflow:hidden;border-radius:7px;
+  padding:6px 11px;min-width:0;max-width:100%;
+  border:1px solid rgba(34,48,79,.55);
+  display:flex;align-items:center;gap:7px;
+  font-size:.78rem;color:var(--ink);
+}
+.goal-col.away .goal-line{flex-direction:row-reverse}
+/* the team flag pattern, faint, waving like cloth in wind */
+.goal-line .flagbg{
+  position:absolute;inset:-30% -10%;z-index:0;opacity:.16;
+  background:var(--gbg);background-size:cover;
+  animation:flagwave 4.5s ease-in-out infinite;
+  transform-origin:center;
+}
+@keyframes flagwave{
+  0%   {transform:translateX(0) skewY(0deg)   scaleY(1)}
+  25%  {transform:translateX(-4%) skewY(1.4deg) scaleY(1.03)}
+  50%  {transform:translateX(-7%) skewY(0deg)   scaleY(1)}
+  75%  {transform:translateX(-4%) skewY(-1.4deg) scaleY(1.03)}
+  100% {transform:translateX(0) skewY(0deg)   scaleY(1)}
+}
+.goal-line .g-min{
+  position:relative;z-index:1;font-weight:700;color:var(--gold);
+  font-variant-numeric:tabular-nums;min-width:30px;
+}
+.goal-line .g-name{position:relative;z-index:1;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.goal-line .g-tag{
+  position:relative;z-index:1;font-size:.56rem;letter-spacing:.06em;font-weight:700;
+  color:var(--sand);border:1px solid rgba(201,184,150,.45);border-radius:4px;padding:1px 4px;
+}
+.goal-line .g-tag.pen{color:#7FB2FF;border-color:rgba(127,178,255,.5)}
+.goal-line .g-tag.og{color:#E0566B;border-color:rgba(224,86,107,.5)}
+@media (prefers-reduced-motion: reduce){ .goal-line .flagbg{animation:none} }
 
 /* ---------- DAY BAND PATTERNS ---------- */
 .p-sadu{background:
@@ -665,7 +715,7 @@ function renderSchedule(){
         : `<div class="ktime">${t}</div>`;
       const region=L[v][1];
       const host = region.endsWith("USA") ? "us" : region.endsWith("Canada") ? "ca" : "mx";
-      html+=`<div class="match${sa}" data-utc="${utc}" data-home="${A[0]}" data-away="${B[0]}" data-kick="${t}">
+      html+=`<div class="match${sa}" data-utc="${utc}" data-home="${A[0]}" data-away="${B[0]}" data-kick="${t}" data-ha="${a}" data-hb="${b}">
         <div class="m-row">
           <div class="half left${winA?' win':''}" style="--pbg:${A[2]}">
             ${flag(A[1])}<span class="tname">${teamName(a)}</span>
@@ -676,6 +726,7 @@ function renderSchedule(){
           </div>
         </div>
         <div class="loc host-${host}"><span class="host-mark">${HOSTMARK[host]}</span><b>${L[v][0]}</b> — ${regionText(region)}</div>
+        <div class="goals-panel" hidden></div>
       </div>`;
     }
     html+=`</section>`;
@@ -866,17 +917,66 @@ function reattachConfetti(){
 }
 reattachConfetti();
 
-/* tap a group badge under any match → jump to that group's table */
+/* build the two-column goal timeline for a match, using the live goal data */
+function buildGoalsHTML(m){
+  const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
+  const ha = m.dataset.ha, hb = m.dataset.hb;     /* team codes */
+  const hPat = N[ha] ? N[ha][2] : "";             /* flag patterns */
+  const aPat = N[hb] ? N[hb][2] : "";
+  const homeGoals = (lv && lv.homeGoals) ? lv.homeGoals : [];
+  const awayGoals = (lv && lv.awayGoals) ? lv.awayGoals : [];
+  const tag = (g)=> g.pen ? '<span class="g-tag pen">PEN</span>'
+                  : g.og ? '<span class="g-tag og">OG</span>' : '';
+  const line = (g, pat)=>`<div class="goal-line">
+      <span class="flagbg" style="--gbg:${pat}"></span>
+      <span class="g-min">${g.minute||''}</span>
+      <span class="g-name">${g.name||''}</span>${tag(g)}
+    </div>`;
+  const homeCol = homeGoals.map(g=>line(g,hPat)).join('');
+  const awayCol = awayGoals.map(g=>line(g,aPat)).join('');
+  return `<div class="goal-col home">${homeCol}</div><div class="goal-col away">${awayCol}</div>`;
+}
+
+/* a match is expandable if it's finished or live (it can have goals) */
+function isExpandable(m){
+  return m.classList.contains('done') || m.classList.contains('live') ||
+         m.classList.contains('ht') || m.querySelector('.ktime.score');
+}
+
+function collapseMatch(m){
+  const p = m.querySelector('.goals-panel');
+  if(p){ p.hidden = true; p.innerHTML = ''; }
+  m.classList.remove('open');
+}
+function expandMatch(m){
+  /* close any other open match (only one open at a time) */
+  document.querySelectorAll('.match.open').forEach(o=>{ if(o!==m) collapseMatch(o); });
+  const p = m.querySelector('.goals-panel');
+  if(!p) return;
+  p.innerHTML = buildGoalsHTML(m);
+  p.hidden = false;
+  m.classList.add('open');
+}
+
 document.getElementById('schedule').addEventListener('click',(e)=>{
+  /* group badge → jump to that group's table (takes priority, no expand) */
   const btn=e.target.closest('.grp');
-  if(!btn) return;
-  const g=btn.dataset.grp;
-  const card=document.getElementById('group-'+g);
-  if(!card) return;
-  card.scrollIntoView({behavior:'smooth', block:'center'});
-  card.classList.remove('flash'); void card.offsetWidth; /* restart animation */
-  card.classList.add('flash');
-  setTimeout(()=>card.classList.remove('flash'),1200);
+  if(btn){
+    const g=btn.dataset.grp;
+    const card=document.getElementById('group-'+g);
+    if(card){
+      card.scrollIntoView({behavior:'smooth', block:'center'});
+      card.classList.remove('flash'); void card.offsetWidth;
+      card.classList.add('flash');
+      setTimeout(()=>card.classList.remove('flash'),1200);
+    }
+    return;
+  }
+  /* otherwise: tap a finished/live match to expand its goal timeline */
+  const m=e.target.closest('.match');
+  if(!m || !isExpandable(m)) return;
+  if(m.classList.contains('open')) collapseMatch(m);
+  else expandMatch(m);
 });
 
 /* ================= LIVE MATCHDAY ENGINE ================= */
@@ -889,7 +989,7 @@ const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after ki
 /* ====== LIVE DATA SOURCE ======
    Paste your Cloudflare Worker URL here (e.g. "https://wc26-scores.<you>.workers.dev").
    Leave as "" to use the local scores.json (GitHub Action) instead. */
-const SCORES_URL = "https://wc2026-scores.abdulelah12012.workers.dev";
+const SCORES_URL = "";
 
 let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
 
@@ -964,6 +1064,7 @@ async function loadScores(){
       const a = norm(m.home), b = norm(m.away);
       map[a+"|"+b] = m;
       map[b+"|"+a] = {...m, homeScore:m.awayScore, awayScore:m.homeScore,
+                     homeGoals:m.awayGoals, awayGoals:m.homeGoals,
                      _flipped:true}; /* allow lookup in either order */
     }
     LIVE = map;
@@ -1135,6 +1236,14 @@ function tick(){
       m.classList.toggle('ht', ht);
       m.classList.toggle('done', done);
       m.classList.toggle('next', false);
+      /* a match becomes pressable once it can have goals (live/ht/done) */
+      const canExpand = live || ht || done || !!m.querySelector('.ktime.score');
+      m.classList.toggle('expandable', canExpand);
+      /* if this match is currently open, refresh its goal panel with new data */
+      if(m.classList.contains('open')){
+        const p=m.querySelector('.goals-panel');
+        if(p && !p.hidden) p.innerHTML = buildGoalsHTML(m);
+      }
 
       /* apply API final score + winner ring if the match has ended live */
       if(finalScore){
