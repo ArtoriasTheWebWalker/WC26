@@ -1685,12 +1685,20 @@ function tick(){
     }
     /* set the INITIAL collapsed state exactly once: past & future collapsed,
        today always open. After that, the user's taps control it. */
+    /* does this card have any live (in-play) match right now? */
+    const hasLive = matches.some(mm=>{
+      const lv = LIVE[norm(mm.dataset.home)+"|"+norm(mm.dataset.away)];
+      return lv && (lv.state==="LIVE"||lv.state==="HT"||lv.state==="ET"||lv.state==="PEN");
+    });
+    /* set the INITIAL collapsed state exactly once: past & future collapsed,
+       today always open. After that, the user's taps control it. */
     if(!DAYS_INIT_DONE){
-      if(isToday) card.classList.remove('collapsed');
+      if(isToday || hasLive) card.classList.remove('collapsed');
       else card.classList.add('collapsed');
     }
-    /* today must NEVER be collapsed, even if it became today after a tap */
-    if(isToday) card.classList.remove('collapsed');
+    /* today, and ANY day with a live match (e.g. a 23:00 game now in its 2nd
+       half past midnight), must never be collapsed while play continues */
+    if(isToday || hasLive) card.classList.remove('collapsed');
 
     /* per-match states */
     let nextSet = false;
@@ -2009,12 +2017,14 @@ function renderFavorites(){
   sec.hidden=false;
   const ar=LANG==="ar";
   const single = FAVS.length===1;
+  /* remember which strips the user has open, so a 60s refresh doesn't fold them */
+  const openCodes = new Set([...document.querySelectorAll('.fav-strip.open')].map(s=>s.dataset.code));
   let html='';
   for(const code of FAVS){
     const matches=favMatchesFor(code);
     const stats=favStatsFor(code);
     const scorers=favScorersFor(code);
-    const openCls = single ? ' open' : '';
+    const openCls = (single || openCodes.has(code)) ? ' open' : '';
     /* meta line: group + points if available */
     const meta = stats ? `${ar?'المجموعة':'Group'} ${stats.grp} · ${stats.Pts} ${ar?'نقطة':'pts'}` : '';
     /* matches block */
