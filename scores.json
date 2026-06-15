@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-15T00:04:54.052Z",
+  "updated": "2026-06-15T05:23:23.601Z",
   "matches": [
     {
       "home": "Mexico",
@@ -84,17 +84,17 @@
     {
       "home": "Ivory Coast",
       "away": "Ecuador",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 1,
+      "awayScore": 0,
+      "state": "LIVE",
+      "minute": 383
     },
     {
       "home": "Sweden",
       "away": "Tunisia",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 5,
+      "awayScore": 1,
+      "state": "FT",
       "minute": null
     },
     {
