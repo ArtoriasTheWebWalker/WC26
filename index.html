@@ -68,30 +68,56 @@ body.light #marble-bg .m-light{display:block}
 #jump-today svg{stroke:var(--letter-ink)}
 @keyframes fabIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 body.ar #jump-today{font-family:'Changa',sans-serif}
-/* floating left cluster: theme + language, always visible, follows scroll */
-#fab-left{
-  position:fixed;left:20px;bottom:22px;z-index:40;
-  display:flex;flex-direction:column;gap:10px;align-items:flex-start;
-}
-.fab-btn{
-  display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;
-  padding:10px 16px;border-radius:30px;
-  font-family:'Cinzel',serif;font-weight:700;font-size:.78rem;letter-spacing:.05em;
-  color:var(--letter-ink);background:var(--gold-grad);
-  box-shadow:0 8px 26px -6px rgba(0,0,0,.7), 0 0 0 1px rgba(227,197,103,.4);
-  transition:transform .2s, box-shadow .2s;
-  animation:fabIn .4s ease;
-}
-.fab-btn:hover{transform:translateY(-3px);box-shadow:0 14px 32px -6px rgba(0,0,0,.75), 0 0 22px -2px rgba(227,197,103,.55)}
-.fab-btn:active{transform:translateY(-1px) scale(.97)}
-.fab-btn svg{stroke:var(--letter-ink)}
-body.ar .fab-btn{font-family:'Changa',sans-serif}
 @media (max-width:520px){
   #jump-today{right:14px;bottom:16px;padding:10px 15px;font-size:.76rem}
-  #fab-left{left:14px;bottom:16px;gap:8px}
-  .fab-btn{padding:9px 13px;font-size:.72rem}
 }
-@media (prefers-reduced-motion: reduce){ #jump-today,.fab-btn{animation:none} }
+@media (prefers-reduced-motion: reduce){ #jump-today{animation:none} }
+
+/* ============ TOP NAV BAR ============ */
+.nav{
+  display:flex;align-items:center;justify-content:flex-end;gap:8px;
+  padding:12px 4px;margin-bottom:8px;border-bottom:1px solid var(--card-border);
+  position:relative;z-index:50;
+}
+.brand{display:flex;align-items:center;margin-right:auto}
+.nav-logo{height:34px;width:auto;display:block;object-fit:contain}
+@media (max-width:520px){ .nav-logo{height:28px} }
+.nav-item{
+  display:inline-flex;align-items:center;gap:7px;cursor:pointer;border:none;background:transparent;
+  color:var(--gold);font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.05em;
+  padding:8px 14px;border-radius:9px;transition:all .18s;
+}
+.nav-item:hover{background:rgba(184,144,47,.12)}
+.nav-item svg{stroke:var(--gold)}
+body.ar .nav-item{font-family:'Changa',sans-serif;letter-spacing:0}
+/* settings dropdown */
+.settings-wrap{position:relative}
+.dropdown{
+  position:absolute;top:calc(100% + 10px);right:0;z-index:60;min-width:270px;
+  border:1px solid var(--card-border);border-radius:14px;overflow:hidden;
+  background:linear-gradient(180deg,var(--card-top),var(--card-bot));
+  box-shadow:0 20px 50px -16px rgba(0,0,0,.7);
+  opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .2s,transform .2s;
+}
+.dropdown.open{opacity:1;transform:none;pointer-events:auto}
+.dd-title{font-family:'Cinzel',serif;font-weight:700;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--sand);padding:13px 16px 7px}
+body.ar .dd-title{font-family:'Changa',sans-serif;letter-spacing:0}
+.dd-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 16px;border-top:1px solid var(--row-line)}
+.dd-label{display:flex;align-items:center;gap:9px;font-size:.86rem;color:var(--ink);font-weight:500}
+.dd-label svg{stroke:var(--gold);flex:none}
+body.ar .dd-label{font-family:'Changa',sans-serif}
+.seg{display:inline-flex;border:1px solid var(--card-border);border-radius:9px;overflow:hidden}
+.seg button{border:none;cursor:pointer;background:transparent;color:var(--sand);
+  font-family:'Outfit',sans-serif;font-weight:600;font-size:.74rem;padding:6px 12px;transition:all .18s}
+body.ar .seg button{font-family:'Changa',sans-serif}
+.seg button.on{background:var(--gold-grad);color:var(--letter-ink)}
+.dd-action{display:flex;align-items:center;gap:9px;width:100%;padding:11px 16px;border:none;cursor:pointer;
+  background:transparent;color:var(--ink);font-family:'Outfit',sans-serif;font-weight:500;font-size:.86rem;
+  border-top:1px solid var(--row-line);transition:background .18s;text-align:left}
+.dd-action:hover{background:rgba(184,144,47,.1)}
+.dd-action svg{stroke:var(--gold);flex:none}
+body.ar .dd-action{font-family:'Changa',sans-serif}
 
 /* ============ FAVORITES SECTION ============ */
 #favorites{margin:0 0 30px;border:1px solid var(--card-border);border-radius:14px;overflow:hidden;
@@ -239,7 +265,6 @@ h1{
   background:linear-gradient(180deg,var(--card-top) 0%,var(--card-bot) 100%);
   box-shadow:0 18px 44px -22px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.02);
 }
-.band{display:none}
 .day-head{
   display:flex;align-items:baseline;justify-content:space-between;gap:10px;
   padding:14px 18px 10px;border-bottom:1px solid var(--line);
@@ -285,8 +310,6 @@ h1{
   transform:rotate(45deg);opacity:.6;transition:opacity .2s;
 }
 .day.collapsed .day-head:hover::after{opacity:1}
-.motif{display:none}
-.motif::before{content:"◆ ";color:var(--gold-deep);font-size:.55rem}
 
 /* ---------- MATCH ROW ---------- */
 .match{border-bottom:1px solid var(--row-line);padding:10px 12px 9px;position:relative}
@@ -384,31 +407,6 @@ h1{
 .goal-line .g-tag.pen{color:#7FB2FF;border-color:rgba(127,178,255,.5)}
 .goal-line .g-tag.og{color:#E0566B;border-color:rgba(224,86,107,.5)}
 @media (prefers-reduced-motion: reduce){ .goal-line .flagbg{animation:none} }
-
-/* ---------- DAY BAND PATTERNS ---------- */
-.p-sadu{background:
-  repeating-linear-gradient(45deg,transparent 0 10px,rgba(11,16,32,.55) 10px 12px),
-  repeating-linear-gradient(90deg,#8E1F1F 0 16px,#C9B896 16px 22px,#0B1020 22px 26px,#165D31 26px 42px,#0B1020 42px 46px,#C9B896 46px 52px);}
-.p-aztec{background:
-  repeating-linear-gradient(45deg,transparent 0 6px,rgba(11,16,32,.4) 6px 8px),
-  repeating-linear-gradient(90deg,#006847 0 18px,#F4EFDF 18px 23px,#CE1126 23px 41px,#F4EFDF 41px 46px);}
-.p-maple{background:repeating-linear-gradient(135deg,#D80621 0 16px,#F4EFDF 16px 21px,#D80621 21px 37px,#0B1020 37px 40px);}
-.p-stars{background:
-  radial-gradient(circle at 7px 5px,#F4EFDF 1.4px,transparent 2px),
-  linear-gradient(90deg,#3C3B6E 0 38%,#B22234 62%,#8E1F2C 100%);
-  background-size:22px 9px,100% 100%;}
-.p-samba{background:repeating-linear-gradient(45deg,#009C3B 0 16px,#FFDF00 16px 26px,#002776 26px 30px);}
-.p-iberia{background:repeating-linear-gradient(90deg,#AA151B 0 22px,#F1BF00 22px 34px);}
-.p-albi{background:repeating-linear-gradient(90deg,#75AADB 0 18px,#F4EFDF 18px 36px);}
-.p-kente{background:
-  repeating-linear-gradient(45deg,transparent 0 9px,rgba(11,16,32,.45) 9px 11px),
-  repeating-linear-gradient(90deg,#E5B80B 0 18px,#006B3F 18px 26px,#CE1126 26px 34px,#0B1020 34px 38px);}
-.p-hosts{background:linear-gradient(90deg,#006847 0%,#F4EFDF 18%,#CE1126 33%,#B22234 50%,#F4EFDF 60%,#3C3B6E 75%,#D80621 100%);}
-.p-zellige{background:repeating-conic-gradient(from 45deg,#C1272D 0 25%,#006233 0 50%) 0 0/16px 16px;}
-.p-checker{background:repeating-conic-gradient(#C8102E 0 25%,#F4EFDF 0 50%) 0 0/14px 14px;}
-.p-lions{background:repeating-linear-gradient(90deg,#F4EFDF 0 26px,#C8102E 26px 36px);}
-.p-hino{background:radial-gradient(circle at 13px 4.5px,#BC002D 3.6px,transparent 4.2px),#F4EFDF;background-size:30px 9px;}
-.p-gold{background:repeating-linear-gradient(45deg,#E3C567 0 14px,#B98A2E 14px 22px,#7A5A1B 22px 26px);}
 
 /* ---------- LIVE APP STATES ---------- */
 .day.past, .day.future{opacity:.72;filter:saturate(.78);transition:opacity .3s,filter .3s}
@@ -712,6 +710,40 @@ body.ar .stab{font-family:'Changa',sans-serif}
 </div>
 <div class="wrap">
 
+<nav class="nav" id="navbar">
+  <div class="brand">
+    <img id="nav-logo" class="nav-logo" src="logo.png" alt="World Cup 2026"
+         onerror="this.style.display='none'">
+  </div>
+  <div class="settings-wrap">
+    <button class="nav-item" id="settings-btn" aria-label="Settings">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span id="settings-label">Settings</span>
+    </button>
+    <div class="dropdown" id="settings-dd">
+      <div class="dd-title" id="dd-title">Settings</div>
+      <div class="dd-row">
+        <span class="dd-label"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg><span id="lbl-lang">Language</span></span>
+        <div class="seg" id="seg-lang">
+          <button data-lang="en">EN</button>
+          <button data-lang="ar">عربي</button>
+        </div>
+      </div>
+      <div class="dd-row">
+        <span class="dd-label"><svg id="theme-svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg><span id="lbl-theme">Theme</span></span>
+        <div class="seg" id="seg-theme">
+          <button data-theme="light">Light</button>
+          <button data-theme="night">Night</button>
+        </div>
+      </div>
+      <button class="dd-action" id="settings-edit-teams">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.5 5.8 21 7 14 2 9.3 9 8.5 12 2"/></svg>
+        <span id="lbl-edit">Edit your teams</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
 <header>
   <div class="eyebrow" id="t-eyebrow">FIFA World Cup · Mexico – Canada – United States</div>
   <h1 id="t-h1">WORLD CUP 2026</h1>
@@ -753,13 +785,6 @@ body.ar .stab{font-family:'Changa',sans-serif}
   </svg>
   <span id="jump-today-label">Today</span>
 </button>
-<div id="fab-left">
-  <button id="theme-toggle" class="fab-btn" aria-label="Switch light/night mode">
-    <svg id="theme-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
-    <span id="theme-label">Light</span>
-  </button>
-  <button id="lang-toggle" class="fab-btn" aria-label="Switch language">العربية</button>
-</div>
 
 <!-- ============ FAVORITE TEAM PICKER (full-screen overlay) ============ -->
 <div id="picker" hidden>
@@ -799,33 +824,11 @@ const AR_DAY={
   Sunday:"الأحد", Monday:"الإثنين", Tuesday:"الثلاثاء", Wednesday:"الأربعاء",
   Thursday:"الخميس", Friday:"الجمعة", Saturday:"السبت"
 };
-/* editorial motif lines, rewritten naturally for a Saudi reader */
-const AR_MOTIF={
-  "Aztec step-fret · Mexico open the Cup":"زخرفة الأزتك · المكسيك تفتتح المونديال",
-  "Maple red · Canada's opening night":"أحمر القيقب · ليلة كندا الأولى",
-  "Stars & stripes · USA enter the stage":"النجوم والخطوط · أمريكا تدخل المونديال",
-  "Verde-amarela · Brazil's first dance":"الأصفر والأخضر · أول ظهور للبرازيل",
-  "Iberian gold · Spain begin in Atlanta":"الذهب الإسباني · إسبانيا تبدأ في أتلانتا",
-  "Sadu weave · Saudi Arabia's opening night":"نقش السدو · ليلة الأخضر الأولى",
-  "Albiceleste · the champions arrive":"الألبيسيليستي · حاملة اللقب تجي",
-  "Kente cloth · Ghana on the board":"قماش الكنتي · غانا تدخل المونديال",
-  "Three hosts · Mexico, Canada & USA all play":"الدول الثلاث المنظمة · المكسيك وكندا وأمريكا كلهم يلعبون",
-  "Zellige mosaic · Morocco face Scotland":"فسيفساء الزليج · المغرب تواجه اسكتلندا",
-  "Sadu weave · Saudi Arabia vs Spain":"نقش السدو · السعودية ضد إسبانيا",
-  "Albiceleste · Argentina vs Austria":"الألبيسيليستي · الأرجنتين ضد النمسا",
-  "Three Lions · England face Ghana":"الأسود الثلاثة · إنجلترا تواجه غانا",
-  "Šahovnica · Croatia's checkerboard day":"رقعة الشطرنج · يوم كرواتيا",
-  "Aztec step-fret · Mexico's decisive night":"زخرفة الأزتك · ليلة المكسيك الحاسمة",
-  "Hinomaru · Japan's all-or-nothing finale":"الهينومارو · اليابان في مباراة المصير",
-  "Sadu weave · Saudi fight for the knockouts":"نقش السدو · الأخضر يقاتل عشان الدور القادم",
-  "Final whistle · the last group-stage night":"الصفارة الأخيرة · آخر ليلة في دور المجموعات"
-};
 /* fixed UI chrome */
 const AR_UI={
   eyebrow:"كأس العالم · المكسيك – كندا – أمريكا",
   h1:"كأس العالم 2026",
   sub:"<b>دور المجموعات</b> · 72 مباراة · 12 مجموعة · 11 – 28 يونيو",
-  tz:"كل الأوقات بتوقيت مكة المكرمة · GMT+3 · نظام 24 ساعة",
   ko_title:"المجموعات والترتيب",
   ko_sub:"12 مجموعة · النقاط تتحدث مع كل مباراة",
   footer:"دور المجموعات · الطريق إلى النهائي — ملعب ميت لايف · 19 يوليو 2026",
@@ -836,13 +839,11 @@ const AR_UI={
   in_play:"مباراة شغالة",
   done:"خلصت مباريات اليوم",
   live:"مباشر", ht:"بين الشوطين", et:"وقت إضافي", pen:"ركلات ترجيح",
-  r_32:"دور الـ32", r_16:"دور الـ16", r_qf:"ربع النهائي", r_sf:"نصف النهائي", r_final:"النهائي",
   toggle_to_ar:"العربية", toggle_to_en:"English"
 };
 let LANG = "en";
 
 /* nation: [name, flagcdn code, pattern-background] */
-const g=(c1,c2)=>`linear-gradient(90deg, rgba(${c1},.35), rgba(${c2},.35))`;
 const N={
 /* Saudi Arabia - Sadu weave with Islamic geometric star pattern */
 MEX:["Mexico","mx","repeating-linear-gradient(45deg, transparent 0 8px, rgba(0,104,71,.25) 8px 9px, transparent 9px 17px), repeating-linear-gradient(135deg, rgba(206,17,38,.28) 0 6px, transparent 6px 12px), repeating-conic-gradient(from 45deg at 50% 50%, rgba(244,239,223,.2) 0deg 90deg, transparent 90deg 180deg) 0 0/24px 24px"],
@@ -930,90 +931,90 @@ ZAP:["Estadio Akron · Zapopan","Jalisco, Mexico"], GDL:["Estadio Monterrey · G
 };
 
 const DAYS=[
-{w:"Thursday",d:11,band:"p-aztec",motif:"Aztec step-fret · Mexico open the Cup",m:[
+{w:"Thursday",d:11,m:[
  ["22:00","MEX","RSA","A","CDMX"]]},
-{w:"Friday",d:12,band:"p-maple",motif:"Maple red · Canada's opening night",m:[
+{w:"Friday",d:12,m:[
  ["05:00","KOR","CZE","A","ZAP"],
  ["22:00","CAN","BIH","B","TOR"]]},
-{w:"Saturday",d:13,band:"p-stars",motif:"Stars & stripes · USA enter the stage",m:[
+{w:"Saturday",d:13,m:[
  ["04:00","USA","PAR","D","LA"],
  ["22:00","QAT","SUI","B","SC"]]},
-{w:"Sunday",d:14,band:"p-samba",motif:"Verde-amarela · Brazil's first dance",m:[
+{w:"Sunday",d:14,m:[
  ["01:00","BRA","MAR","C","NJ"],
  ["04:00","HAI","SCO","C","FOX"],
  ["07:00","AUS","TUR","D","VAN"],
  ["20:00","GER","CUW","E","HOU"],
  ["23:00","NED","JPN","F","ARL"]]},
-{w:"Monday",d:15,band:"p-iberia",motif:"Iberian gold · Spain begin in Atlanta",m:[
+{w:"Monday",d:15,m:[
  ["02:00","CIV","ECU","E","PHI"],
  ["05:00","SWE","TUN","F","GDL"],
  ["19:00","ESP","CPV","H","ATL"],
  ["22:00","BEL","EGY","G","SEA"]]},
-{w:"Tuesday",d:16,band:"p-sadu",motif:"Sadu weave · Saudi Arabia's opening night",m:[
+{w:"Tuesday",d:16,m:[
  ["01:00","KSA","URU","H","MIA"],
  ["04:00","IRN","NZL","G","LA"],
  ["22:00","FRA","SEN","I","NJ"]]},
-{w:"Wednesday",d:17,band:"p-albi",motif:"Albiceleste · the champions arrive",m:[
+{w:"Wednesday",d:17,m:[
  ["01:00","IRQ","NOR","I","FOX"],
  ["04:00","ARG","ALG","J","KC"],
  ["07:00","AUT","JOR","J","SC"],
  ["20:00","POR","COD","K","HOU"],
  ["23:00","ENG","CRO","L","ARL"]]},
-{w:"Thursday",d:18,band:"p-kente",motif:"Kente cloth · Ghana on the board",m:[
+{w:"Thursday",d:18,m:[
  ["02:00","GHA","PAN","L","TOR"],
  ["05:00","UZB","COL","K","CDMX"],
  ["19:00","CZE","RSA","A","ATL"],
  ["22:00","SUI","BIH","B","LA"]]},
-{w:"Friday",d:19,band:"p-hosts",motif:"Three hosts · Mexico, Canada & USA all play",m:[
+{w:"Friday",d:19,m:[
  ["01:00","CAN","QAT","B","VAN"],
  ["04:00","MEX","KOR","A","ZAP"],
  ["22:00","USA","AUS","D","SEA"]]},
-{w:"Saturday",d:20,band:"p-zellige",motif:"Zellige mosaic · Morocco face Scotland",m:[
+{w:"Saturday",d:20,m:[
  ["01:00","SCO","MAR","C","FOX"],
  ["03:30","BRA","HAI","C","PHI"],
  ["06:00","TUR","PAR","D","SC"],
  ["20:00","NED","SWE","F","HOU"],
  ["23:00","GER","CIV","E","TOR"]]},
-{w:"Sunday",d:21,band:"p-sadu",motif:"Sadu weave · Saudi Arabia vs Spain",m:[
+{w:"Sunday",d:21,m:[
  ["03:00","ECU","CUW","E","KC"],
  ["07:00","TUN","JPN","F","GDL"],
  ["19:00","ESP","KSA","H","ATL"],
  ["22:00","BEL","IRN","G","LA"]]},
-{w:"Monday",d:22,band:"p-albi",motif:"Albiceleste · Argentina vs Austria",m:[
+{w:"Monday",d:22,m:[
  ["01:00","URU","CPV","H","MIA"],
  ["04:00","NZL","EGY","G","VAN"],
  ["20:00","ARG","AUT","J","ARL"]]},
-{w:"Tuesday",d:23,band:"p-lions",motif:"Three Lions · England face Ghana",m:[
+{w:"Tuesday",d:23,m:[
  ["00:00","FRA","IRQ","I","PHI"],
  ["03:00","NOR","SEN","I","TOR"],
  ["06:00","JOR","ALG","J","SC"],
  ["20:00","POR","UZB","K","HOU"],
  ["23:00","ENG","GHA","L","FOX"]]},
-{w:"Wednesday",d:24,band:"p-checker",motif:"Šahovnica · Croatia's checkerboard day",m:[
+{w:"Wednesday",d:24,m:[
  ["02:00","PAN","CRO","L","FOX"],
  ["05:00","COL","COD","K","ZAP"],
  ["22:00","SUI","CAN","B","VAN"],
  ["22:00","BIH","QAT","B","SEA"]]},
-{w:"Thursday",d:25,band:"p-aztec",motif:"Aztec step-fret · Mexico's decisive night",m:[
+{w:"Thursday",d:25,m:[
  ["01:00","MAR","HAI","C","ATL"],
  ["01:00","SCO","BRA","C","MIA"],
  ["04:00","RSA","KOR","A","GDL"],
  ["04:00","CZE","MEX","A","CDMX"],
  ["23:00","CUW","CIV","E","PHI"],
  ["23:00","ECU","GER","E","NJ"]]},
-{w:"Friday",d:26,band:"p-hino",motif:"Hinomaru · Japan's all-or-nothing finale",m:[
+{w:"Friday",d:26,m:[
  ["02:00","TUN","NED","F","KC"],
  ["02:00","JPN","SWE","F","ARL"],
  ["05:00","TUR","USA","D","LA"],
  ["05:00","PAR","AUS","D","SC"],
  ["22:00","NOR","FRA","I","FOX"],
  ["22:00","SEN","IRQ","I","TOR"]]},
-{w:"Saturday",d:27,band:"p-sadu",motif:"Sadu weave · Saudi fight for the knockouts",m:[
+{w:"Saturday",d:27,m:[
  ["03:00","CPV","KSA","H","HOU"],
  ["03:00","URU","ESP","H","ZAP"],
  ["06:00","NZL","BEL","G","VAN"],
  ["06:00","EGY","IRN","G","SEA"]]},
-{w:"Sunday",d:28,band:"p-gold",motif:"Final whistle · the last group-stage night",m:[
+{w:"Sunday",d:28,m:[
  ["00:00","PAN","ENG","L","NJ"],
  ["00:00","CRO","GHA","L","PHI"],
  ["02:30","COL","POR","K","MIA"],
@@ -1023,7 +1024,6 @@ const DAYS=[
 ];
 
 const flag=c=>`<img src="https://flagcdn.com/h24/${c}.png" alt="" loading="lazy" onerror="this.style.display='none'">`;
-const ord=d=>{const s=["th","st","nd","rd"],v=d%100;return d+(s[(v-20)%10]||s[v]||s[0]);};
 const HOSTMARK={
 us:`<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4 7.3 13.6 2.2 9l6.9-.7z"/></svg>`,
 ca:`<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.4 4.3 3.3-2.1-.9 4.6 4.2-1-2.8 3.6 4.6 1.5-4.6 1.5 2.8 3.6-4.2-1 .9 4.6-3.3-2.1L12 22l-1.4-4.3-3.3 2.1.9-4.6-4.2 1 2.8-3.6L2 13.5l4.6-1.5-2.8-3.6 4.2 1-.9-4.6 3.3 2.1z"/></svg>`,
@@ -1041,7 +1041,6 @@ const RESULTS={
 /* team name + helper text for the current language */
 const teamName = (code) => LANG==="ar" ? (AR_TEAM[code]||N[code][0]) : N[code][0];
 const dayName  = (w) => LANG==="ar" ? (AR_DAY[w]||w) : w;
-const motifText= (m) => LANG==="ar" ? (AR_MOTIF[m]||m) : m;
 const regionText = (r) => {
   if(LANG!=="ar") return r;
   /* swap the trailing host-country word into Arabic, keep the rest */
@@ -1057,7 +1056,6 @@ function renderSchedule(){
     const matchCount = day.m.length;
     const cntWord = LANG==="ar" ? (matchCount===1?"مباراة":"مباريات") : (matchCount===1?"match":"matches");
     html+=`<section class="day" id="day-${day.d}" data-day="${day.d}">
-      <div class="band ${day.band}"></div>
       <div class="day-head">
         <div class="date-block">
           <div class="date-num">${day.d}</div>
@@ -1159,13 +1157,6 @@ function collectFinished(){
     fixtures.push({a, b, ha, hb});
   }
   return fixtures;
-}
-
-/* set of team codes currently in a live (in-play) match */
-function liveTeamCodes(){
-  const set=new Set();
-  collectFinished().forEach(f=>{ if(f.live){ set.add(f.a); set.add(f.b); } });
-  return set;
 }
 
 /* compute standings for a set of team codes given finished + live fixtures */
@@ -1855,9 +1846,14 @@ function applyLanguage(){
   set('tab-scorers',ar?"الهدافون":"Top Scorers");
   set('jump-today-label',ar?"اليوم":"Today");
   set('t-footer',  ar?AR_UI.footer:"Group Stage · Road to the Final — MetLife Stadium · July 19, 2026");
-  const btn=document.getElementById('lang-toggle');
-  if(btn) btn.textContent = ar?AR_UI.toggle_to_en:AR_UI.toggle_to_ar;
-  if(typeof applyTheme === "function") applyTheme(); /* theme label is language-dependent */
+  /* settings dropdown labels + active states */
+  set('settings-label', ar?"الإعدادات":"Settings");
+  set('dd-title', ar?"الإعدادات":"Settings");
+  set('lbl-lang', ar?"اللغة":"Language");
+  set('lbl-theme', ar?"المظهر":"Theme");
+  set('lbl-edit', ar?"تعديل فِرَقك":"Edit your teams");
+  document.querySelectorAll('#seg-lang button').forEach(b=>b.classList.toggle('on', b.dataset.lang===LANG));
+  if(typeof applyTheme === "function") applyTheme(); /* theme seg is language-dependent */
   /* favorites + picker localisation */
   set('picker-title', ar?"اختر فِرَقك":"Choose your teams");
   set('picker-sub', ar?'تابع حتى 5 فِرَق · <span id="picker-count">'+(typeof pickerSel!=="undefined"?pickerSel.length:0)+'</span>/5'
@@ -1873,28 +1869,44 @@ function applyLanguage(){
   tick(); /* refresh live states/countdown text immediately */
 }
 
-document.getElementById('lang-toggle').addEventListener('click', ()=>{
-  LANG = (LANG==="en") ? "ar" : "en";
+/* language: segmented EN | عربي control inside settings */
+document.getElementById('seg-lang').addEventListener('click', (e)=>{
+  const b = e.target.closest('button'); if(!b) return;
+  LANG = b.dataset.lang;
   applyLanguage();
 });
+
+/* settings dropdown open/close */
+const settingsBtn = document.getElementById('settings-btn');
+const settingsDD  = document.getElementById('settings-dd');
+settingsBtn.addEventListener('click', (e)=>{ e.stopPropagation(); settingsDD.classList.toggle('open'); });
+document.addEventListener('click', (e)=>{ if(!e.target.closest('.settings-wrap')) settingsDD.classList.remove('open'); });
 
 /* ============ LIGHT / NIGHT THEME ============ */
 const SUN = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.2" y1="4.2" x2="5.6" y2="5.6"/><line x1="18.4" y1="18.4" x2="19.8" y2="19.8"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.2" y1="19.8" x2="5.6" y2="18.4"/><line x1="18.4" y1="5.6" x2="19.8" y2="4.2"/>';
 const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>';
 function applyTheme(){
   const light = document.body.classList.contains('light');
-  const icon = document.getElementById('theme-icon');
-  const label = document.getElementById('theme-label');
-  /* in light mode, offer to go Night (moon); in night mode, offer Light (sun) */
-  if(icon) icon.innerHTML = light ? MOON : SUN;
-  if(label) label.textContent = LANG==="ar" ? (light?"ليلي":"نهاري") : (light?"Night":"Light");
+  /* the small icon next to the Theme label shows the CURRENT mode */
+  const svg = document.getElementById('theme-svg');
+  if(svg) svg.innerHTML = light ? SUN : MOON;
+  /* highlight the active segment */
+  document.querySelectorAll('#seg-theme button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.theme === (light?'light':'night'));
+  });
 }
-/* default: follow the device's system setting */
-if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches){
-  document.body.classList.add('light');
-}
-document.getElementById('theme-toggle').addEventListener('click', ()=>{
-  document.body.classList.toggle('light');
+/* initial theme: a remembered manual choice wins; otherwise follow the system setting */
+(function initTheme(){
+  let saved=null; try{ saved=localStorage.getItem('wc26_theme'); }catch(e){}
+  if(saved==='light') document.body.classList.add('light');
+  else if(saved==='night') document.body.classList.remove('light');
+  else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) document.body.classList.add('light');
+})();
+/* segmented Light | Night control inside settings (choice is remembered) */
+document.getElementById('seg-theme').addEventListener('click', (e)=>{
+  const b = e.target.closest('button'); if(!b) return;
+  document.body.classList.toggle('light', b.dataset.theme==='light');
+  try{ localStorage.setItem('wc26_theme', b.dataset.theme); }catch(e){}
   applyTheme();
 });
 applyTheme();
@@ -1963,6 +1975,14 @@ document.getElementById('picker-confirm').addEventListener('click', ()=>{
   renderFavorites();
 });
 document.getElementById('fav-edit').addEventListener('click', openPicker);
+/* the Edit-teams action inside the settings dropdown also opens the picker */
+(function(){
+  const se = document.getElementById('settings-edit-teams');
+  if(se) se.addEventListener('click', ()=>{
+    const dd=document.getElementById('settings-dd'); if(dd) dd.classList.remove('open');
+    openPicker();
+  });
+})();
 
 /* ---- build each favorite team's collapsible strip ---- */
 function favMatchesFor(code){
