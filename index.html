@@ -80,8 +80,8 @@ body.ar #jump-today{font-family:'Changa',sans-serif}
   position:relative;z-index:50;
 }
 .brand{display:flex;align-items:center;margin-right:auto}
-.nav-logo{height:34px;width:auto;display:block;object-fit:contain}
-@media (max-width:520px){ .nav-logo{height:28px} }
+.nav-logo{height:52px;width:auto;display:block;object-fit:contain}
+@media (max-width:520px){ .nav-logo{height:42px} }
 .nav-item{
   display:inline-flex;align-items:center;gap:7px;cursor:pointer;border:none;background:transparent;
   color:var(--gold);font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.05em;
@@ -193,6 +193,11 @@ body.ar .picker-region h3{font-family:'Changa',sans-serif;letter-spacing:0}
 body.ar #picker-confirm{font-family:'Changa',sans-serif;letter-spacing:0}
 #picker-confirm:disabled{opacity:.45;cursor:not-allowed}
 #picker-confirm:not(:disabled):hover{transform:translateY(-2px)}
+.picker-skip{padding:14px 28px;border-radius:30px;border:1px solid var(--card-border);cursor:pointer;
+  background:transparent;color:var(--sand);font-family:'Cinzel',serif;font-weight:600;font-size:.84rem;
+  letter-spacing:.05em;transition:all .2s;margin-right:10px}
+.picker-skip:hover{color:var(--ink);border-color:var(--gold-deep)}
+body.ar .picker-skip{font-family:'Changa',sans-serif;letter-spacing:0}
 body.ar #lang-toggle{font-family:'Changa',sans-serif;font-weight:600}
 body.ar h1{font-family:'Changa',sans-serif;font-weight:700}
 body.ar .ko-title{font-family:'Changa',sans-serif;font-weight:600}
@@ -467,6 +472,11 @@ h1{
 }
 .match.ht .ktime{color:#E3C567}
 .match.ht .ktime .live-tag{display:block;font-size:.54rem;letter-spacing:.18em;font-weight:600;margin-top:1px;color:#E3C567}
+/* Arabic: live status text must not be letter-spaced (breaks cursive joins) */
+body.ar .match.live .ktime .live-tag,
+body.ar .match.ht .ktime .live-tag,
+body.ar .ktime,
+body.ar .ktime.clock-only{letter-spacing:0 !important}
 .match.ht{background:rgba(227,197,103,.07)}
 .match.done{opacity:.5}
 
@@ -712,7 +722,7 @@ body.ar .stab{font-family:'Changa',sans-serif}
 
 <nav class="nav" id="navbar">
   <div class="brand">
-    <img id="nav-logo" class="nav-logo" src="FIFA-World-Cup-Logo-2026.png" alt="World Cup 2026"
+    <img id="nav-logo" class="nav-logo" src="logo.png" alt="World Cup 2026"
          onerror="this.style.display='none'">
   </div>
   <div class="settings-wrap">
@@ -795,6 +805,7 @@ body.ar .stab{font-family:'Changa',sans-serif}
     </div>
     <div id="picker-grid"></div>
     <div class="picker-actions">
+      <button id="picker-skip" class="picker-skip">Maybe later</button>
       <button id="picker-confirm" disabled>Confirm</button>
     </div>
   </div>
@@ -1859,6 +1870,7 @@ function applyLanguage(){
   set('picker-sub', ar?'تابع حتى 5 فِرَق · <span id="picker-count">'+(typeof pickerSel!=="undefined"?pickerSel.length:0)+'</span>/5'
                        :'Pick up to 5 teams to follow · <span id="picker-count">'+(typeof pickerSel!=="undefined"?pickerSel.length:0)+'</span>/5');
   set('picker-confirm', ar?"تأكيد":"Confirm");
+  set('picker-skip', ar?"ربما لاحقاً":"Maybe later");
   if(typeof renderFavorites === "function") renderFavorites();
   if(typeof buildPickerGrid === "function" && !document.getElementById('picker').hidden) buildPickerGrid();
   /* re-render dynamic content in the new language */
@@ -1973,6 +1985,12 @@ document.getElementById('picker-confirm').addEventListener('click', ()=>{
   saveFavs();
   closePicker();
   renderFavorites();
+});
+/* "Maybe later" — picker is optional; dismiss without choosing and remember
+   that the user has seen it, so the first-open overlay won't nag next time. */
+document.getElementById('picker-skip').addEventListener('click', ()=>{
+  try{ localStorage.setItem('wc26_picker_seen','1'); }catch(e){}
+  closePicker();
 });
 document.getElementById('fav-edit').addEventListener('click', openPicker);
 /* the Edit-teams action inside the settings dropdown also opens the picker */
@@ -2110,7 +2128,10 @@ setInterval(tick, 1000);
 
 /* first-open: if no favorites saved yet, show the picker. Otherwise render them. */
 renderFavorites();
-if(!FAVS.length){ openPicker(); }
+if(!FAVS.length){
+  let seen=null; try{ seen=localStorage.getItem('wc26_picker_seen'); }catch(e){}
+  if(!seen) openPicker(); /* show once; "Maybe later" suppresses it thereafter */
+}
 
 /* ============ DESCENDING ZIG-ZAG BALL ============ */
 (function(){
