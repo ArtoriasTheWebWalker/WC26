@@ -389,6 +389,26 @@ h1{
   mask-image:linear-gradient(to left,#000 0%,rgba(0,0,0,.5) 55%,transparent 100%);
 }
 .half img{height:16px;width:24px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 4px rgba(0,0,0,.55);position:relative}
+/* ---- GOOOAAALLL!!! celebration band: sweeps left→right→left over the team's half ---- */
+.goal-band{
+  position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden;border-radius:8px;
+  display:flex;align-items:center;
+  background:linear-gradient(90deg,rgba(227,197,103,.0),rgba(227,197,103,.22),rgba(227,197,103,.0));
+}
+.goal-band .gb-text{
+  white-space:nowrap;font-family:'Cinzel',serif;font-weight:900;font-size:.78rem;letter-spacing:.04em;
+  color:var(--gold);text-shadow:0 0 8px rgba(227,197,103,.7),0 1px 2px rgba(0,0,0,.6);
+  padding-left:100%;                 /* start off the right edge */
+  animation:goalSweep 2.2s ease-in-out infinite alternate;
+}
+body.ar .goal-band .gb-text{font-family:'Changa',sans-serif;letter-spacing:0}
+@keyframes goalSweep{
+  from{transform:translateX(0)}      /* text off to the right */
+  to{transform:translateX(-200%)}    /* sweep left across the half, then alternate back */
+}
+@media (prefers-reduced-motion:reduce){
+  .goal-band .gb-text{animation:none;padding-left:8px}
+}
 .tname{font-weight:500;font-size:.86rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
 
 /* center: 24h time + group */
@@ -2037,6 +2057,12 @@ let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,stat
    localStorage so it survives the 60s refreshes and page reloads. */
 let HALF2_ANCHOR = {};
 let PREV_STATE = {};
+/* goal-celebration tracking: last-seen score per match, and the moment each
+   side last scored (so the GOOOAAALLL band runs for 30s). Not persisted —
+   celebrations are live-only and shouldn't replay on reload. */
+let PREV_SCORE = {};
+let GOAL_FX = {};
+const GOAL_FX_MS = 30000; /* banner lifetime: 30 seconds from detection */
 try{
   HALF2_ANCHOR = JSON.parse(localStorage.getItem('wc26_half2')||'{}');
   PREV_STATE   = JSON.parse(localStorage.getItem('wc26_prev')||'{}');
@@ -2105,6 +2131,22 @@ async function loadScores(){
       map[b+"|"+a] = {...m, homeScore:m.awayScore, awayScore:m.homeScore,
                      homeGoals:m.awayGoals, awayGoals:m.homeGoals,
                      _flipped:true}; /* allow lookup in either order */
+    }
+    /* ---- goal detection: compare each match's score to what we last saw.
+       When a side's score increases, record the moment + which side scored so
+       tick() can sweep a "GOOOAAALLL!!!" band on the scoring team for 30s. ---- */
+    for(const m of (data.matches||[])){
+      const a = norm(m.home), b = norm(m.away);
+      const id = a+"|"+b; /* canonical (non-flipped) key */
+      const hs = (m.homeScore==null)?0:m.homeScore;
+      const as = (m.awayScore==null)?0:m.awayScore;
+      const inPlay = (m.state==="LIVE"||m.state==="HT"||m.state==="ET"||m.state==="PEN");
+      const prev = PREV_SCORE[id];
+      if(prev && inPlay){
+        if(hs > prev.h) GOAL_FX[id+"|home"] = Date.now();
+        if(as > prev.a) GOAL_FX[id+"|away"] = Date.now();
+      }
+      PREV_SCORE[id] = {h:hs, a:as};
     }
     LIVE = map;
     /* diagnostic: warn about any live match whose teams don't match our schedule,
@@ -2329,6 +2371,31 @@ function tick(){
       m.classList.toggle('next', false);
       const staleCd = m.querySelector('.match-cd');
       if(staleCd) staleCd.remove();
+
+      /* ---- GOOOAAALLL!!! celebration band ----
+         If this match's home/away side scored within the last 30s, sweep a
+         band across that team's half. Only on the Schedule page (where match
+         rows live). The key matches the canonical (non-flipped) match id. */
+      const canonId = norm(m.dataset.home)+"|"+norm(m.dataset.away);
+      [['home','left',m.dataset.ha],['away','right',m.dataset.hb]].forEach(([side,sideCls,teamCode])=>{
+        const fxKey = canonId+"|"+side;
+        const at = GOAL_FX[fxKey];
+        const half = m.querySelector('.half.'+sideCls);
+        if(!half) return;
+        const existing = half.querySelector('.goal-band');
+        if(at && (now - at) < GOAL_FX_MS){
+          if(!existing){
+            const band=document.createElement('div');
+            band.className='goal-band';
+            const nm = teamCode ? teamName(teamCode) : '';
+            band.innerHTML = `<span class="gb-text">GOOOAAALLL!!! ${nm}</span>`;
+            half.appendChild(band);
+          }
+        }else if(existing){
+          existing.remove();
+          if(at) delete GOAL_FX[fxKey]; /* expired: clear so it won't refire */
+        }
+      });
       /* a match becomes pressable once it can have goals (live/ht/done) */
       const canExpand = live || ht || done || !!m.querySelector('.ktime.score');
       m.classList.toggle('expandable', canExpand);
