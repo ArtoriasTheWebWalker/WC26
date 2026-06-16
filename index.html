@@ -1659,7 +1659,11 @@ function renderKnockout(){
     ${col([89,90,93,94].map(m=>feedTie(m,'r16')).join(''))}
     ${connCol(2,'l')}
     ${col([97,98].map(m=>feedTie(m,'qf')).join(''))}
+    ${connCol(1,'l')}
+    ${col([101].map(m=>feedTie(m,'sf')).join(''))}
     ${cup}
+    ${col([102].map(m=>feedTie(m,'sf')).join(''))}
+    ${connCol(1,'r')}
     ${col([99,100].map(m=>feedTie(m,'qf')).join(''))}
     ${connCol(2,'r')}
     ${col([91,92,95,96].map(m=>feedTie(m,'r16')).join(''))}
@@ -2038,7 +2042,6 @@ const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after ki
    Paste your Cloudflare Worker URL here (e.g. "https://wc26-scores.<you>.workers.dev").
    Leave as "" to use the local scores.json (GitHub Action) instead. */
 const SCORES_URL = "https://wc2026-scores.abdulelah12012.workers.dev/";
-
 let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
 
 /* second-half timing: remember when each match resumed after half-time, and
