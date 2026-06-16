@@ -36,6 +36,40 @@ body.light{
   --q-row:rgba(184,144,47,.08);
   --loc-ink:#6B6052;
 }
+/* ===== NIGHT SUB-PALETTES (override night surface tokens) ===== */
+/* navy is the default (no class needed). charcoal + green below. */
+body.pal-charcoal{
+  --bg:#0E0F12;
+  --card-top:#191B20; --card-bot:#131418;
+  --row-line:rgba(120,124,140,.28); --row-line-soft:rgba(120,124,140,.18);
+  --loc-ink:#AEB2BE;
+}
+body.pal-green{
+  --bg:#091512;
+  --card-top:#10241D; --card-bot:#0C1A15;
+  --row-line:rgba(58,120,96,.34); --row-line-soft:rgba(58,120,96,.22);
+  --loc-ink:#9FC7B4;
+}
+/* ===== DAY SUB-PALETTES (only apply in light mode) ===== */
+body.light.pal-rose{
+  --bg:#F6E9E8;
+  --card-top:#F3DEDC; --card-bot:#EDD2CF;
+  --card-border:rgba(184,144,47,.4);
+  --row-line:rgba(150,110,108,.3); --row-line-soft:rgba(150,110,108,.2);
+  --loc-ink:#7A5C5A;
+}
+body.light.pal-brown{
+  --bg:#EFE6D8;
+  --card-top:#E7D9C4; --card-bot:#DECBB0;
+  --row-line:rgba(120,96,64,.32); --row-line-soft:rgba(120,96,64,.2);
+  --loc-ink:#6E5A40;
+}
+body.light.pal-ivory{
+  --bg:#F7F2E6;
+  --card-top:#F1EAD7; --card-bot:#EAE0C9;
+  --row-line:rgba(150,134,92,.3); --row-line-soft:rgba(150,134,92,.2);
+  --loc-ink:#6B6042;
+}
 *{margin:0;padding:0;box-sizing:border-box}
 body{
   background:var(--bg);
@@ -77,7 +111,8 @@ body.ar #jump-today{font-family:'Changa',sans-serif}
 .nav{
   display:flex;align-items:center;justify-content:flex-end;gap:8px;
   padding:12px 4px;margin-bottom:8px;border-bottom:1px solid var(--card-border);
-  position:relative;z-index:50;
+  position:sticky;top:0;z-index:50;
+  background:var(--bg);
 }
 .brand{display:flex;align-items:center;margin-right:auto}
 .nav-logo{height:52px;width:auto;display:block;object-fit:contain}
@@ -112,6 +147,14 @@ body.ar .dd-label{font-family:'Changa',sans-serif}
   font-family:'Outfit',sans-serif;font-weight:600;font-size:.74rem;padding:6px 12px;transition:all .18s}
 body.ar .seg button{font-family:'Changa',sans-serif}
 .seg button.on{background:var(--gold-grad);color:var(--letter-ink)}
+/* colour palette swatches */
+.dd-swatches .swatches{display:flex;gap:9px}
+.swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;
+  box-shadow:0 1px 4px rgba(0,0,0,.4);transition:transform .15s,border-color .15s;padding:0}
+.swatch:hover{transform:scale(1.12)}
+.swatch.on{border-color:var(--gold);box-shadow:0 0 10px -1px rgba(227,197,103,.7)}
+.sw-navy{background:#0B1020} .sw-charcoal{background:#0E0F12} .sw-green{background:#091512}
+.sw-rose{background:#E9C9C6} .sw-brown{background:#D8BE9A} .sw-ivory{background:#EFE3C6}
 .dd-action{display:flex;align-items:center;gap:9px;width:100%;padding:11px 16px;border:none;cursor:pointer;
   background:transparent;color:var(--ink);font-family:'Outfit',sans-serif;font-weight:500;font-size:.86rem;
   border-top:1px solid var(--row-line);transition:background .18s;text-align:left}
@@ -464,6 +507,12 @@ h1{
 .cd b{color:var(--gold);font-size:1.02rem;font-variant-numeric:tabular-nums;letter-spacing:.08em;font-weight:600}
 .match.next{background:rgba(227,197,103,.08)}
 .match.next .ktime{text-shadow:0 0 14px rgba(227,197,103,.7)}
+.match-cd{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;padding:6px 10px;
+  border-top:1px solid var(--row-line-soft);font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--sand);font-weight:600}
+.match-cd b{color:var(--gold);font-size:.92rem;letter-spacing:.06em;font-variant-numeric:tabular-nums;font-weight:700}
+.match-cd .mcd-label{opacity:.85}
+body.ar .match-cd{letter-spacing:0}
 .match.live{background:rgba(255,90,90,.08)}
 .match.live .ktime{color:#FF7B6B}
 .match.live .ktime .live-tag{
@@ -521,9 +570,6 @@ body.ar .stab{font-family:'Changa',sans-serif}
   font-family:'Cinzel',serif;font-weight:700;font-size:.78rem;color:var(--sand);
   border:1px solid rgba(34,48,79,.9);
 }
-.scorer-row:nth-child(1) .s-rank,.scorer-row:nth-child(2) .s-rank,.scorer-row:nth-child(3) .s-rank{
-  color:var(--letter-ink);border:none;background:var(--gold-grad);
-}
 .scorer-row .s-flag{flex:none;width:26px;height:18px;object-fit:cover;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.5)}
 .scorer-row .s-name{flex:1;min-width:0;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .scorer-row .s-team{font-size:.7rem;color:var(--sand);font-weight:400;margin-left:6px}
@@ -572,12 +618,12 @@ body.light .bracket-scroll{background:linear-gradient(180deg,#EFE9DC,#E8E1D2)}
 .kcol{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:10px;min-width:114px}
 .kcol.kconn{flex:0 0 22px;min-width:22px}
 .kcol.kcenter{flex:0 0 132px;min-width:132px;justify-content:center}
-.kcol-label{text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:.58rem;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--gold-deep);margin-bottom:6px;min-height:14px}
-body.ar .kcol-label{font-family:'Changa',sans-serif;letter-spacing:0}
 .tie{position:relative;border:1px solid rgba(185,138,46,.34);border-radius:9px;overflow:hidden;
   background:linear-gradient(180deg,#162038,#0F1729);box-shadow:0 6px 18px -12px rgba(0,0,0,.9)}
 body.light .tie{background:linear-gradient(180deg,#F0EADB,#E7E0D0)}
+.tie-tag{font-family:'Cinzel',serif;font-weight:700;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold-deep);text-align:center;padding:3px 0 2px;background:rgba(184,144,47,.08);border-bottom:1px solid var(--row-line-soft)}
+body.ar .tie-tag{font-family:'Changa',sans-serif;letter-spacing:0}
 .tie-side{display:flex;align-items:center;gap:6px;padding:7px 8px;min-height:31px}
 .tie-side+.tie-side{border-top:1px solid var(--row-line-soft)}
 .tie-side.filled{background:rgba(227,197,103,.05)}
@@ -706,17 +752,44 @@ body.ar .bnav-label{font-family:'Changa',sans-serif;letter-spacing:0}
 .champ.c1{box-shadow:0 0 22px -4px rgba(227,197,103,.5),0 12px 30px -18px rgba(0,0,0,.85)}
 body.ar .champ-team,body.ar .champ-goals small{letter-spacing:0}
 .scorers-list{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:7px}
+/* inline penalty tag on scorer rows + champion cards */
+.pen-tag{font-family:'Outfit',sans-serif;font-size:.58rem;font-weight:600;color:var(--sand);
+  border:1px solid rgba(201,184,150,.4);border-radius:5px;padding:1px 5px;margin-left:6px;letter-spacing:.04em;
+  -webkit-text-fill-color:var(--sand)}
+body.ar .pen-tag{font-family:'Changa',sans-serif;letter-spacing:0}
+.champ-pen{font-size:.56rem;font-weight:600;margin-top:4px;opacity:.85;letter-spacing:.06em}
+.champ.c1 .champ-pen{color:#5A4A14} .champ.c2 .champ-pen{color:#3A3E48} .champ.c3 .champ-pen{color:#5A3E22}
 
-/* ===== STATS TOTALS CARD ===== */
-#stats-totals{max-width:560px;margin:0 auto 18px}
-.stat-card{border:1px solid var(--card-border);border-radius:14px;padding:16px 18px;
-  background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 12px 30px -20px rgba(0,0,0,.85)}
-.stat-label{font-family:'Cinzel',serif;font-weight:700;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:4px}
+/* ===== STATS TOTALS — two square cards, below the scorers ===== */
+#stats-totals{max-width:560px;margin:24px auto 0}
+.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stat-card{border:1px solid var(--card-border);border-radius:16px;padding:18px;
+  background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 12px 30px -20px rgba(0,0,0,.85);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
+.stat-card.sq{aspect-ratio:1/1} /* square */
+.stat-label{font-family:'Cinzel',serif;font-weight:700;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:8px}
 body.ar .stat-label{font-family:'Changa',sans-serif;letter-spacing:0}
-.stat-value{font-family:'Cinzel',serif;font-weight:900;font-size:2.1rem;color:transparent;
-  background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;display:flex;align-items:baseline;gap:10px;font-variant-numeric:lining-nums}
-.stat-delta{font-family:'Outfit',sans-serif;font-weight:600;font-size:.74rem;color:var(--sand);-webkit-text-fill-color:var(--sand)}
+.stat-value{font-family:'Cinzel',serif;font-weight:900;font-size:3rem;color:transparent;line-height:1;
+  background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;font-variant-numeric:lining-nums}
+.stat-foot{margin-top:8px}
+.stat-delta{font-family:'Outfit',sans-serif;font-weight:600;font-size:.78rem;color:var(--sand)}
 body.ar .stat-delta{font-family:'Changa',sans-serif}
+.stat-sub{font-size:.62rem;color:var(--sand);letter-spacing:.06em}
+body.ar .stat-sub{letter-spacing:0}
+/* ===== HISTORICAL WINNERS ===== */
+#stats-history{max-width:560px;margin:24px auto 0}
+.hist-wrap{border:1px solid rgba(185,138,46,.34);border-radius:14px;overflow:hidden;
+  background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 14px 36px -22px rgba(0,0,0,.85)}
+.hist-head{padding:12px 16px;background:var(--head-grad);border-bottom:1px solid var(--row-line)}
+.hist-title{font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.1em;color:var(--sand);text-transform:uppercase}
+body.ar .hist-title{font-family:'Changa',sans-serif;letter-spacing:0}
+.hist-row{display:flex;align-items:center;gap:11px;padding:10px 16px;border-bottom:1px solid var(--row-line-soft)}
+.hist-row:last-child{border-bottom:none}
+.hist-row img{width:26px;height:17px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.hist-nm{flex:1;font-weight:600;color:var(--ink);font-size:.92rem}
+.hist-stars{color:var(--gold);font-size:.7rem;letter-spacing:1px}
+.hist-count{font-family:'Cinzel',serif;font-weight:700;color:var(--gold);font-size:.82rem;min-width:62px;text-align:right}
+body.ar .hist-count{font-family:'Changa',sans-serif}
 
 @media (max-width:920px){ .grid{grid-template-columns:1fr} }
 @media (max-width:520px){
@@ -870,6 +943,19 @@ body.ar .stat-delta{font-family:'Changa',sans-serif}
           <button data-theme="night">Night</button>
         </div>
       </div>
+      <div class="dd-row dd-swatches" id="row-palette">
+        <span class="dd-label"><span id="lbl-palette">Colour</span></span>
+        <div class="swatches" id="swatches-night">
+          <button class="swatch sw-navy" data-pal="navy" title="Navy" aria-label="Navy"></button>
+          <button class="swatch sw-charcoal" data-pal="charcoal" title="Charcoal" aria-label="Charcoal"></button>
+          <button class="swatch sw-green" data-pal="green" title="Dark Green" aria-label="Dark Green"></button>
+        </div>
+        <div class="swatches" id="swatches-day" hidden>
+          <button class="swatch sw-rose" data-pal="rose" title="Rose Gold" aria-label="Rose Gold"></button>
+          <button class="swatch sw-brown" data-pal="brown" title="Warm Brown" aria-label="Warm Brown"></button>
+          <button class="swatch sw-ivory" data-pal="ivory" title="Ivory Gold" aria-label="Ivory Gold"></button>
+        </div>
+      </div>
       <button class="dd-action" id="settings-edit-teams">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15 8.5 22 9.3 17 14 18.2 21 12 17.5 5.8 21 7 14 2 9.3 9 8.5 12 2"/></svg>
         <span id="lbl-edit">Edit your teams</span>
@@ -935,8 +1021,9 @@ body.ar .stat-delta{font-family:'Changa',sans-serif}
   <section class="ko">
     <div class="ko-title" id="t-stats-title">TOURNAMENT STATS</div>
     <div class="ko-sub" id="t-stats-sub">Top scorers · Goals across the tournament</div>
-    <div id="stats-totals"></div>
     <div class="scorers-wrap" id="scorers"></div>
+    <div id="stats-totals"></div>
+    <div id="stats-history"></div>
   </section>
 </div>
 
@@ -1530,41 +1617,46 @@ function renderKnockout(){
     if(teamCode) return `<div class="tie-side filled">${tFlag(teamCode)}<span class="tie-nm">${tName(teamCode)}</span></div>`;
     return `<div class="tie-side"><span class="tie-nm empty"></span></div>`;
   }
+  /* round tag shown on each tie card (per your choice) */
+  const RLABEL = {
+    r32: ar?'دور 32':'R32', r16: ar?'دور 16':'R16',
+    qf: ar?'ربع':'QF', sf: ar?'نصف':'SF', fin: ar?'نهائي':'Final'
+  };
   function r32Tie(t){
     const ca = resolveSlot(t.a, pic), cb = resolveSlot(t.b, pic);
-    return `<div class="tie" data-m="${t.m}">${sideHTML(ca)}${sideHTML(cb)}<div class="tie-date">${ar?t.da:t.d}</div></div>`;
+    return `<div class="tie" data-m="${t.m}"><div class="tie-tag">${RLABEL.r32}</div>${sideHTML(ca)}${sideHTML(cb)}<div class="tie-date">${ar?t.da:t.d}</div></div>`;
   }
-  function feedTie(m, finalCls){
+  function feedTie(m, round, finalCls){
     const src = FEED[m]||[];
     const a = koWinner[src[0]]||null, b = koWinner[src[1]]||null;
     const dt = KO_DATE[m]?(ar?KO_DATE[m][1]:KO_DATE[m][0]):'';
-    return `<div class="tie ${finalCls||''}" data-m="${m}">${sideHTML(a)}${sideHTML(b)}${dt?`<div class="tie-date">${dt}</div>`:''}</div>`;
+    const tag = RLABEL[round]||'';
+    return `<div class="tie ${finalCls||''}" data-m="${m}"><div class="tie-tag">${tag}</div>${sideHTML(a)}${sideHTML(b)}${dt?`<div class="tie-date">${dt}</div>`:''}</div>`;
   }
-  const col = (label, inner) => `<div class="kcol"><div class="kcol-label">${label}</div>${inner}</div>`;
+  const col = (inner) => `<div class="kcol">${inner}</div>`;
   const connCol = (n, dir) => `<div class="kcol kconn">${('<div class="conn '+dir+'"></div>').repeat(n)}</div>`;
 
   const L=R32.left, R=R32.right;
   const cup = `<div class="kcol kcenter">
-    <div class="kcol-label">${ar?'النهائي':'Final'}</div>
     <div class="cup">
       <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z"/></svg>
-      ${feedTie(104,'final-tie')}
+      ${feedTie(104,'fin','final-tie')}
       <div class="cup-label">${ar?'البطل':'Champion'}</div>
     </div>
   </div>`;
 
   const bracket = `<div class="bracket2">
-    ${col(ar?'دور الـ32':'R32', L.map(r32Tie).join(''))}
+    ${col(L.map(r32Tie).join(''))}
     ${connCol(4,'l')}
-    ${col(ar?'دور الـ16':'R16', [89,90,93,94].map(m=>feedTie(m)).join(''))}
+    ${col([89,90,93,94].map(m=>feedTie(m,'r16')).join(''))}
     ${connCol(2,'l')}
-    ${col(ar?'ربع':'QF', [97,98].map(m=>feedTie(m)).join(''))}
+    ${col([97,98].map(m=>feedTie(m,'qf')).join(''))}
     ${cup}
-    ${col(ar?'ربع':'QF', [99,100].map(m=>feedTie(m)).join(''))}
+    ${col([99,100].map(m=>feedTie(m,'qf')).join(''))}
     ${connCol(2,'r')}
-    ${col(ar?'دور الـ16':'R16', [91,92,95,96].map(m=>feedTie(m)).join(''))}
+    ${col([91,92,95,96].map(m=>feedTie(m,'r16')).join(''))}
     ${connCol(4,'r')}
-    ${col(ar?'دور الـ32':'R32', R.map(r32Tie).join(''))}
+    ${col(R.map(r32Tie).join(''))}
   </div>`;
 
   const note = ar
@@ -1607,6 +1699,7 @@ function renderScorers(){
   }
   const goalWord = ar ? "هدف" : "goals";
   const flagOf = code => N[code] ? N[code][1] : "";
+  const penLabel = (p)=> p>0 ? ` <span class="pen-tag">${p} ${ar?'ركلة':'pen'}</span>` : '';
 
   /* top 3 get solid gold / silver / bronze champion cards */
   const top3 = rows.slice(0,3);
@@ -1619,18 +1712,19 @@ function renderScorers(){
       <div class="champ-name">${r.name}</div>
       <div class="champ-team">${teamName(r.team)}</div>
       <div class="champ-goals">${r.goals}<small>${goalWord}</small></div>
+      ${r.pens>0?`<div class="champ-pen">${r.pens} ${ar?'ركلة جزاء':'pen'}</div>`:''}
     </div>`;
   });
   const champBlock = `<div class="champ-row">${champHtml}</div>`;
 
-  /* ranks 4+ use the original scorer-row list */
+  /* ranks 4+ use the original scorer-row list, with inline pen count */
   let listHtml = '';
   rows.slice(3).forEach((r,i)=>{
     listHtml += `<div class="scorer-row">
       <span class="s-rank">${i+4}</span>
       <img class="s-flag" src="https://flagcdn.com/h24/${flagOf(r.team)}.png" alt="${teamName(r.team)}">
       <span class="s-name">${r.name}<span class="s-team">${teamName(r.team)}</span></span>
-      <span class="s-goals">${r.goals}<small>${goalWord}</small></span>
+      <span class="s-goals">${r.goals}<small>${goalWord}</small>${penLabel(r.pens)}</span>
     </div>`;
   });
   const listBlock = listHtml
@@ -1641,18 +1735,20 @@ function renderScorers(){
 
 /* ===== Stats totals: total goals (with +today indicator) ===== */
 function tournamentGoals(){
-  /* count goals from every finished/in-play match in LIVE; also count today's */
+  /* count goals from every finished/in-play match in LIVE; also count today's
+     and the total penalty goals across the tournament */
   const liveData = (typeof LIVE!=="undefined"&&LIVE)?LIVE:{};
-  let total=0, today=0;
+  let total=0, today=0, pens=0;
   const t = meccaToday(); /* {y,mo,d} in Mecca time */
+  const countPens = (goals)=>{ if(Array.isArray(goals)) for(const g of goals){ if(g && g.pen && !g.og) pens++; } };
   for(const key in liveData){
     const lv=liveData[key]; if(lv._flipped) continue;
     const hs=(lv.homeScore==null)?0:lv.homeScore;
     const as=(lv.awayScore==null)?0:lv.awayScore;
     const g = (typeof hs==="number"?hs:0)+(typeof as==="number"?as:0);
     if(g>0) total+=g;
-    /* is this match today? match localDate is "MM/DD/YYYY HH:mm" (feed local).
-       We approximate "today" by matching our schedule's UTC day for the pairing. */
+    countPens(lv.homeGoals); countPens(lv.awayGoals);
+    /* is this match today? */
     const ca=codeFromName(lv.home), cb=codeFromName(lv.away);
     if(ca&&cb){
       const utc = matchUtcFor(ca,cb);
@@ -1662,7 +1758,7 @@ function tournamentGoals(){
       }
     }
   }
-  return {total, today};
+  return {total, today, pens};
 }
 /* find scheduled kickoff UTC for a pairing (either order) from DAYS */
 function matchUtcFor(a,b){
@@ -1680,11 +1776,55 @@ function renderStatsTotals(){
   const ar = LANG==="ar";
   const el = document.getElementById('stats-totals');
   if(!el) return;
-  const {total, today} = tournamentGoals();
+  const {total, today, pens} = tournamentGoals();
   const todayTag = today>0 ? `<span class="stat-delta">+${today} ${ar?'اليوم':'today'}</span>` : '';
-  el.innerHTML = `<div class="stat-card">
-    <div class="stat-label">${ar?'إجمالي الأهداف':'Total Goals'}</div>
-    <div class="stat-value">${total}${todayTag}</div>
+  el.innerHTML = `<div class="stat-cards">
+    <div class="stat-card sq">
+      <div class="stat-label">${ar?'إجمالي الأهداف':'Total Goals'}</div>
+      <div class="stat-value">${total}</div>
+      ${todayTag?`<div class="stat-foot">${todayTag}</div>`:''}
+    </div>
+    <div class="stat-card sq">
+      <div class="stat-label">${ar?'أهداف الركلات':'Penalty Goals'}</div>
+      <div class="stat-value">${pens}</div>
+      <div class="stat-foot"><span class="stat-sub">${ar?'من ركلات الجزاء':'from the spot'}</span></div>
+    </div>
+  </div>`;
+}
+
+/* historical World Cup winners aggregated by nation (settled history) */
+const WC_WINNERS = [
+  {code:'BRA', flag:'br', titles:5},
+  {code:'GER', flag:'de', titles:4},
+  {code:'ITA', flag:'it', titles:4},
+  {code:'ARG', flag:'ar', titles:3},
+  {code:'FRA', flag:'fr', titles:2},
+  {code:'URU', flag:'uy', titles:2},
+  {code:'ENG', flag:'gb-eng', titles:1},
+  {code:'ESP', flag:'es', titles:1}
+];
+const WC_WIN_NAME = {
+  BRA:{en:'Brazil',ar:'البرازيل'}, GER:{en:'Germany',ar:'ألمانيا'}, ITA:{en:'Italy',ar:'إيطاليا'},
+  ARG:{en:'Argentina',ar:'الأرجنتين'}, FRA:{en:'France',ar:'فرنسا'}, URU:{en:'Uruguay',ar:'الأوروغواي'},
+  ENG:{en:'England',ar:'إنجلترا'}, ESP:{en:'Spain',ar:'إسبانيا'}
+};
+function renderStatsHistory(){
+  const ar = LANG==="ar";
+  const el = document.getElementById('stats-history');
+  if(!el) return;
+  const titleWord = (n)=> ar ? (n===1?'لقب':'ألقاب') : (n===1?'title':'titles');
+  let rows='';
+  WC_WINNERS.forEach(w=>{
+    rows += `<div class="hist-row">
+      <img src="https://flagcdn.com/h24/${w.flag}.png" alt="">
+      <span class="hist-nm">${WC_WIN_NAME[w.code][ar?'ar':'en']}</span>
+      <span class="hist-stars">${'★'.repeat(w.titles)}</span>
+      <span class="hist-count">${w.titles} ${titleWord(w.titles)}</span>
+    </div>`;
+  });
+  el.innerHTML = `<div class="hist-wrap">
+    <div class="hist-head"><span class="hist-title">${ar?'أبطال كأس العالم عبر التاريخ':'World Cup Winners'}</span></div>
+    ${rows}
   </div>`;
 }
 
@@ -1821,17 +1961,23 @@ function expandMatch(m){
 }
 
 document.getElementById('schedule').addEventListener('click',(e)=>{
-  /* group badge → jump to that group's table (takes priority, no expand) */
+  /* group badge → switch to Standings page, then jump to that group's table.
+     (Groups live on the Standings page, which is hidden while on Schedule, so
+     we must switch pages first or scrollIntoView does nothing.) */
   const btn=e.target.closest('.grp');
   if(btn){
     const g=btn.dataset.grp;
-    const card=document.getElementById('group-'+g);
-    if(card){
-      card.scrollIntoView({behavior:'smooth', block:'center'});
-      card.classList.remove('flash'); void card.offsetWidth;
-      card.classList.add('flash');
-      setTimeout(()=>card.classList.remove('flash'),1200);
-    }
+    showPage('standings');
+    switchStatsTab('groups');
+    setTimeout(()=>{
+      const card=document.getElementById('group-'+g);
+      if(card){
+        card.scrollIntoView({behavior:'smooth', block:'center'});
+        card.classList.remove('flash'); void card.offsetWidth;
+        card.classList.add('flash');
+        setTimeout(()=>card.classList.remove('flash'),1200);
+      }
+    }, 60);
     return;
   }
   /* tap a COLLAPSED day's header → expand it (accordion).
@@ -1961,6 +2107,7 @@ async function loadScores(){
     /* refresh the Stats page (scorers + totals) and Knockout with new data */
     if(typeof renderScorers === "function") renderScorers();
     if(typeof renderStatsTotals === "function") renderStatsTotals();
+    if(typeof renderStatsHistory === "function") renderStatsHistory();
     const kEl = document.getElementById('knockout');
     if(kEl && !kEl.hidden && typeof renderKnockout === "function") renderKnockout();
   }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
@@ -2099,6 +2246,7 @@ function tick(){
 
     /* per-match states */
     let nextSet = false;
+    let nextMatchEl = null;
     for(const m of matches){
       const ko = +m.dataset.utc;
       const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
@@ -2165,6 +2313,8 @@ function tick(){
       m.classList.toggle('ht', ht);
       m.classList.toggle('done', done);
       m.classList.toggle('next', false);
+      const staleCd = m.querySelector('.match-cd');
+      if(staleCd) staleCd.remove();
       /* a match becomes pressable once it can have goals (live/ht/done) */
       const canExpand = live || ht || done || !!m.querySelector('.ktime.score');
       m.classList.toggle('expandable', canExpand);
@@ -2182,35 +2332,37 @@ function tick(){
         else if(finalScore.a>finalScore.h){halves[1].classList.add('win');halves[0].classList.remove('win');}
       }
 
-      if(isToday && !live && !done && !ht && !nextSet){ m.classList.add('next'); nextSet=true; }
+      if(isToday && !live && !done && !ht && !nextSet){ m.classList.add('next'); nextSet=true; nextMatchEl=m; }
     }
 
-    /* countdown bar lives ONLY inside today's card */
+    /* today's card gets the badge; the countdown now lives ON the next match
+       row (clearer than a separate header bar that could read ambiguously) */
     let cd = card.querySelector('.cd');
+    if(cd) cd.remove(); /* remove any legacy header countdown bar */
+    const he = card.querySelector('.head-extra');
     if(isToday){
-      if(!cd){
-        cd = document.createElement('div');
-        cd.className = 'cd';
-        card.querySelector('.day-head').after(cd);
-        card.querySelector('.head-extra').innerHTML = `<span class="today-badge">${LANG==="ar"?AR_UI.today:"Today"}</span>`;
+      if(he && !he.querySelector('.today-badge')){
+        he.innerHTML = `<span class="today-badge">${LANG==="ar"?AR_UI.today:"Today"}</span>`;
       }
-      const upcoming = matches.map(m=>+m.dataset.utc).filter(ko=>ko>now).sort((a,b)=>a-b)[0];
-      const liveOne  = matches.find(m=>m.classList.contains('live'));
-      if(liveOne && !upcoming){
-        cd.innerHTML = `<span>${LANG==="ar"?AR_UI.in_play:"Match in play"}</span><b>${LANG==="ar"?AR_UI.live:"LIVE"}</b>`;
-      }else if(upcoming){
-        let s = Math.floor((upcoming-now)/1000);
+      /* attach / refresh a countdown chip on the single next upcoming match */
+      if(nextMatchEl){
+        const upcoming = +nextMatchEl.dataset.utc;
+        let s = Math.max(0, Math.floor((upcoming-now)/1000));
+        let chip = nextMatchEl.querySelector('.match-cd');
+        if(!chip){
+          chip = document.createElement('div');
+          chip.className = 'match-cd';
+          nextMatchEl.appendChild(chip);
+        }
+        const dd=Math.floor(s/86400); s-=dd*86400;
         const h=Math.floor(s/3600); s-=h*3600;
         const mi=Math.floor(s/60); const se=s-mi*60;
-        const lbl = liveOne ? (LANG==="ar"?AR_UI.in_play_next:'Match in play · next kick-off')
-                            : (LANG==="ar"?AR_UI.next_ko:'Next kick-off');
-        cd.innerHTML = `<span>${lbl}</span><b>${fmt(h)}:${fmt(mi)}:${fmt(se)}</b>`;
-      }else{
-        cd.innerHTML = `<span>${LANG==="ar"?AR_UI.done:"Matchday complete"}</span><b>—</b>`;
+        const lbl = LANG==="ar"?AR_UI.next_ko:'Next kick-off';
+        const time = dd>0 ? `${dd}${LANG==="ar"?'ي':'d'} ${fmt(h)}:${fmt(mi)}:${fmt(se)}` : `${fmt(h)}:${fmt(mi)}:${fmt(se)}`;
+        chip.innerHTML = `<span class="mcd-label">${lbl}</span><b>${time}</b>`;
       }
-    }else if(cd){
-      cd.remove();
-      card.querySelector('.head-extra').innerHTML = '';
+    }else if(he){
+      he.innerHTML = '';
     }
   }
   DAYS_INIT_DONE = true;  /* initial collapse state now set; user taps take over */
@@ -2270,6 +2422,7 @@ function applyLanguage(){
   set('picker-sub', ar?'تابع حتى 5 فِرَق · <span id="picker-count">'+(typeof pickerSel!=="undefined"?pickerSel.length:0)+'</span>/5'
                        :'Pick up to 5 teams to follow · <span id="picker-count">'+(typeof pickerSel!=="undefined"?pickerSel.length:0)+'</span>/5');
   set('picker-confirm', ar?"تأكيد":"Confirm");
+  set('lbl-palette', ar?"اللون":"Colour");
   set('picker-skip', ar?"ربما لاحقاً":"Maybe later");
   if(typeof renderFavorites === "function") renderFavorites();
   if(typeof buildPickerGrid === "function" && !document.getElementById('picker').hidden) buildPickerGrid();
@@ -2308,6 +2461,30 @@ function applyTheme(){
   document.querySelectorAll('#seg-theme button').forEach(b=>{
     b.classList.toggle('on', b.dataset.theme === (light?'light':'night'));
   });
+  /* show the swatch set for the current mode, hide the other */
+  const nightSw = document.getElementById('swatches-night');
+  const daySw   = document.getElementById('swatches-day');
+  if(nightSw) nightSw.hidden = light;
+  if(daySw)   daySw.hidden   = !light;
+  /* highlight the active palette swatch */
+  const activePal = light ? DAY_PAL : NIGHT_PAL;
+  document.querySelectorAll('.swatch').forEach(s=>s.classList.toggle('on', s.dataset.pal===activePal));
+}
+/* palette state: a sub-colour within each mode. Defaults: navy (night), rose (day) */
+const PAL_CLASS = {navy:'', charcoal:'pal-charcoal', green:'pal-green',
+                   rose:'pal-rose', brown:'pal-brown', ivory:'pal-ivory'};
+let NIGHT_PAL='navy', DAY_PAL='rose';
+try{
+  NIGHT_PAL = localStorage.getItem('wc26_pal_night') || 'navy';
+  DAY_PAL   = localStorage.getItem('wc26_pal_day')   || 'rose';
+}catch(e){}
+function applyPalette(){
+  /* clear all palette classes, then apply the one for the active mode */
+  Object.values(PAL_CLASS).forEach(c=>{ if(c) document.body.classList.remove(c); });
+  const light = document.body.classList.contains('light');
+  const pal = light ? DAY_PAL : NIGHT_PAL;
+  const cls = PAL_CLASS[pal];
+  if(cls) document.body.classList.add(cls);
 }
 /* initial theme: a remembered manual choice wins; otherwise follow the system setting */
 (function initTheme(){
@@ -2316,11 +2493,23 @@ function applyTheme(){
   else if(saved==='night') document.body.classList.remove('light');
   else if(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) document.body.classList.add('light');
 })();
+applyPalette();
 /* segmented Light | Night control inside settings (choice is remembered) */
 document.getElementById('seg-theme').addEventListener('click', (e)=>{
   const b = e.target.closest('button'); if(!b) return;
   document.body.classList.toggle('light', b.dataset.theme==='light');
   try{ localStorage.setItem('wc26_theme', b.dataset.theme); }catch(e){}
+  applyPalette();
+  applyTheme();
+});
+/* colour swatches — pick a sub-palette within the active mode (remembered) */
+document.getElementById('row-palette').addEventListener('click', (e)=>{
+  const s = e.target.closest('.swatch'); if(!s) return;
+  const pal = s.dataset.pal;
+  const light = document.body.classList.contains('light');
+  if(light){ DAY_PAL=pal; try{ localStorage.setItem('wc26_pal_day',pal); }catch(e){} }
+  else     { NIGHT_PAL=pal; try{ localStorage.setItem('wc26_pal_night',pal); }catch(e){} }
+  applyPalette();
   applyTheme();
 });
 applyTheme();
@@ -2561,7 +2750,7 @@ function showPage(page){
   if(jb && page!=='schedule') jb.hidden=true;
   /* render the page's dynamic content fresh on entry */
   if(page==='standings'){ renderGroups(); const k=document.getElementById('knockout'); if(k&&!k.hidden) renderKnockout(); }
-  if(page==='stats'){ renderScorers(); renderStatsTotals(); }
+  if(page==='stats'){ renderScorers(); renderStatsTotals(); renderStatsHistory(); }
   window.scrollTo({top:0,behavior:'instant'});
   if(typeof updateJumpButton==="function") updateJumpButton();
 }
@@ -2576,6 +2765,7 @@ setInterval(tick, 1000);
 /* initial Stats render so it's ready when first opened */
 renderScorers();
 renderStatsTotals();
+renderStatsHistory();
 
 /* first-open: if no favorites saved yet, show the picker. Otherwise render them. */
 renderFavorites();
