@@ -120,7 +120,7 @@ body.ar .seg button{font-family:'Changa',sans-serif}
 body.ar .dd-action{font-family:'Changa',sans-serif}
 
 /* ============ FAVORITES SECTION ============ */
-#favorites{margin:0 0 30px;border:1px solid var(--card-border);border-radius:14px;overflow:hidden;
+.favorites{margin:0 0 30px;border:1px solid var(--card-border);border-radius:14px;overflow:hidden;
   background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 18px 44px -22px rgba(0,0,0,.6)}
 .fav-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--row-line);
   background:var(--head-grad)}
@@ -533,6 +533,43 @@ body.ar .stab{font-family:'Changa',sans-serif}
 }
 .scorer-row .s-goals small{font-size:.6rem;color:var(--sand);font-weight:400;letter-spacing:.08em}
 .scorers-empty{text-align:center;color:var(--sand);padding:30px;font-size:.9rem}
+.knockout-wrap[hidden]{display:none !important}
+/* ---- KNOCKOUT VIEW (two-sided bracket) ---- */
+.knockout-wrap{margin-bottom:30px}
+.ko-note{max-width:760px;margin:0 auto 18px;text-align:center;color:var(--sand);font-size:.72rem;
+  line-height:1.5;border:1px solid var(--row-line);border-radius:10px;padding:10px 14px;background:rgba(14,21,38,.4)}
+body.ar .ko-note{letter-spacing:0}
+/* horizontal-scroll shell keeps the wide bracket readable on phones */
+.bracket-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:0 2px 14px}
+.bracket2{display:grid;grid-template-columns:repeat(9,minmax(116px,1fr));gap:0 9px;align-items:center;
+  min-width:1060px;margin:0 auto}
+.kcol{display:flex;flex-direction:column;justify-content:space-around;height:100%;gap:9px}
+.kcol-label{text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:.56rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--gold-deep);margin-bottom:8px;min-height:13px}
+body.ar .kcol-label{font-family:'Changa',sans-serif;letter-spacing:0}
+.tie{position:relative;border:1px solid rgba(185,138,46,.3);border-radius:9px;overflow:hidden;
+  background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 8px 22px -16px rgba(0,0,0,.85)}
+.tie-side{display:flex;align-items:center;gap:6px;padding:7px 8px;font-size:.76rem;min-height:30px}
+.tie-side+.tie-side{border-top:1px solid var(--row-line-soft)}
+.tie-side img{width:22px;height:15px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.tie-nm{flex:1;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.82rem}
+.tie-nm.empty{min-height:15px} /* blank slot until a team qualifies */
+.tie-date{text-align:center;font-size:.5rem;letter-spacing:.08em;color:var(--sand);padding:2px 0 3px;background:rgba(227,197,103,.04)}
+body.ar .tie-date{letter-spacing:0}
+.tie.final-tie{border-color:var(--gold);box-shadow:0 0 20px -4px rgba(227,197,103,.45)}
+/* connector columns */
+.kconn{justify-content:space-around}
+.conn{position:relative;flex:1;min-height:34px}
+.conn::before{content:"";position:absolute;top:25%;bottom:25%;width:1.5px;background:var(--gold-deep);opacity:.5}
+.conn.l::after,.conn.r::after{content:"";position:absolute;top:50%;width:50%;height:1.5px;background:var(--gold-deep);opacity:.5}
+.conn.l::before{left:0}.conn.l::after{left:50%}
+.conn.r::before{right:0}.conn.r::after{right:50%}
+/* center trophy + final */
+.kcenter{justify-content:center}
+.cup{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--gold)}
+.cup svg{filter:drop-shadow(0 0 10px rgba(227,197,103,.4))}
+.cup-label{font-family:'Cinzel',serif;font-weight:700;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+body.ar .cup-label{font-family:'Changa',sans-serif;letter-spacing:0}
 .groups-wrap{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:30px;
 }
@@ -593,6 +630,63 @@ body.ar .stab{font-family:'Changa',sans-serif}
 .wdl .wl{background:#4ED38A;box-shadow:0 0 0 2px rgba(78,211,138,.3)}
 .wdl .dl{background:var(--sand);box-shadow:0 0 0 2px rgba(201,184,150,.3)}
 .wdl .ll{background:#E0566B;box-shadow:0 0 0 2px rgba(224,86,107,.3)}
+
+/* ===== 3-PAGE LAYOUT + BOTTOM NAV ===== */
+.page[hidden]{display:none !important}
+.wrap{padding-bottom:96px} /* room for the fixed bottom nav */
+#bottom-nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  display:flex;justify-content:space-around;align-items:stretch;
+  padding:8px 6px calc(8px + env(safe-area-inset-bottom));
+  background:linear-gradient(0deg,var(--card-bot),var(--card-top));
+  border-top:1px solid var(--card-border);
+  box-shadow:0 -10px 30px -12px rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);
+}
+.bnav-btn{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;
+  background:transparent;border:none;padding:6px 4px;border-radius:10px;transition:background .18s;
+}
+.bnav-btn svg{width:23px;height:23px;stroke:var(--sand);transition:stroke .2s,transform .2s}
+.bnav-label{font-family:'Cinzel',serif;font-weight:600;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--sand);transition:color .2s}
+body.ar .bnav-label{font-family:'Changa',sans-serif;letter-spacing:0}
+.bnav-btn:hover svg{stroke:var(--gold)}
+.bnav-btn.active svg{stroke:var(--gold);transform:translateY(-1px)}
+.bnav-btn.active .bnav-label{color:var(--gold)}
+.bnav-btn.active{background:rgba(184,144,47,.08)}
+
+/* ===== TOP-3 CHAMPION CARDS (solid gold/silver/bronze) ===== */
+.champ-row{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;max-width:560px;margin:0 auto 16px}
+.champ{position:relative;border-radius:14px;padding:16px 10px 14px;text-align:center;
+  box-shadow:0 12px 30px -18px rgba(0,0,0,.85);border:1px solid rgba(0,0,0,.15)}
+.champ-medal{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;margin:0 auto 9px;
+  font-family:'Cinzel',serif;font-weight:700;font-size:.82rem;background:rgba(0,0,0,.22);color:#fff}
+.champ-flag{width:42px;height:28px;object-fit:cover;border-radius:4px;margin:0 auto 9px;display:block;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.champ-name{font-weight:700;font-size:.82rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.champ-team{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;margin-top:2px;opacity:.8}
+.champ-goals{font-family:'Cinzel',serif;font-weight:900;font-size:1.7rem;margin-top:7px;line-height:1}
+.champ-goals small{display:block;font-size:.5rem;letter-spacing:.18em;font-weight:400;margin-top:1px;opacity:.7}
+/* solid metallic backgrounds; dark ink for contrast */
+.champ.c1{background:linear-gradient(160deg,#F7ECCB,#E3C567 55%,#B98A2E);color:#3A2E0A}
+.champ.c2{background:linear-gradient(160deg,#F0F3F8,#BFC7D6 55%,#8A93A6);color:#2A2E36}
+.champ.c3{background:linear-gradient(160deg,#EAC9A0,#C8945A 55%,#9A6E3E);color:#3A2614}
+.champ.c1 .champ-name,.champ.c1 .champ-goals{color:#3A2E0A}
+.champ.c2 .champ-name,.champ.c2 .champ-goals{color:#2A2E36}
+.champ.c3 .champ-name,.champ.c3 .champ-goals{color:#3A2614}
+.champ.c1{box-shadow:0 0 22px -4px rgba(227,197,103,.5),0 12px 30px -18px rgba(0,0,0,.85)}
+body.ar .champ-team,body.ar .champ-goals small{letter-spacing:0}
+.scorers-list{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:7px}
+
+/* ===== STATS TOTALS CARD ===== */
+#stats-totals{max-width:560px;margin:0 auto 18px}
+.stat-card{border:1px solid var(--card-border);border-radius:14px;padding:16px 18px;
+  background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 12px 30px -20px rgba(0,0,0,.85)}
+.stat-label{font-family:'Cinzel',serif;font-weight:700;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:4px}
+body.ar .stat-label{font-family:'Changa',sans-serif;letter-spacing:0}
+.stat-value{font-family:'Cinzel',serif;font-weight:900;font-size:2.1rem;color:transparent;
+  background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;display:flex;align-items:baseline;gap:10px;font-variant-numeric:lining-nums}
+.stat-delta{font-family:'Outfit',sans-serif;font-weight:600;font-size:.74rem;color:var(--sand);-webkit-text-fill-color:var(--sand)}
+body.ar .stat-delta{font-family:'Changa',sans-serif}
 
 @media (max-width:920px){ .grid{grid-template-columns:1fr} }
 @media (max-width:520px){
@@ -766,29 +860,74 @@ body.ar .stab{font-family:'Changa',sans-serif}
   <div class="tz-badge" id="t-tz"><span id="wc-phrase">World Cup</span></div>
 </header>
 
-<section id="favorites" hidden>
-  <div class="fav-head">
-    <span class="fav-title" id="fav-title">Your Teams</span>
-    <button id="fav-edit" class="fav-edit" aria-label="Edit your teams">★ Edit</button>
-  </div>
-  <div id="fav-strips"></div>
-</section>
+<!-- ===================== PAGE: SCHEDULE ===================== -->
+<div class="page" id="page-schedule">
+  <section class="favorites" id="fav-schedule" data-mode="matches" hidden>
+    <div class="fav-head">
+      <span class="fav-title fav-title-schedule">Your Teams</span>
+      <button class="fav-edit fav-edit-btn" aria-label="Edit your teams">★ Edit</button>
+    </div>
+    <div class="fav-strips"></div>
+  </section>
+  <div class="grid" id="schedule"></div>
+</div>
 
-<div class="grid" id="schedule"></div>
+<!-- ===================== PAGE: STANDINGS ===================== -->
+<div class="page" id="page-standings" hidden>
+  <section class="favorites" id="fav-standings" data-mode="standings" hidden>
+    <div class="fav-head">
+      <span class="fav-title fav-title-standings">Your Teams</span>
+      <button class="fav-edit fav-edit-btn" aria-label="Edit your teams">★ Edit</button>
+    </div>
+    <div class="fav-strips"></div>
+  </section>
+  <section class="ko">
+    <div class="ko-title" id="t-ko-title">GROUPS &amp; STANDINGS</div>
+    <div class="ko-sub" id="t-ko-sub">12 Groups · Points update as matches are played</div>
+    <div class="stats-tabs" role="tablist">
+      <button class="stab active" id="tab-groups" data-tab="groups">Groups</button>
+      <button class="stab" id="tab-knockout" data-tab="knockout">Knockout</button>
+    </div>
+    <div class="groups-wrap" id="groups"></div>
+    <div class="knockout-wrap" id="knockout" hidden></div>
+  </section>
+</div>
 
-<section class="ko">
-  <div class="ko-title" id="t-ko-title">GROUPS &amp; STANDINGS</div>
-  <div class="ko-sub" id="t-ko-sub">12 Groups · Points update as matches are played</div>
-  <div class="stats-tabs" role="tablist">
-    <button class="stab active" id="tab-groups" data-tab="groups">Groups</button>
-    <button class="stab" id="tab-scorers" data-tab="scorers">Top Scorers</button>
-  </div>
-  <div class="groups-wrap" id="groups"></div>
-  <div class="scorers-wrap" id="scorers" hidden></div>
-</section>
+<!-- ===================== PAGE: STATS ===================== -->
+<div class="page" id="page-stats" hidden>
+  <section class="favorites" id="fav-stats" data-mode="scorers" hidden>
+    <div class="fav-head">
+      <span class="fav-title fav-title-stats">Your Teams</span>
+      <button class="fav-edit fav-edit-btn" aria-label="Edit your teams">★ Edit</button>
+    </div>
+    <div class="fav-strips"></div>
+  </section>
+  <section class="ko">
+    <div class="ko-title" id="t-stats-title">TOURNAMENT STATS</div>
+    <div class="ko-sub" id="t-stats-sub">Top scorers · Goals across the tournament</div>
+    <div id="stats-totals"></div>
+    <div class="scorers-wrap" id="scorers"></div>
+  </section>
+</div>
 
 <footer id="t-footer">Group Stage · Road to the Final — MetLife Stadium · July 19, 2026</footer>
 </div>
+
+<!-- ===================== BOTTOM NAV ===================== -->
+<nav id="bottom-nav">
+  <button class="bnav-btn active" data-page="schedule">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    <span class="bnav-label" id="bnav-schedule">Schedule</span>
+  </button>
+  <button class="bnav-btn" data-page="standings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="10" x2="20" y2="10"/><line x1="4" y1="14" x2="20" y2="14"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+    <span class="bnav-label" id="bnav-standings">Standings</span>
+  </button>
+  <button class="bnav-btn" data-page="stats">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19V11M15 19V5M3 19h18M21 19V9a0 0 0 0 0 0 0"/><rect x="3" y="3" width="18" height="18" rx="2" opacity="0"/></svg>
+    <span class="bnav-label" id="bnav-stats">Stats</span>
+  </button>
+</nav>
 <button id="jump-today" aria-label="Jump to today's matches" title="Today's matches" hidden>
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
@@ -1268,45 +1407,245 @@ function computeTopScorers(){
   return rows.slice(0,10);
 }
 
+/* ============ KNOCKOUT (Round of 32 → Final) ============
+   Built purely from group standings. Group winners (1st) and runners-up (2nd)
+   fill automatically once tables settle. The 8 best third-placed teams are
+   chosen by: points → goal difference → goals scored (your ranking logic).
+   Exact FIFA R32 third-place pairings need FIFA's 495-combination table, so
+   third-place bracket slots are placed by our own ranking and clearly noted
+   as provisional until the official assignment after the group stage. */
+
+/* per-group: standing rows, with completion flag (all 6 group matches done) */
+function groupIsComplete(codes){
+  /* a group of 4 plays 6 matches; complete when every team has played 3 */
+  const rows = computeStandings(codes);
+  return rows.every(r=>r.P>=3);
+}
+/* gather winners, runners-up, and all third-placed teams across the 12 groups */
+function knockoutPicture(){
+  const winners={}, runners={}, thirds=[];
+  for(const g of Object.keys(GROUPS)){
+    const rows = computeStandings(GROUPS[g]);
+    const complete = rows.every(r=>r.P>=3);
+    winners[g] = {code:rows[0]?rows[0].code:null, settled:complete};
+    runners[g] = {code:rows[1]?rows[1].code:null, settled:complete};
+    if(rows[2]) thirds.push({code:rows[2].code, grp:g, Pts:rows[2].Pts, GD:rows[2].GD, GF:rows[2].GF, settled:complete});
+  }
+  /* rank third-placed teams: points, then GD, then GF (your logic) */
+  thirds.sort((a,b)=> b.Pts-a.Pts || b.GD-a.GD || b.GF-a.GF || N[a.code][0].localeCompare(N[b.code][0]));
+  return {winners, runners, thirds};
+}
+
+/* official WC2026 R32 structure (FIFA). Each tie: match no, two source slots,
+   and date. Slot codes: "1A"=winner A, "2B"=runner-up B, "3:ABCDF"=a third-
+   placed team from one of those groups. Split into left/right halves. */
+const R32 = {
+  left: [
+    {m:74, a:'1E', b:'3:ABCDF', d:'Jun 29', da:'29 يونيو'},
+    {m:77, a:'1I', b:'3:CDFGH', d:'Jun 30', da:'30 يونيو'},
+    {m:73, a:'2A', b:'2B',      d:'Jun 28', da:'28 يونيو'},
+    {m:75, a:'1F', b:'2C',      d:'Jun 30', da:'30 يونيو'},
+    {m:83, a:'2K', b:'2L',      d:'Jul 2',  da:'2 يوليو'},
+    {m:84, a:'1H', b:'2J',      d:'Jul 2',  da:'2 يوليو'},
+    {m:81, a:'1D', b:'3:BEFIJ', d:'Jul 2',  da:'2 يوليو'},
+    {m:82, a:'1G', b:'3:AEHIJ', d:'Jul 1',  da:'1 يوليو'},
+  ],
+  right: [
+    {m:76, a:'1C', b:'2F',      d:'Jun 29', da:'29 يونيو'},
+    {m:78, a:'2E', b:'2I',      d:'Jun 30', da:'30 يونيو'},
+    {m:79, a:'1A', b:'3:CEFHI', d:'Jul 1',  da:'1 يوليو'},
+    {m:80, a:'1L', b:'3:EHIJK', d:'Jul 1',  da:'1 يوليو'},
+    {m:86, a:'1J', b:'2H',      d:'Jul 3',  da:'3 يوليو'},
+    {m:88, a:'2D', b:'2G',      d:'Jul 3',  da:'3 يوليو'},
+    {m:85, a:'1B', b:'3:EFGIJ', d:'Jul 3',  da:'3 يوليو'},
+    {m:87, a:'1K', b:'3:DEIJL', d:'Jul 4',  da:'4 يوليو'},
+  ]
+};
+/* R16/QF/SF/Final feed map by match number → its two source match winners */
+const FEED = {
+  89:[74,77], 90:[73,75], 93:[83,84], 94:[81,82],
+  91:[76,78], 92:[79,80], 95:[86,88], 96:[85,87],
+  97:[89,90], 98:[93,94], 99:[91,92], 100:[95,96],
+  101:[97,98], 102:[99,100], 104:[101,102]
+};
+const KO_DATE = {
+  89:['Jul 4','4 يوليو'],90:['Jul 4','4 يوليو'],93:['Jul 6','6 يوليو'],94:['Jul 7','7 يوليو'],
+  91:['Jul 5','5 يوليو'],92:['Jul 5','5 يوليو'],95:['Jul 6','6 يوليو'],96:['Jul 7','7 يوليو'],
+  97:['Jul 9','9 يوليو'],98:['Jul 10','10 يوليو'],99:['Jul 10','10 يوليو'],100:['Jul 11','11 يوليو'],
+  101:['Jul 14','14 يوليو'],102:['Jul 15','15 يوليو'],104:['Jul 19 · MetLife','19 يوليو · ميت لايف']
+};
+
+/* resolve a slot code to a qualified team code, or null if not yet known.
+   Only fills when the source group is actually settled. Third-place slots
+   need FIFA's official assignment table, so they stay empty until known. */
+function resolveSlot(code, pic){
+  if(!code) return null;
+  if(code[0]==='1'){ const g=code.slice(1); const w=pic.winners[g]; return (w&&w.settled)?w.code:null; }
+  if(code[0]==='2'){ const g=code.slice(1); const r=pic.runners[g]; return (r&&r.settled)?r.code:null; }
+  return null; /* "3:..." third-place slots stay empty until officially assigned */
+}
+
+function renderKnockout(){
+  const ar = LANG==="ar";
+  const pic = knockoutPicture();
+  const el = document.getElementById('knockout');
+  const tFlag = c => c ? `<img src="https://flagcdn.com/h24/${N[c][1]}.png" alt="">` : '';
+  const tName = c => c ? teamName(c) : '';
+
+  const koWinner = {}; /* matchNo -> team code, once knockout games are played */
+
+  function sideHTML(teamCode){
+    if(teamCode) return `<div class="tie-side filled">${tFlag(teamCode)}<span class="tie-nm">${tName(teamCode)}</span></div>`;
+    return `<div class="tie-side"><span class="tie-nm empty"></span></div>`;
+  }
+  function r32Tie(t){
+    const ca = resolveSlot(t.a, pic), cb = resolveSlot(t.b, pic);
+    return `<div class="tie" data-m="${t.m}">${sideHTML(ca)}${sideHTML(cb)}<div class="tie-date">${ar?t.da:t.d}</div></div>`;
+  }
+  function feedTie(m, finalCls){
+    const src = FEED[m]||[];
+    const a = koWinner[src[0]]||null, b = koWinner[src[1]]||null;
+    const dt = KO_DATE[m]?(ar?KO_DATE[m][1]:KO_DATE[m][0]):'';
+    return `<div class="tie ${finalCls||''}" data-m="${m}">${sideHTML(a)}${sideHTML(b)}${dt?`<div class="tie-date">${dt}</div>`:''}</div>`;
+  }
+  const col = (label, inner) => `<div class="kcol"><div class="kcol-label">${label}</div>${inner}</div>`;
+  const connCol = (n, dir) => `<div class="kcol kconn">${('<div class="conn '+dir+'"></div>').repeat(n)}</div>`;
+
+  const L=R32.left, R=R32.right;
+  const cup = `<div class="kcol kcenter">
+    <div class="kcol-label">${ar?'النهائي':'Final'}</div>
+    <div class="cup">
+      <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z"/></svg>
+      ${feedTie(104,'final-tie')}
+      <div class="cup-label">${ar?'البطل':'Champion'}</div>
+    </div>
+  </div>`;
+
+  const bracket = `<div class="bracket2">
+    ${col(ar?'دور الـ32':'R32', L.map(r32Tie).join(''))}
+    ${connCol(4,'l')}
+    ${col(ar?'دور الـ16':'R16', [89,90,93,94].map(m=>feedTie(m)).join(''))}
+    ${connCol(2,'l')}
+    ${col(ar?'ربع':'QF', [97,98].map(m=>feedTie(m)).join(''))}
+    ${cup}
+    ${col(ar?'ربع':'QF', [99,100].map(m=>feedTie(m)).join(''))}
+    ${connCol(2,'r')}
+    ${col(ar?'دور الـ16':'R16', [91,92,95,96].map(m=>feedTie(m)).join(''))}
+    ${connCol(4,'r')}
+    ${col(ar?'دور الـ32':'R32', R.map(r32Tie).join(''))}
+  </div>`;
+
+  const note = ar
+    ? 'الشبكة بالترتيب الرسمي للفيفا. تُملأ المنتخبات تلقائياً بمجرد تأهلها من المجموعات.'
+    : 'Official FIFA bracket structure. Slots fill automatically as teams qualify from the groups.';
+
+  el.innerHTML = `<div class="ko-note">${note}</div><div class="bracket-scroll">${bracket}</div>`;
+}
+
 function renderScorers(){
   const ar = LANG==="ar";
   const rows = computeTopScorers();
   const el = document.getElementById('scorers');
+  if(!el) return;
   if(!rows.length){
     el.innerHTML = `<div class="scorers-empty">${ar?"لا توجد أهداف بعد":"No goals yet — check back once matches kick off."}</div>`;
     return;
   }
   const goalWord = ar ? "هدف" : "goals";
-  let html="";
-  rows.forEach((r,i)=>{
-    const code = r.team;
-    const flagCode = N[code] ? N[code][1] : "";
-    const teamNm = teamName(code);
-    html += `<div class="scorer-row">
-      <span class="s-rank">${i+1}</span>
-      <img class="s-flag" src="https://flagcdn.com/h24/${flagCode}.png" alt="${teamNm}">
-      <span class="s-name">${r.name}<span class="s-team">${teamNm}</span></span>
+  const flagOf = code => N[code] ? N[code][1] : "";
+
+  /* top 3 get solid gold / silver / bronze champion cards */
+  const top3 = rows.slice(0,3);
+  const medalClass = ['c1','c2','c3'];
+  let champHtml = '';
+  top3.forEach((r,i)=>{
+    champHtml += `<div class="champ ${medalClass[i]}">
+      <div class="champ-medal">${i+1}</div>
+      <img class="champ-flag" src="https://flagcdn.com/h60/${flagOf(r.team)}.png" alt="${teamName(r.team)}">
+      <div class="champ-name">${r.name}</div>
+      <div class="champ-team">${teamName(r.team)}</div>
+      <div class="champ-goals">${r.goals}<small>${goalWord}</small></div>
+    </div>`;
+  });
+  const champBlock = `<div class="champ-row">${champHtml}</div>`;
+
+  /* ranks 4+ use the original scorer-row list */
+  let listHtml = '';
+  rows.slice(3).forEach((r,i)=>{
+    listHtml += `<div class="scorer-row">
+      <span class="s-rank">${i+4}</span>
+      <img class="s-flag" src="https://flagcdn.com/h24/${flagOf(r.team)}.png" alt="${teamName(r.team)}">
+      <span class="s-name">${r.name}<span class="s-team">${teamName(r.team)}</span></span>
       <span class="s-goals">${r.goals}<small>${goalWord}</small></span>
     </div>`;
   });
-  el.innerHTML = html;
+  const listBlock = listHtml
+    ? `<div class="scorers-list">${listHtml}</div>` : '';
+
+  el.innerHTML = champBlock + listBlock;
+}
+
+/* ===== Stats totals: total goals (with +today indicator) ===== */
+function tournamentGoals(){
+  /* count goals from every finished/in-play match in LIVE; also count today's */
+  const liveData = (typeof LIVE!=="undefined"&&LIVE)?LIVE:{};
+  let total=0, today=0;
+  const t = meccaToday(); /* {y,mo,d} in Mecca time */
+  for(const key in liveData){
+    const lv=liveData[key]; if(lv._flipped) continue;
+    const hs=(lv.homeScore==null)?0:lv.homeScore;
+    const as=(lv.awayScore==null)?0:lv.awayScore;
+    const g = (typeof hs==="number"?hs:0)+(typeof as==="number"?as:0);
+    if(g>0) total+=g;
+    /* is this match today? match localDate is "MM/DD/YYYY HH:mm" (feed local).
+       We approximate "today" by matching our schedule's UTC day for the pairing. */
+    const ca=codeFromName(lv.home), cb=codeFromName(lv.away);
+    if(ca&&cb){
+      const utc = matchUtcFor(ca,cb);
+      if(utc!=null){
+        const md = new Date(utc + MECCA_OFFSET);
+        if(md.getUTCFullYear()===t.y && md.getUTCMonth()===t.mo && md.getUTCDate()===t.d) today+=g;
+      }
+    }
+  }
+  return {total, today};
+}
+/* find scheduled kickoff UTC for a pairing (either order) from DAYS */
+function matchUtcFor(a,b){
+  for(const day of DAYS){
+    for(const [t,ha,hb] of day.m){
+      if((ha===a&&hb===b)||(ha===b&&hb===a)){
+        const [hh,mm]=t.split(":").map(Number);
+        return Date.UTC(2026,5,day.d,hh-3,mm);
+      }
+    }
+  }
+  return null;
+}
+function renderStatsTotals(){
+  const ar = LANG==="ar";
+  const el = document.getElementById('stats-totals');
+  if(!el) return;
+  const {total, today} = tournamentGoals();
+  const todayTag = today>0 ? `<span class="stat-delta">+${today} ${ar?'اليوم':'today'}</span>` : '';
+  el.innerHTML = `<div class="stat-card">
+    <div class="stat-label">${ar?'إجمالي الأهداف':'Total Goals'}</div>
+    <div class="stat-value">${total}${todayTag}</div>
+  </div>`;
 }
 
 /* tab switching: Groups ⇄ Top Scorers */
 function switchStatsTab(tab){
   const groupsEl = document.getElementById('groups');
-  const scorersEl = document.getElementById('scorers');
-  const gTab = document.getElementById('tab-groups');
-  const sTab = document.getElementById('tab-scorers');
-  const showScorers = (tab==="scorers");
-  groupsEl.hidden = showScorers;
-  scorersEl.hidden = !showScorers;
-  gTab.classList.toggle('active', !showScorers);
-  sTab.classList.toggle('active', showScorers);
-  if(showScorers) renderScorers();
+  const knockoutEl = document.getElementById('knockout');
+  groupsEl.hidden   = (tab!=="groups");
+  knockoutEl.hidden = (tab!=="knockout");
+  document.getElementById('tab-groups').classList.toggle('active', tab==="groups");
+  document.getElementById('tab-knockout').classList.toggle('active', tab==="knockout");
+  if(tab==="knockout") renderKnockout();
 }
 document.getElementById('tab-groups').addEventListener('click', ()=>switchStatsTab('groups'));
-document.getElementById('tab-scorers').addEventListener('click', ()=>switchStatsTab('scorers'));
+document.getElementById('tab-knockout').addEventListener('click', ()=>switchStatsTab('knockout'));
 
 /* floating "jump to today" button: scrolls to today's match card.
    Visible only when a today card exists, and hidden while it's already on screen. */
@@ -1475,7 +1814,7 @@ const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after ki
 /* ====== LIVE DATA SOURCE ======
    Paste your Cloudflare Worker URL here (e.g. "https://wc26-scores.<you>.workers.dev").
    Leave as "" to use the local scores.json (GitHub Action) instead. */
-const SCORES_URL = "https://wc2026-scores.abdulelah12012.workers.dev";
+const SCORES_URL = "https://wc2026-scores.abdulelah12012.workers.dev/";
 
 let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
 
@@ -1565,9 +1904,11 @@ async function loadScores(){
     if(typeof renderGroups === "function") renderGroups();
     /* refresh favorites strips with new live data */
     if(typeof renderFavorites === "function") renderFavorites();
-    /* if the Top Scorers tab is open, refresh it with the new goal data */
-    const sEl = document.getElementById('scorers');
-    if(sEl && !sEl.hidden && typeof renderScorers === "function") renderScorers();
+    /* refresh the Stats page (scorers + totals) and Knockout with new data */
+    if(typeof renderScorers === "function") renderScorers();
+    if(typeof renderStatsTotals === "function") renderStatsTotals();
+    const kEl = document.getElementById('knockout');
+    if(kEl && !kEl.hidden && typeof renderKnockout === "function") renderKnockout();
   }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
 }
 /* resolve a feed name to our team code, or null if unknown */
@@ -1854,8 +2195,13 @@ function applyLanguage(){
   set('t-ko-title',ar?AR_UI.ko_title:"GROUPS &amp; STANDINGS");
   set('t-ko-sub',  ar?AR_UI.ko_sub:"12 Groups · Points update as matches are played");
   set('tab-groups',ar?"المجموعات":"Groups");
-  set('tab-scorers',ar?"الهدافون":"Top Scorers");
+  set('tab-knockout',ar?"الأدوار الإقصائية":"Knockout");
   set('jump-today-label',ar?"اليوم":"Today");
+  set('t-stats-title', ar?"إحصائيات البطولة":"TOURNAMENT STATS");
+  set('t-stats-sub', ar?"الهدافون · الأهداف خلال البطولة":"Top scorers · Goals across the tournament");
+  set('bnav-schedule', ar?"المباريات":"Schedule");
+  set('bnav-standings', ar?"الترتيب":"Standings");
+  set('bnav-stats', ar?"إحصائيات":"Stats");
   set('t-footer',  ar?AR_UI.footer:"Group Stage · Road to the Final — MetLife Stadium · July 19, 2026");
   /* settings dropdown labels + active states */
   set('settings-label', ar?"الإعدادات":"Settings");
@@ -1877,6 +2223,8 @@ function applyLanguage(){
   renderSchedule();
   DAYS_INIT_DONE = false;  /* DOM rebuilt: let tick() re-apply initial collapse */
   renderGroups();
+  const kEl = document.getElementById('knockout');
+  if(kEl && !kEl.hidden && typeof renderKnockout === "function") renderKnockout();
   reattachConfetti();
   tick(); /* refresh live states/countdown text immediately */
 }
@@ -1992,7 +2340,6 @@ document.getElementById('picker-skip').addEventListener('click', ()=>{
   try{ localStorage.setItem('wc26_picker_seen','1'); }catch(e){}
   closePicker();
 });
-document.getElementById('fav-edit').addEventListener('click', openPicker);
 /* the Edit-teams action inside the settings dropdown also opens the picker */
 (function(){
   const se = document.getElementById('settings-edit-teams');
@@ -2050,81 +2397,131 @@ function favScorersFor(code){
   return Object.entries(tally).map(([name,goals])=>({name,goals})).sort((a,b)=>b.goals-a.goals);
 }
 function renderFavorites(){
-  const sec=document.getElementById('favorites');
-  if(!FAVS.length){ sec.hidden=true; return; }
-  sec.hidden=false;
   const ar=LANG==="ar";
+  const containers=[...document.querySelectorAll('.favorites')];
+  if(!FAVS.length){ containers.forEach(c=>c.hidden=true); return; }
   const single = FAVS.length===1;
-  /* remember which strips the user has open, so a 60s refresh doesn't fold them */
-  const openCodes = new Set([...document.querySelectorAll('.fav-strip.open')].map(s=>s.dataset.code));
-  let html='';
-  for(const code of FAVS){
-    const matches=favMatchesFor(code);
-    const stats=favStatsFor(code);
-    const scorers=favScorersFor(code);
-    const openCls = (single || openCodes.has(code)) ? ' open' : '';
-    /* meta line: group + points if available */
-    const meta = stats ? `${ar?'المجموعة':'Group'} ${stats.grp} · ${stats.Pts} ${ar?'نقطة':'pts'}` : '';
-    /* matches block */
-    let mHtml='';
-    const now=Date.now();
-    const nextM = matches.filter(m=>m.state==='upcoming' && m.utc>now).sort((a,b)=>a.utc-b.utc)[0];
-    for(const m of matches){
-      const opp=`${ar?'ضد':'vs'} <img src="https://flagcdn.com/h24/${N[m.oppCode][1]}.png">${teamName(m.oppCode)}`;
-      if(m.state==='done'){
-        mHtml+=`<div class="fav-match"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}<small>${ar?'انتهت':'FT'}</small></span></div>`;
-      }else if(m.state==='live'){
-        mHtml+=`<div class="fav-match fm-live"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}<small>${ar?'مباشر':'LIVE'}</small></span></div>`;
-      }else{
-        const isNext = nextM && m.utc===nextM.utc;
-        const cd = isNext ? `<span class="fm-cd" data-utc="${m.utc}"></span>` : '';
-        mHtml+=`<div class="fav-match${isNext?' fm-next':''}"><span class="fm-opp">${opp}</span><span class="fm-res">${ar?'يونيو':'Jun'} ${m.day} · ${m.time}${cd}</span></div>`;
-      }
-    }
-    /* stats block */
-    const sHtml = stats ? `<div class="fav-stats">
-      <span>${ar?'المركز':'Pos'} <b>${stats.pos}</b></span>
-      <span>${ar?'لعب':'P'} <b>${stats.P}</b></span>
-      <span>${ar?'فوز':'W'} <b>${stats.W}</b></span>
-      <span>${ar?'تعادل':'D'} <b>${stats.D}</b></span>
-      <span>${ar?'خسارة':'L'} <b>${stats.L}</b></span>
-      <span>${ar?'الفارق':'GD'} <b>${stats.GD>0?'+':''}${stats.GD}</b></span>
-      <span>${ar?'نقاط':'Pts'} <b>${stats.Pts}</b></span>
-    </div>` : `<div class="fav-empty">${ar?'لا توجد بيانات بعد':'No data yet'}</div>`;
-    /* scorers block */
-    let scHtml='';
-    if(scorers.length){ scHtml = scorers.map(s=>`<div class="fav-scorer"><span class="fs-min">${s.goals}×</span>${s.name}</div>`).join(''); }
-    else scHtml = `<div class="fav-empty">${ar?'لا أهداف بعد':'No goals yet'}</div>`;
+  const titleTxt = ar ? (single?'فريقك':'فِرَقك') : (single?'Your Team':'Your Teams');
+  const now=Date.now();
 
-    html+=`<div class="fav-strip${openCls}" data-code="${code}">
-      <div class="fav-strip-head">
-        <img src="https://flagcdn.com/h24/${N[code][1]}.png" alt="">
-        <span class="fav-strip-name">${teamName(code)}</span>
-        <span class="fav-strip-meta">${meta}</span>
-        ${single?'':'<span class="fav-strip-chev"></span>'}
-      </div>
-      <div class="fav-strip-body">
-        <div class="fav-block-label">${ar?'المباريات':'Matches'}</div>${mHtml}
-        <div class="fav-block-label">${ar?'الإحصائيات':'Stats'}</div>${sHtml}
-        <div class="fav-block-label">${ar?'الهدافون':'Scorers'}</div>${scHtml}
-      </div>
-    </div>`;
+  /* remember which strips are open per page so the 60s refresh doesn't fold them */
+  const openByPage={};
+  containers.forEach(c=>{
+    openByPage[c.id]=new Set([...c.querySelectorAll('.fav-strip.open')].map(s=>s.dataset.code));
+  });
+
+  /* build the body for one team in a given mode: matches | standings | scorers */
+  function bodyFor(code, mode){
+    if(mode==='matches'){
+      const matches=favMatchesFor(code);
+      const nextM=matches.filter(m=>m.state==='upcoming'&&m.utc>now).sort((a,b)=>a.utc-b.utc)[0];
+      let mHtml='';
+      for(const m of matches){
+        const opp=`${ar?'ضد':'vs'} <img src="https://flagcdn.com/h24/${N[m.oppCode][1]}.png">${teamName(m.oppCode)}`;
+        if(m.state==='done'){
+          mHtml+=`<div class="fav-match"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}<small>${ar?'انتهت':'FT'}</small></span></div>`;
+        }else if(m.state==='live'){
+          mHtml+=`<div class="fav-match fm-live"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}<small>${ar?'مباشر':'LIVE'}</small></span></div>`;
+        }else{
+          const isNext=nextM&&m.utc===nextM.utc;
+          const cd=isNext?`<span class="fm-cd" data-utc="${m.utc}"></span>`:'';
+          mHtml+=`<div class="fav-match${isNext?' fm-next':''}"><span class="fm-opp">${opp}</span><span class="fm-res">${ar?'يونيو':'Jun'} ${m.day} · ${m.time}${cd}</span></div>`;
+        }
+      }
+      return `<div class="fav-block-label">${ar?'المباريات':'Matches'}</div>${mHtml||`<div class="fav-empty">${ar?'لا مباريات':'No matches'}</div>`}`;
+    }
+    if(mode==='standings'){
+      const stats=favStatsFor(code);
+      return stats ? `<div class="fav-block-label">${ar?'الترتيب':'Standing'}</div><div class="fav-stats">
+        <span>${ar?'المركز':'Pos'} <b>${stats.pos}</b></span>
+        <span>${ar?'لعب':'P'} <b>${stats.P}</b></span>
+        <span>${ar?'فوز':'W'} <b>${stats.W}</b></span>
+        <span>${ar?'تعادل':'D'} <b>${stats.D}</b></span>
+        <span>${ar?'خسارة':'L'} <b>${stats.L}</b></span>
+        <span>${ar?'الفارق':'GD'} <b>${stats.GD>0?'+':''}${stats.GD}</b></span>
+        <span>${ar?'نقاط':'Pts'} <b>${stats.Pts}</b></span>
+      </div>` : `<div class="fav-empty">${ar?'لا توجد بيانات بعد':'No data yet'}</div>`;
+    }
+    /* scorers */
+    const scorers=favScorersFor(code);
+    const scHtml = scorers.length
+      ? scorers.map(s=>`<div class="fav-scorer"><span class="fs-min">${s.goals}×</span>${s.name}</div>`).join('')
+      : `<div class="fav-empty">${ar?'لا أهداف بعد':'No goals yet'}</div>`;
+    return `<div class="fav-block-label">${ar?'الهدافون':'Scorers'}</div>${scHtml}`;
   }
-  document.getElementById('fav-strips').innerHTML = html;
-  document.getElementById('fav-title').textContent = ar ? (FAVS.length===1?'فريقك':'فِرَقك') : (FAVS.length===1?'Your Team':'Your Teams');
-  document.getElementById('fav-edit').innerHTML = ar?'★ تعديل':'★ Edit';
+
+  /* meta line per mode (shown in the strip head) */
+  function metaFor(code, mode){
+    const stats=favStatsFor(code);
+    if(mode==='standings' || mode==='scorers'){
+      return stats ? `${ar?'المجموعة':'Group'} ${stats.grp} · ${stats.Pts} ${ar?'نقطة':'pts'}` : '';
+    }
+    /* matches mode: show next match countdown hint or group */
+    return stats ? `${ar?'المجموعة':'Group'} ${stats.grp}` : '';
+  }
+
+  containers.forEach(c=>{
+    c.hidden=false;
+    const mode=c.dataset.mode;
+    const open=openByPage[c.id]||new Set();
+    let html='';
+    for(const code of FAVS){
+      const openCls=(single||open.has(code))?' open':'';
+      html+=`<div class="fav-strip${openCls}" data-code="${code}">
+        <div class="fav-strip-head">
+          <img src="https://flagcdn.com/h24/${N[code][1]}.png" alt="">
+          <span class="fav-strip-name">${teamName(code)}</span>
+          <span class="fav-strip-meta">${metaFor(code,mode)}</span>
+          ${single?'':'<span class="fav-strip-chev"></span>'}
+        </div>
+        <div class="fav-strip-body">${bodyFor(code,mode)}</div>
+      </div>`;
+    }
+    c.querySelector('.fav-strips').innerHTML=html;
+    const titleEl=c.querySelector('.fav-title'); if(titleEl) titleEl.textContent=titleTxt;
+    const editEl=c.querySelector('.fav-edit'); if(editEl) editEl.innerHTML=ar?'★ تعديل':'★ Edit';
+  });
 }
-/* expand/collapse strips (only when 2+, single is always open) */
-document.getElementById('fav-strips').addEventListener('click',(e)=>{
-  if(FAVS.length<=1) return;
-  const head=e.target.closest('.fav-strip-head'); if(!head) return;
-  head.closest('.fav-strip').classList.toggle('open');
+/* expand/collapse strips (only when 2+, single is always open) — delegated to all pages */
+document.querySelectorAll('.favorites').forEach(sec=>{
+  sec.addEventListener('click',(e)=>{
+    if(FAVS.length<=1) return;
+    const head=e.target.closest('.fav-strip-head'); if(!head) return;
+    head.closest('.fav-strip').classList.toggle('open');
+  });
 });
+/* edit buttons across all pages open the picker */
+document.querySelectorAll('.fav-edit-btn').forEach(b=>b.addEventListener('click', ()=>{ if(typeof openPicker==="function") openPicker(); }));
 
 applyLanguage(); /* set initial EN labels + button text */
 
+/* ============ BOTTOM NAV — page switching ============ */
+function showPage(page){
+  ['schedule','standings','stats'].forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el) el.hidden = (p!==page);
+  });
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
+  /* the floating Today button only makes sense on the Schedule page */
+  const jb=document.getElementById('jump-today');
+  if(jb && page!=='schedule') jb.hidden=true;
+  /* render the page's dynamic content fresh on entry */
+  if(page==='standings'){ renderGroups(); const k=document.getElementById('knockout'); if(k&&!k.hidden) renderKnockout(); }
+  if(page==='stats'){ renderScorers(); renderStatsTotals(); }
+  window.scrollTo({top:0,behavior:'instant'});
+  if(typeof updateJumpButton==="function") updateJumpButton();
+}
+document.getElementById('bottom-nav').addEventListener('click',(e)=>{
+  const b=e.target.closest('.bnav-btn'); if(!b) return;
+  showPage(b.dataset.page);
+});
+
 const firstToday = tick();
 setInterval(tick, 1000);
+
+/* initial Stats render so it's ready when first opened */
+renderScorers();
+renderStatsTotals();
 
 /* first-open: if no favorites saved yet, show the picker. Otherwise render them. */
 renderFavorites();
