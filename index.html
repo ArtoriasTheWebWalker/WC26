@@ -92,25 +92,23 @@ body{
 body.light #marble-bg .m-night{display:none}
 body.light #marble-bg .m-light{display:block}
 .wrap{max-width:1180px;margin:0 auto;padding:44px 22px 90px;position:relative;z-index:1}
-/* floating "jump to today" button */
+/* floating "jump to today" button — the ball image, no text/pill */
 #jump-today{
-  position:fixed;right:20px;bottom:22px;z-index:40;
-  display:inline-flex;align-items:center;gap:8px;
-  padding:11px 18px;border-radius:30px;cursor:pointer;
-  font-family:'Cinzel',serif;font-weight:700;font-size:.82rem;letter-spacing:.05em;
-  color:var(--letter-ink);border:none;
-  background:var(--gold-grad);
-  box-shadow:0 8px 26px -6px rgba(0,0,0,.7), 0 0 0 1px rgba(227,197,103,.4);
-  transition:transform .2s, box-shadow .2s, opacity .35s;
+  position:fixed;right:20px;bottom:88px;z-index:45;
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:0;border:none;background:none;cursor:pointer;
+  width:54px;height:54px;border-radius:50%;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(227,197,103,.3));
+  transition:transform .2s, filter .2s, opacity .35s;
   animation:fabIn .4s ease;
 }
-#jump-today:hover{transform:translateY(-3px);box-shadow:0 14px 32px -6px rgba(0,0,0,.75), 0 0 22px -2px rgba(227,197,103,.55)}
+#jump-today img{width:100%;height:100%;object-fit:contain;display:block;animation:ballspin 6s linear infinite}
+#jump-today:hover{transform:translateY(-3px) scale(1.05);filter:drop-shadow(0 12px 22px rgba(0,0,0,.6)) drop-shadow(0 0 20px rgba(227,197,103,.5))}
 #jump-today:active{transform:translateY(-1px) scale(.97)}
-#jump-today svg{stroke:var(--letter-ink)}
 @keyframes fabIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 body.ar #jump-today{font-family:'Changa',sans-serif}
 @media (max-width:520px){
-  #jump-today{right:14px;bottom:16px;padding:10px 15px;font-size:.76rem}
+  #jump-today{right:14px;bottom:80px;width:46px;height:46px}
 }
 @media (prefers-reduced-motion: reduce){ #jump-today{animation:none} }
 
@@ -1028,10 +1026,7 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
   </button>
 </nav>
 <button id="jump-today" aria-label="Jump to today's matches" title="Today's matches" hidden>
-  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-  </svg>
-  <span id="jump-today-label">Today</span>
+  <img src="ball.png" alt="" onerror="this.style.display='none'">
 </button>
 
 <!-- ============ FAVORITE TEAM PICKER (full-screen overlay) ============ -->
@@ -1840,18 +1835,23 @@ document.getElementById('tab-knockout').addEventListener('click', ()=>switchStat
    Visible only when a today card exists, and hidden while it's already on screen. */
 const jumpBtn = document.getElementById('jump-today');
 jumpBtn.addEventListener('click', ()=>{
-  const today = document.querySelector('.day.today');
-  if(today) today.scrollIntoView({behavior:'smooth', block:'center'});
+  /* from any page: go to the Schedule page, then center today's match */
+  if(typeof showPage === "function") showPage('schedule');
+  setTimeout(()=>{
+    const today = document.querySelector('#page-schedule .day.today') || document.querySelector('.day.today');
+    if(today) today.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 60);
 });
 function updateJumpButton(){
-  /* only relevant on the Schedule page */
-  const schedulePage = document.getElementById('page-schedule');
-  if(schedulePage && schedulePage.hidden){ jumpBtn.hidden = true; return; }
   const today = document.querySelector('#page-schedule .day.today') || document.querySelector('.day.today');
+  /* no today card (outside the tournament window) → nothing to jump to */
   if(!today){ jumpBtn.hidden = true; return; }
-  /* show the button whenever today's card's CENTER is outside the comfortable
-     middle band of the viewport (i.e. you've scrolled away from it). This is
-     more reliable than an overlap test for tall multi-match cards. */
+  /* On the Schedule page, show the button only when today's card is scrolled
+     away (its centre outside the comfortable middle band). On the other pages,
+     always show it — tapping takes the user to today's match. */
+  const schedulePage = document.getElementById('page-schedule');
+  const onSchedule = !(schedulePage && schedulePage.hidden);
+  if(!onSchedule){ jumpBtn.hidden = false; return; }
   const r = today.getBoundingClientRect();
   const center = r.top + r.height/2;
   const vh = window.innerHeight;
@@ -2759,9 +2759,6 @@ function showPage(page){
     if(el) el.hidden = (p!==page);
   });
   document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
-  /* the floating Today button only makes sense on the Schedule page */
-  const jb=document.getElementById('jump-today');
-  if(jb && page!=='schedule') jb.hidden=true;
   /* render the page's dynamic content fresh on entry */
   if(page==='standings'){ renderGroups(); const k=document.getElementById('knockout'); if(k&&!k.hidden) renderKnockout(); }
   if(page==='stats'){ renderScorers(); renderStatsTotals(); renderStatsHistory(); }
