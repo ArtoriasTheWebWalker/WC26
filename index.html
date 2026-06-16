@@ -21,6 +21,7 @@
   --letter-ink:var(--night);
   --q-row:rgba(227,197,103,.06);
   --loc-ink:#A7B4D0;
+  --marble-cloud:#1A2440;
 }
 body.light{
   /* Calacatta ceramic + antique gold + warm espresso */
@@ -35,6 +36,7 @@ body.light{
   --letter-ink:#FBF8F1;
   --q-row:rgba(184,144,47,.08);
   --loc-ink:#6B6052;
+  --marble-cloud:#8B8B95;
 }
 /* ===== NIGHT SUB-PALETTES (override night surface tokens) ===== */
 /* navy is the default (no class needed). charcoal + green below. */
@@ -43,12 +45,14 @@ body.pal-charcoal{
   --card-top:#191B20; --card-bot:#131418;
   --row-line:rgba(120,124,140,.28); --row-line-soft:rgba(120,124,140,.18);
   --loc-ink:#AEB2BE;
+  --marble-cloud:#23262E;
 }
 body.pal-green{
   --bg:#091512;
   --card-top:#10241D; --card-bot:#0C1A15;
   --row-line:rgba(58,120,96,.34); --row-line-soft:rgba(58,120,96,.22);
   --loc-ink:#9FC7B4;
+  --marble-cloud:#163328;
 }
 /* ===== DAY SUB-PALETTES (only apply in light mode) ===== */
 body.light.pal-rose{
@@ -57,18 +61,21 @@ body.light.pal-rose{
   --card-border:rgba(184,144,47,.4);
   --row-line:rgba(150,110,108,.3); --row-line-soft:rgba(150,110,108,.2);
   --loc-ink:#7A5C5A;
+  --marble-cloud:#D8B5B2;
 }
 body.light.pal-brown{
   --bg:#EFE6D8;
   --card-top:#E7D9C4; --card-bot:#DECBB0;
   --row-line:rgba(120,96,64,.32); --row-line-soft:rgba(120,96,64,.2);
   --loc-ink:#6E5A40;
+  --marble-cloud:#C9B48F;
 }
 body.light.pal-ivory{
   --bg:#F7F2E6;
   --card-top:#F1EAD7; --card-bot:#EAE0C9;
   --row-line:rgba(150,134,92,.3); --row-line-soft:rgba(150,134,92,.2);
   --loc-ink:#6B6042;
+  --marble-cloud:#D6CBA6;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -149,6 +156,7 @@ body.ar .seg button{font-family:'Changa',sans-serif}
 .seg button.on{background:var(--gold-grad);color:var(--letter-ink)}
 /* colour palette swatches */
 .dd-swatches .swatches{display:flex;gap:9px}
+.dd-swatches .swatches[hidden]{display:none !important}
 .swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;
   box-shadow:0 1px 4px rgba(0,0,0,.4);transition:transform .15s,border-color .15s;padding:0}
 .swatch:hover{transform:scale(1.12)}
@@ -835,12 +843,12 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
 
   <!-- ============ NIGHT MARBLE ============ -->
   <g class="m-night">
-    <rect width="1000" height="1600" fill="#0B1020"/>
+    <rect width="1000" height="1600" fill="var(--bg)"/>
     <g filter="url(#msoft)" opacity="0.55">
-      <ellipse cx="760" cy="260" rx="280" ry="180" fill="#1A2440"/>
-      <ellipse cx="170" cy="980" rx="250" ry="190" fill="#16203A"/>
-      <ellipse cx="560" cy="1360" rx="270" ry="160" fill="#1C2647"/>
-      <ellipse cx="900" cy="760" rx="210" ry="170" fill="#141C33"/>
+      <ellipse cx="760" cy="260" rx="280" ry="180" fill="var(--marble-cloud)"/>
+      <ellipse cx="170" cy="980" rx="250" ry="190" fill="var(--marble-cloud)"/>
+      <ellipse cx="560" cy="1360" rx="270" ry="160" fill="var(--marble-cloud)"/>
+      <ellipse cx="900" cy="760" rx="210" ry="170" fill="var(--marble-cloud)"/>
     </g>
     <g filter="url(#mwarp)">
       <g filter="url(#mglow)" fill="none" stroke-linecap="round">
@@ -865,11 +873,11 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
 
   <!-- ============ LIGHT (CALACATTA) MARBLE ============ -->
   <g class="m-light">
-    <rect width="1000" height="1600" fill="#F4F0E8"/>
+    <rect width="1000" height="1600" fill="var(--bg)"/>
     <g filter="url(#msoft)" opacity="0.5">
-      <ellipse cx="760" cy="260" rx="280" ry="170" fill="#8B8B95"/>
-      <ellipse cx="180" cy="1000" rx="240" ry="180" fill="#9A9AA4"/>
-      <ellipse cx="560" cy="1360" rx="260" ry="150" fill="#8E8E99"/>
+      <ellipse cx="760" cy="260" rx="280" ry="170" fill="var(--marble-cloud)"/>
+      <ellipse cx="180" cy="1000" rx="240" ry="180" fill="var(--marble-cloud)"/>
+      <ellipse cx="560" cy="1360" rx="260" ry="150" fill="var(--marble-cloud)"/>
     </g>
     <g filter="url(#mwarp)" fill="none" stroke-linecap="round">
       <path d="M-20 420 Q 250 380 480 490 T 1020 470" stroke="#9A7322" stroke-width="6" opacity="0.55"/>
@@ -1849,11 +1857,14 @@ jumpBtn.addEventListener('click', ()=>{
   if(today) today.scrollIntoView({behavior:'smooth', block:'center'});
 });
 function updateJumpButton(){
-  const today = document.querySelector('.day.today');
+  /* only relevant on the Schedule page */
+  const schedulePage = document.getElementById('page-schedule');
+  if(schedulePage && schedulePage.hidden){ jumpBtn.hidden = true; return; }
+  const today = document.querySelector('#page-schedule .day.today') || document.querySelector('.day.today');
   if(!today){ jumpBtn.hidden = true; return; }
-  /* hide the button while today's card is already in view */
+  /* show the button whenever today's card is NOT comfortably in view */
   const r = today.getBoundingClientRect();
-  const inView = r.top < window.innerHeight*0.8 && r.bottom > window.innerHeight*0.2;
+  const inView = r.top < window.innerHeight*0.85 && r.bottom > window.innerHeight*0.15;
   jumpBtn.hidden = inView;
 }
 window.addEventListener('scroll', updateJumpButton, {passive:true});
@@ -1919,9 +1930,21 @@ function buildGoalsHTML(m){
   const groupGoals = (goals)=>{
     const order=[]; const map={};
     for(const g of goals){
-      const key=(g.name||'')+'|'+(g.og?'og':'');
-      if(!map[key]){ map[key]={name:g.name, og:g.og, mins:[]}; order.push(key); }
-      map[key].mins.push({minute:g.minute||'', pen:g.pen});
+      /* repair stoppage-time goals: a "90'+5'" can arrive split, leaving the
+         base minute stuck on the name (e.g. name "Kilian Ambaph 90+", minute "5").
+         Pull a trailing "<n>+" off the name and fold it back into the minute. */
+      let name=(g.name||'').trim();
+      let minute=(g.minute||'').toString().trim();
+      const leak = name.match(/\s+(\d{1,3})\s*\+\s*$/);   /* trailing " 90+" on the name */
+      if(leak){
+        name = name.slice(0, leak.index).trim();
+        const base = leak[1];
+        const extra = minute.replace(/[^\d]/g,'');         /* the "5" part */
+        minute = extra ? `${base}+${extra}'` : `${base}+'`;
+      }
+      const key=name+'|'+(g.og?'og':'');
+      if(!map[key]){ map[key]={name:name, og:g.og, mins:[]}; order.push(key); }
+      map[key].mins.push({minute:minute, pen:g.pen});
     }
     return order.map(k=>map[k]);
   };
