@@ -539,36 +539,66 @@ body.ar .stab{font-family:'Changa',sans-serif}
 .ko-note{max-width:760px;margin:0 auto 18px;text-align:center;color:var(--sand);font-size:.72rem;
   line-height:1.5;border:1px solid var(--row-line);border-radius:10px;padding:10px 14px;background:rgba(14,21,38,.4)}
 body.ar .ko-note{letter-spacing:0}
-/* horizontal-scroll shell keeps the wide bracket readable on phones */
-.bracket-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:0 2px 14px}
-.bracket2{display:grid;grid-template-columns:repeat(9,minmax(116px,1fr));gap:0 9px;align-items:center;
-  min-width:1060px;margin:0 auto}
-.kcol{display:flex;flex-direction:column;justify-content:space-around;height:100%;gap:9px}
-.kcol-label{text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:.56rem;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--gold-deep);margin-bottom:8px;min-height:13px}
+/* best third-placed teams panel */
+.ko-thirds{max-width:620px;margin:0 auto 24px;border:1px solid rgba(185,138,46,.34);border-radius:12px;overflow:hidden;
+  background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 14px 36px -22px rgba(0,0,0,.85)}
+.ko-thirds-head{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--head-grad);border-bottom:1px solid var(--row-line)}
+.ko-thirds-title{font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.1em;color:var(--sand);text-transform:uppercase}
+body.ar .ko-thirds-title{font-family:'Changa',sans-serif;letter-spacing:0}
+.third-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--row-line-soft);font-size:.82rem}
+.third-row:last-child{border-bottom:none}
+.third-row .t-rank{flex:none;width:22px;font-family:'Cinzel',serif;font-weight:700;font-size:.74rem;color:var(--sand)}
+.third-row img{width:24px;height:16px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.third-row .t-grp{flex:none;font-size:.62rem;color:var(--gold-deep);font-weight:700;letter-spacing:.08em;width:54px}
+body.ar .third-row .t-grp{letter-spacing:0}
+.third-row .t-name{flex:1;color:var(--ink);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.third-row .t-stat{flex:none;color:var(--sand);font-size:.72rem;font-variant-numeric:lining-nums;letter-spacing:.04em}
+.third-row.qual{background:var(--q-row)}
+.third-row.qual .t-rank,.third-row.qual .t-name{color:var(--gold)}
+.third-row.out{opacity:.4}
+.third-cut{display:flex;align-items:center;gap:8px;padding:4px 14px;font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gold-deep);font-weight:700;background:rgba(184,144,47,.06)}
+body.ar .third-cut{letter-spacing:0}
+.third-cut::before,.third-cut::after{content:"";flex:1;height:1px;background:var(--row-line)}
+/* horizontal-scroll shell with a SOLID panel so the marble vein behind the
+   page doesn't bleed through and wash out the bracket */
+.bracket-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+  border:1px solid var(--card-border);border-radius:14px;
+  background:linear-gradient(180deg,#0C1322,#0A0F1C);
+  box-shadow:inset 0 0 60px -20px rgba(0,0,0,.9), 0 16px 40px -24px rgba(0,0,0,.8);
+  padding:16px 12px}
+body.light .bracket-scroll{background:linear-gradient(180deg,#EFE9DC,#E8E1D2)}
+.bracket2{display:flex;align-items:stretch;gap:8px;min-width:1080px;margin:0 auto}
+.kcol{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:10px;min-width:114px}
+.kcol.kconn{flex:0 0 22px;min-width:22px}
+.kcol.kcenter{flex:0 0 132px;min-width:132px;justify-content:center}
+.kcol-label{text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:.58rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--gold-deep);margin-bottom:6px;min-height:14px}
 body.ar .kcol-label{font-family:'Changa',sans-serif;letter-spacing:0}
-.tie{position:relative;border:1px solid rgba(185,138,46,.3);border-radius:9px;overflow:hidden;
-  background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 8px 22px -16px rgba(0,0,0,.85)}
-.tie-side{display:flex;align-items:center;gap:6px;padding:7px 8px;font-size:.76rem;min-height:30px}
+.tie{position:relative;border:1px solid rgba(185,138,46,.34);border-radius:9px;overflow:hidden;
+  background:linear-gradient(180deg,#162038,#0F1729);box-shadow:0 6px 18px -12px rgba(0,0,0,.9)}
+body.light .tie{background:linear-gradient(180deg,#F0EADB,#E7E0D0)}
+.tie-side{display:flex;align-items:center;gap:6px;padding:7px 8px;min-height:31px}
 .tie-side+.tie-side{border-top:1px solid var(--row-line-soft)}
+.tie-side.filled{background:rgba(227,197,103,.05)}
 .tie-side img{width:22px;height:15px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
 .tie-nm{flex:1;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.82rem}
-.tie-nm.empty{min-height:15px} /* blank slot until a team qualifies */
-.tie-date{text-align:center;font-size:.5rem;letter-spacing:.08em;color:var(--sand);padding:2px 0 3px;background:rgba(227,197,103,.04)}
+.tie-nm.empty{min-height:15px}
+.tie-date{text-align:center;font-size:.52rem;letter-spacing:.06em;color:var(--sand);padding:3px 0;
+  background:rgba(227,197,103,.05);border-top:1px solid var(--row-line-soft)}
 body.ar .tie-date{letter-spacing:0}
-.tie.final-tie{border-color:var(--gold);box-shadow:0 0 20px -4px rgba(227,197,103,.45)}
-/* connector columns */
-.kconn{justify-content:space-around}
-.conn{position:relative;flex:1;min-height:34px}
-.conn::before{content:"";position:absolute;top:25%;bottom:25%;width:1.5px;background:var(--gold-deep);opacity:.5}
-.conn.l::after,.conn.r::after{content:"";position:absolute;top:50%;width:50%;height:1.5px;background:var(--gold-deep);opacity:.5}
+.tie.final-tie{border-color:var(--gold);box-shadow:0 0 20px -4px rgba(227,197,103,.5)}
+/* connectors */
+.conn{position:relative;flex:1;min-height:36px}
+.conn::before{content:"";position:absolute;top:25%;bottom:25%;width:1.5px;background:var(--gold-deep);opacity:.55}
+.conn.l::after,.conn.r::after{content:"";position:absolute;top:50%;width:50%;height:1.5px;background:var(--gold-deep);opacity:.55}
 .conn.l::before{left:0}.conn.l::after{left:50%}
 .conn.r::before{right:0}.conn.r::after{right:50%}
 /* center trophy + final */
-.kcenter{justify-content:center}
-.cup{display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--gold)}
-.cup svg{filter:drop-shadow(0 0 10px rgba(227,197,103,.4))}
-.cup-label{font-family:'Cinzel',serif;font-weight:700;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.cup{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--gold)}
+.cup svg{filter:drop-shadow(0 0 10px rgba(227,197,103,.45))}
+.cup .tie{width:100%}
+.cup-label{font-family:'Cinzel',serif;font-weight:700;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
 body.ar .cup-label{font-family:'Changa',sans-serif;letter-spacing:0}
 .groups-wrap{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:30px;
@@ -1403,7 +1433,9 @@ function computeTopScorers(){
     add(lv.awayGoals, ca);
   }
   const rows = Object.values(tally);
-  rows.sort((a,b)=> b.goals-a.goals || a.name.localeCompare(b.name));
+  /* sort: most goals, then fewer penalty goals (a non-pen scorer ranks higher
+     when goals are level), then name */
+  rows.sort((a,b)=> b.goals-a.goals || (a.pens||0)-(b.pens||0) || a.name.localeCompare(b.name));
   return rows.slice(0,10);
 }
 
@@ -1539,7 +1571,29 @@ function renderKnockout(){
     ? 'الشبكة بالترتيب الرسمي للفيفا. تُملأ المنتخبات تلقائياً بمجرد تأهلها من المجموعات.'
     : 'Official FIFA bracket structure. Slots fill automatically as teams qualify from the groups.';
 
-  el.innerHTML = `<div class="ko-note">${note}</div><div class="bracket-scroll">${bracket}</div>`;
+  /* best third-placed teams (top 8 qualify) — sorted points → GD → GF */
+  const thirds = pic.thirds;
+  let thirdsBlock = '';
+  if(thirds.length){
+    let rowsHtml='';
+    thirds.forEach((t,i)=>{
+      if(i===8) rowsHtml += `<div class="third-cut">${ar?'خط التأهل':'Qualification line'}</div>`;
+      const gd=(t.GD>0?'+':'')+t.GD;
+      rowsHtml += `<div class="third-row ${i<8?'qual':'out'}">
+        <span class="t-rank">${i+1}</span>
+        <img src="https://flagcdn.com/h24/${N[t.code][1]}.png" alt="">
+        <span class="t-grp">${ar?'مجموعة':'Grp'} ${t.grp}</span>
+        <span class="t-name">${tName(t.code)}</span>
+        <span class="t-stat">${t.Pts} ${ar?'ن':'pts'} · ${gd}</span>
+      </div>`;
+    });
+    thirdsBlock = `<div class="ko-thirds">
+      <div class="ko-thirds-head"><span class="ko-thirds-title">${ar?'أفضل المراكز الثالثة':'Best Third-Placed Teams'}</span></div>
+      ${rowsHtml}
+    </div>`;
+  }
+
+  el.innerHTML = `<div class="ko-note">${note}</div>${thirdsBlock}<div class="bracket-scroll">${bracket}</div>`;
 }
 
 function renderScorers(){
