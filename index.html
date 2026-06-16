@@ -1492,8 +1492,17 @@ function computeTopScorers(){
       for(const g of goals){
         if(g.og) continue;            /* own goals credit nobody */
         if(!g.name) continue;
-        const k = g.name+"|"+teamCode;
-        if(!tally[k]) tally[k] = {name:g.name, team:teamCode, goals:0, pens:0};
+        /* normalise the name: a stoppage-time goal can arrive with the minute
+           mashed onto the name (e.g. "K. Mbappe 90+"), which would split one
+           player's goals across two keys. Strip any trailing minute fragment
+           ("90+", "45+2", "  90' ") so both goals tally to the same player. */
+        let nm = g.name.trim()
+          .replace(/\s+\d{1,3}\s*\+\s*\d*\s*'?\s*$/,'')  /* " 90+", " 45+2", " 90+5'" */
+          .replace(/\s+\d{1,3}\s*'?\s*$/,'')             /* trailing " 66'" / " 66"   */
+          .trim();
+        if(!nm) nm = g.name.trim();
+        const k = nm+"|"+teamCode;
+        if(!tally[k]) tally[k] = {name:nm, team:teamCode, goals:0, pens:0};
         tally[k].goals++;
         if(g.pen) tally[k].pens++;
       }
@@ -2019,7 +2028,7 @@ const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after ki
 /* ====== LIVE DATA SOURCE ======
    Paste your Cloudflare Worker URL here (e.g. "https://wc26-scores.<you>.workers.dev").
    Leave as "" to use the local scores.json (GitHub Action) instead. */
-const SCORES_URL = "https://wc2026-scores.abdulelah12012.workers.dev/";
+const SCORES_URL = "";
 
 let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
 
