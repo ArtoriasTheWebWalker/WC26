@@ -813,7 +813,7 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
   .ko-title{font-size:1.25rem}
   .groups-wrap{grid-template-columns:1fr}
   #wc-ball{opacity:.75}
-  #wc-ball svg{width:38px;height:38px}
+  #wc-ball svg,#wc-ball img{width:38px;height:38px}
 }
 @media (max-width:380px){
   .tname{font-size:.7rem}
@@ -895,33 +895,7 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
 </svg>
 </div>
 <div id="wc-ball" aria-hidden="true">
-<svg viewBox="0 0 100 100" width="50" height="50">
-<defs>
-<radialGradient id="ballsphere" cx="38%" cy="32%" r="74%">
-<stop offset="0%" stop-color="#ffffff"/>
-<stop offset="58%" stop-color="#F4F6FA"/>
-<stop offset="100%" stop-color="#C2CAD8"/>
-</radialGradient>
-<clipPath id="ballclip"><circle cx="50" cy="50" r="47"/></clipPath>
-</defs>
-<circle cx="50" cy="50" r="47" fill="url(#ballsphere)" stroke="#9AA3B5" stroke-width="1"/>
-<g clip-path="url(#ballclip)">
-  <path d="M50 50 C40 36,30 30,14 30 C20 44,22 52,38 60 C44 56,48 54,50 50Z" fill="#C8102E" opacity="0.95"/>
-  <path d="M50 50 C60 36,70 30,86 30 C80 44,78 52,62 60 C56 56,52 54,50 50Z" fill="#1A7A3C" opacity="0.95"/>
-  <path d="M50 50 C44 62,42 74,48 92 C52 92,56 82,56 74 C54 64,52 56,50 50Z" fill="#0A4DA6" opacity="0.95"/>
-  <path d="M50 50 C40 36,30 30,14 30 C20 44,22 52,38 60 C44 56,48 54,50 50Z" fill="none" stroke="#E3C567" stroke-width="1.3"/>
-  <path d="M50 50 C60 36,70 30,86 30 C80 44,78 52,62 60 C56 56,52 54,50 50Z" fill="none" stroke="#E3C567" stroke-width="1.3"/>
-  <path d="M50 50 C44 62,42 74,48 92 C52 92,56 82,56 74 C54 64,52 56,50 50Z" fill="none" stroke="#E3C567" stroke-width="1.3"/>
-  <path d="M38 60 C30 70,26 80,28 96" fill="none" stroke="#C9CFDA" stroke-width="0.8"/>
-  <path d="M62 60 C70 70,74 80,72 96" fill="none" stroke="#C9CFDA" stroke-width="0.8"/>
-  <path d="M14 30 C8 40,6 50,8 64" fill="none" stroke="#C9CFDA" stroke-width="0.8"/>
-  <path d="M86 30 C92 40,94 50,92 64" fill="none" stroke="#C9CFDA" stroke-width="0.8"/>
-  <circle cx="50" cy="50" r="4.4" fill="#E3C567"/>
-  <circle cx="50" cy="50" r="2.2" fill="#fff"/>
-</g>
-<circle cx="50" cy="50" r="47" fill="none" stroke="#7A8294" stroke-width="0.6"/>
-<ellipse cx="38" cy="30" rx="16" ry="9" fill="#ffffff" opacity="0.22"/>
-</svg>
+<img src="ball.png" alt="" width="50" height="50" style="display:block" onerror="this.style.display='none'">
 </div>
 <div class="wrap">
 
@@ -1866,10 +1840,14 @@ function updateJumpButton(){
   if(schedulePage && schedulePage.hidden){ jumpBtn.hidden = true; return; }
   const today = document.querySelector('#page-schedule .day.today') || document.querySelector('.day.today');
   if(!today){ jumpBtn.hidden = true; return; }
-  /* show the button whenever today's card is NOT comfortably in view */
+  /* show the button whenever today's card's CENTER is outside the comfortable
+     middle band of the viewport (i.e. you've scrolled away from it). This is
+     more reliable than an overlap test for tall multi-match cards. */
   const r = today.getBoundingClientRect();
-  const inView = r.top < window.innerHeight*0.85 && r.bottom > window.innerHeight*0.15;
-  jumpBtn.hidden = inView;
+  const center = r.top + r.height/2;
+  const vh = window.innerHeight;
+  const comfortable = center > vh*0.12 && center < vh*0.9;
+  jumpBtn.hidden = comfortable;
 }
 window.addEventListener('scroll', updateJumpButton, {passive:true});
 window.addEventListener('resize', updateJumpButton, {passive:true});
@@ -2042,6 +2020,7 @@ const MATCH_LEN = 2.25*3600000; /* a match is considered live for ~2h15 after ki
    Paste your Cloudflare Worker URL here (e.g. "https://wc26-scores.<you>.workers.dev").
    Leave as "" to use the local scores.json (GitHub Action) instead. */
 const SCORES_URL = "https://wc2026-scores.abdulelah12012.workers.dev/";
+
 let LIVE = {};   /* key: "teamA|teamB" (normalised) -> {homeScore,awayScore,state,minute} */
 
 /* second-half timing: remember when each match resumed after half-time, and
