@@ -439,10 +439,36 @@ body.ar .goal-band .gb-text{font-family:'Changa',sans-serif;letter-spacing:0}
 .match.open .m-row::after{transform:translateY(-50%) rotate(180deg);opacity:.9}
 .goals-panel{
   overflow:hidden;border-top:1px solid rgba(34,48,79,.5);margin-top:8px;padding-top:9px;
-  display:grid;grid-template-columns:1fr 1fr;gap:8px;
   animation:goalsIn .3s ease;
 }
+.goals-panel .exp-body{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+/* when goals render directly (no toggle/fallback), the panel's first child is
+   the goal columns wrapper; keep the 2-col grid via exp-body */
 @keyframes goalsIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+/* Goals/Squad toggle */
+.exp-toggle{display:flex;gap:6px;justify-content:center;margin-bottom:10px}
+.exp-tab{font-family:'Cinzel',serif;font-weight:700;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:5px 14px;border-radius:20px;border:1px solid var(--row-line);background:transparent;color:var(--sand);cursor:pointer;transition:all .18s}
+.exp-tab.on{background:var(--gold-grad);color:var(--letter-ink);border-color:transparent}
+body.ar .exp-tab{font-family:'Changa',sans-serif;letter-spacing:0}
+/* squad view */
+.squad-view{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sq-col{min-width:0}
+.sq-head{display:flex;align-items:center;gap:7px;padding:4px 6px 8px;border-bottom:1px solid var(--row-line-soft);margin-bottom:6px}
+.sq-head img{width:22px;height:15px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.sq-team{font-family:'Cinzel',serif;font-weight:700;font-size:.74rem;color:var(--ink);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.ar .sq-team{font-family:'Changa',sans-serif}
+.sq-form{font-size:.6rem;font-weight:700;color:var(--gold-deep);letter-spacing:.06em;flex:none}
+.sq-row{display:flex;align-items:center;gap:7px;padding:3px 6px;font-size:.78rem;border-radius:5px}
+.sq-row:nth-child(odd){background:rgba(255,255,255,.02)}
+.sq-num{flex:none;width:18px;text-align:center;font-variant-numeric:tabular-nums;color:var(--sand);font-size:.68rem}
+.sq-name{flex:1;min-width:0;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sq-icons{flex:none;display:flex;gap:3px;align-items:center}
+.sq-icon{flex:none}
+.sq-subs-label{margin:8px 6px 4px;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep);font-weight:700}
+body.ar .sq-subs-label{letter-spacing:0}
+.sq-subs .sq-row{opacity:.72}
+.sq-empty{padding:14px 6px;text-align:center;color:var(--sand);font-size:.72rem;opacity:.7}
 .goal-col{display:flex;flex-direction:column;gap:5px}
 .goal-col.away{align-items:flex-end}
 .goal-line{
@@ -795,8 +821,7 @@ body.ar .pen-tag{font-family:'Changa',sans-serif;letter-spacing:0}
 .stat-card{border:1px solid var(--card-border);border-radius:16px;padding:18px;
   background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 12px 30px -20px rgba(0,0,0,.85);
   display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}
-.stat-card.sq{aspect-ratio:1/1} /* square */
-.stat-label{font-family:'Cinzel',serif;font-weight:700;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:8px}
+.stat-card.sq{aspect-ratio:1/1} /* square */.stat-label{font-family:'Cinzel',serif;font-weight:700;font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--sand);margin-bottom:8px}
 body.ar .stat-label{font-family:'Changa',sans-serif;letter-spacing:0}
 .stat-value{font-family:'Cinzel',serif;font-weight:900;font-size:3rem;color:transparent;line-height:1;
   background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;font-variant-numeric:lining-nums}
@@ -807,6 +832,24 @@ body.ar .stat-delta{font-family:'Changa',sans-serif}
 body.ar .stat-sub{letter-spacing:0}
 /* ===== HISTORICAL WINNERS ===== */
 #stats-history{max-width:560px;margin:24px auto 0}
+/* stats sub-tabs: Goals | Assists | Cards */
+.sstats-tabs{display:flex;gap:8px;justify-content:center;max-width:560px;margin:0 auto 20px}
+.sstats-tab{font-family:'Cinzel',serif;font-weight:700;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:8px 18px;border-radius:22px;border:1px solid var(--row-line);background:transparent;color:var(--sand);cursor:pointer;transition:all .18s}
+.sstats-tab.on{background:var(--gold-grad);color:var(--letter-ink);border-color:transparent}
+body.ar .sstats-tab{font-family:'Changa',sans-serif;letter-spacing:0}
+/* total/pen goal cards: slightly smaller than before */
+#stats-totals .stat-cards,#assists-totals .stat-cards{max-width:420px;margin-left:auto;margin-right:auto}
+#stats-totals .stat-value,#assists-totals .stat-value{font-size:2.3rem}
+.stat-card.empty-card{border-style:dashed;opacity:.35;background:transparent;box-shadow:none}
+/* cards leaderboard blocks */
+#cards-content{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.card-blk-head{display:flex;align-items:center;gap:9px;font-family:'Cinzel',serif;font-weight:700;font-size:.8rem;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--sand);margin-bottom:12px}
+body.ar .card-blk-head{font-family:'Changa',sans-serif;letter-spacing:0}
+.card-chip{width:15px;height:20px;border-radius:3px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.card-chip.yc{background:#E9C20B}
+.card-chip.rc{background:#D32F2F}
 .hist-wrap{border:1px solid rgba(185,138,46,.34);border-radius:14px;overflow:hidden;
   background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 14px 36px -22px rgba(0,0,0,.85)}
 .hist-head{padding:12px 16px;background:var(--head-grad);border-bottom:1px solid var(--row-line)}
@@ -1024,9 +1067,27 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
   <section class="ko">
     <div class="ko-title" id="t-stats-title">TOURNAMENT STATS</div>
     <div class="ko-sub" id="t-stats-sub">Top scorers · Goals across the tournament</div>
-    <div class="scorers-wrap" id="scorers"></div>
-    <div id="stats-totals"></div>
-    <div id="stats-history"></div>
+    <div class="sstats-tabs" role="tablist">
+      <button class="sstats-tab on" id="stab-goals" data-stab="goals">Goals</button>
+      <button class="sstats-tab" id="stab-assists" data-stab="assists">Assists</button>
+      <button class="sstats-tab" id="stab-cards" data-stab="cards">Cards</button>
+    </div>
+    <!-- GOALS tab -->
+    <div class="sstats-pane" id="pane-goals">
+      <div class="scorers-wrap" id="scorers"></div>
+      <div id="stats-totals"></div>
+      <div id="stats-history"></div>
+    </div>
+    <!-- ASSISTS tab -->
+    <div class="sstats-pane" id="pane-assists" hidden>
+      <div class="scorers-wrap" id="assisters"></div>
+      <div id="assists-totals"></div>
+      <div id="assists-history"></div>
+    </div>
+    <!-- CARDS tab -->
+    <div class="sstats-pane" id="pane-cards" hidden>
+      <div id="cards-content"></div>
+    </div>
   </section>
 </div>
 
@@ -1821,6 +1882,18 @@ const WC_WIN_NAME = {
   ARG:{en:'Argentina',ar:'الأرجنتين'}, FRA:{en:'France',ar:'فرنسا'}, URU:{en:'Uruguay',ar:'الأوروغواي'},
   ENG:{en:'England',ar:'إنجلترا'}, ESP:{en:'Spain',ar:'إسبانيا'}
 };
+/* all-time World Cup top scorers (settled history) */
+const WC_ALLTIME_SCORERS = [
+  {name:'Miroslav Klose', flag:'de', goals:16},
+  {name:'Ronaldo', flag:'br', goals:15},
+  {name:'Gerd Müller', flag:'de', goals:14},
+  {name:'Just Fontaine', flag:'fr', goals:13},
+  {name:'Lionel Messi', flag:'ar', goals:13},
+  {name:'Pelé', flag:'br', goals:12},
+  {name:'Kylian Mbappé', flag:'fr', goals:12},
+  {name:'Sándor Kocsis', flag:'hu', goals:11},
+  {name:'Jürgen Klinsmann', flag:'de', goals:11}
+];
 function renderStatsHistory(){
   const ar = LANG==="ar";
   const el = document.getElementById('stats-history');
@@ -1835,10 +1908,160 @@ function renderStatsHistory(){
       <span class="hist-count">${w.titles} ${titleWord(w.titles)}</span>
     </div>`;
   });
+  /* all-time top scorers list */
+  const gWord = ar?'هدف':'goals';
+  let scRows='';
+  WC_ALLTIME_SCORERS.forEach((p,i)=>{
+    scRows += `<div class="hist-row">
+      <span class="t-rank">${i+1}</span>
+      <img src="https://flagcdn.com/h24/${p.flag}.png" alt="">
+      <span class="hist-nm">${p.name}</span>
+      <span class="hist-count">${p.goals} ${gWord}</span>
+    </div>`;
+  });
   el.innerHTML = `<div class="hist-wrap">
     <div class="hist-head"><span class="hist-title">${ar?'أبطال كأس العالم عبر التاريخ':'World Cup Winners'}</span></div>
     ${rows}
+  </div>
+  <div class="hist-wrap" style="margin-top:18px">
+    <div class="hist-head"><span class="hist-title">${ar?'أكثر الهدافين عبر التاريخ':'All-Time Top Scorers'}</span></div>
+    ${scRows}
   </div>`;
+}
+
+/* ===== ASSISTS (from EXTRA / Highlightly) ===== */
+function computeTopAssists(){
+  const tally = {};
+  const ex = (typeof EXTRA!=="undefined" && EXTRA) ? EXTRA : {};
+  const seen = new Set();
+  for(const k in ex){
+    const m = ex[k];
+    if(!m || !Array.isArray(m.assists)) continue;
+    /* EXTRA holds each match under two flipped keys — dedupe by a stable id */
+    const id = norm(m.home)+"~"+norm(m.away);
+    if(seen.has(id)) continue; seen.add(id);
+    for(const a of m.assists){
+      if(!a.assist) continue;
+      const teamCode = codeFromName(a.team) || "";
+      const key = (a.assist||"").trim()+"|"+teamCode;
+      if(!tally[key]) tally[key] = {name:(a.assist||"").trim(), team:teamCode, assists:0};
+      tally[key].assists++;
+    }
+  }
+  const list = Object.values(tally);
+  list.sort((x,y)=> y.assists-x.assists || x.name.localeCompare(y.name));
+  return list.slice(0,10);
+}
+function renderAssisters(){
+  const ar = LANG==="ar";
+  const el = document.getElementById('assisters');
+  if(!el) return;
+  const rows = computeTopAssists();
+  if(!rows.length){
+    el.innerHTML = `<div class="scorers-empty">${ar?"لا توجد تمريرات حاسمة بعد":"No assists yet — appears once matches are played."}</div>`;
+    /* still render the (empty) totals + history below */
+    renderAssistsExtras();
+    return;
+  }
+  const word = ar ? "صناعة" : "assists";
+  const flagOf = code => N[code] ? N[code][1] : "";
+  const top3 = rows.slice(0,3);
+  const medalClass = ['c1','c2','c3'];
+  let champHtml='';
+  top3.forEach((r,i)=>{
+    champHtml += `<div class="champ ${medalClass[i]}">
+      <div class="champ-medal">${i+1}</div>
+      <img class="champ-flag" src="https://flagcdn.com/h60/${flagOf(r.team)}.png" alt="">
+      <div class="champ-name">${r.name}</div>
+      <div class="champ-team">${teamName(r.team)}</div>
+      <div class="champ-goals">${r.assists}<small>${word}</small></div>
+    </div>`;
+  });
+  let listHtml='';
+  rows.slice(3).forEach((r,i)=>{
+    listHtml += `<div class="scorer-row">
+      <span class="s-rank">${i+4}</span>
+      <img class="s-flag" src="https://flagcdn.com/h24/${flagOf(r.team)}.png" alt="">
+      <span class="s-name">${r.name}<span class="s-team">${teamName(r.team)}</span></span>
+      <span class="s-goals">${r.assists}<small>${word}</small></span>
+    </div>`;
+  });
+  el.innerHTML = `<div class="champ-row">${champHtml}</div>` + (listHtml?`<div class="scorers-list">${listHtml}</div>`:'');
+  renderAssistsExtras();
+}
+/* assists tab: total-assists card + an empty second card (mirrors Goals layout) */
+function renderAssistsExtras(){
+  const ar = LANG==="ar";
+  const el = document.getElementById('assists-totals');
+  if(el){
+    let total=0; const ex=(typeof EXTRA!=="undefined"&&EXTRA)?EXTRA:{}; const seen=new Set();
+    for(const k in ex){ const m=ex[k]; if(!m||!Array.isArray(m.assists))continue;
+      const id=norm(m.home)+"~"+norm(m.away); if(seen.has(id))continue; seen.add(id);
+      total += m.assists.filter(a=>a.assist).length; }
+    el.innerHTML = `<div class="stat-cards">
+      <div class="stat-card sq">
+        <div class="stat-label">${ar?'إجمالي التمريرات الحاسمة':'Total Assists'}</div>
+        <div class="stat-value">${total}</div>
+      </div>
+      <div class="stat-card sq empty-card"></div>
+    </div>`;
+  }
+}
+
+/* ===== CARDS leaderboard (top yellow / top red) ===== */
+function computeCardLeaders(){
+  const yellow={}, red={};
+  const ex=(typeof EXTRA!=="undefined"&&EXTRA)?EXTRA:{}; const seen=new Set();
+  for(const k in ex){
+    const m=ex[k]; if(!m||!Array.isArray(m.cards))continue;
+    const id=norm(m.home)+"~"+norm(m.away); if(seen.has(id))continue; seen.add(id);
+    for(const c of m.cards){
+      const teamCode = codeFromName(c.team) || "";
+      const key=(c.player||"").trim()+"|"+teamCode;
+      if(/red/i.test(c.card)){ if(!red[key])red[key]={name:(c.player||"").trim(),team:teamCode,n:0}; red[key].n++; }
+      else { if(!yellow[key])yellow[key]={name:(c.player||"").trim(),team:teamCode,n:0}; yellow[key].n++; }
+    }
+  }
+  const sortTop=(o)=>Object.values(o).sort((a,b)=>b.n-a.n||a.name.localeCompare(b.name)).slice(0,5);
+  return { yellow:sortTop(yellow), red:sortTop(red) };
+}
+function renderCards(){
+  const ar = LANG==="ar";
+  const el = document.getElementById('cards-content');
+  if(!el) return;
+  const {yellow, red} = computeCardLeaders();
+  const flagOf = code => N[code] ? N[code][1] : "";
+  const list = (rows, cls, label)=>{
+    if(!rows.length) return `<div class="card-block"><div class="card-blk-head"><span class="card-chip ${cls}"></span>${label}</div><div class="scorers-empty">${ar?'لا شيء بعد':'None yet'}</div></div>`;
+    let h='';
+    rows.forEach((r,i)=>{
+      h += `<div class="scorer-row">
+        <span class="s-rank">${i+1}</span>
+        <img class="s-flag" src="https://flagcdn.com/h24/${flagOf(r.team)}.png" alt="">
+        <span class="s-name">${r.name}<span class="s-team">${teamName(r.team)}</span></span>
+        <span class="s-goals">${r.n}<small>${ar?(cls==='yc'?'صفراء':'حمراء'):(cls==='yc'?'yellow':'red')}</small></span>
+      </div>`;
+    });
+    return `<div class="card-block">
+      <div class="card-blk-head"><span class="card-chip ${cls}"></span>${label}</div>
+      <div class="scorers-list">${h}</div>
+    </div>`;
+  };
+  el.innerHTML =
+    list(yellow,'yc', ar?'أكثر البطاقات الصفراء':'Top Yellow Cards') +
+    list(red,'rc', ar?'أكثر البطاقات الحمراء':'Top Red Cards');
+}
+
+/* stats sub-tab switcher: Goals | Assists | Cards */
+function switchSStatsTab(tab){
+  ['goals','assists','cards'].forEach(t=>{
+    const pane=document.getElementById('pane-'+t);
+    const btn=document.getElementById('stab-'+t);
+    if(pane) pane.hidden = (t!==tab);
+    if(btn) btn.classList.toggle('on', t===tab);
+  });
+  if(tab==='assists') renderAssisters();
+  if(tab==='cards') renderCards();
 }
 
 /* tab switching: Groups ⇄ Top Scorers */
@@ -1853,6 +2076,10 @@ function switchStatsTab(tab){
 }
 document.getElementById('tab-groups').addEventListener('click', ()=>switchStatsTab('groups'));
 document.getElementById('tab-knockout').addEventListener('click', ()=>switchStatsTab('knockout'));
+['goals','assists','cards'].forEach(t=>{
+  const b=document.getElementById('stab-'+t);
+  if(b) b.addEventListener('click', ()=>switchSStatsTab(t));
+});
 
 /* floating "jump to today" button: scrolls to today's match card.
    Visible only when a today card exists, and hidden while it's already on screen. */
@@ -1986,10 +2213,88 @@ function buildGoalsHTML(m){
   return `<div class="goal-col home">${homeCol}</div><div class="goal-col away">${awayCol}</div>`;
 }
 
-/* a match is expandable if it's finished or live (it can have goals) */
+/* SVG icons for the squad view: ball next to a scorer, boot next to an assister */
+const ICON_BALL = '<svg class="sq-icon" viewBox="0 0 24 24" width="13" height="13" aria-label="goal"><circle cx="12" cy="12" r="9" fill="#fff" stroke="#1b2236" stroke-width="1.4"/><path d="M12 7l2.6 1.9-1 3.1h-3.2l-1-3.1z" fill="#1b2236"/></svg>';
+const ICON_BOOT = '<svg class="sq-icon" viewBox="0 0 24 24" width="13" height="13" aria-label="assist"><path d="M3 7h7l4 4h6a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7z" fill="var(--gold)"/><path d="M3 17h18" stroke="var(--gold)" stroke-width="1.5"/></svg>';
+
+/* build the squad (lineups) view for an expanded match. Returns "" if no
+   lineup data is available (caller falls back to the goal timeline). */
+function buildSquadHTML(m){
+  const ex = (typeof extraFor==="function") ? extraFor(m) : null;
+  if(!ex || !ex.lineups) return "";
+  const lu = ex.lineups;
+  const ha = m.dataset.ha, hb = m.dataset.hb;
+  const ar = (typeof LANG!=="undefined" && LANG==="ar");
+  /* which side in EXTRA is our home/away? match by normalised name */
+  const exHomeIsOurHome = ex.home && norm(ex.home)===norm(N[ha]?N[ha][0]:"");
+  const homeLU = exHomeIsOurHome ? lu.home : lu.away;
+  const awayLU = exHomeIsOurHome ? lu.away : lu.home;
+
+  /* sets of scorer / assister surnames for icon matching */
+  const scorers = new Set(), assisters = new Set();
+  (ex.assists||[]).forEach(a=>{
+    if(a.scorer) scorers.add(surname(a.scorer));
+    if(a.assist) assisters.add(surname(a.assist));
+  });
+  /* scorers also come from the goal feed (LIVE), not just assisted goals */
+  const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
+  if(lv){
+    (lv.homeGoals||[]).concat(lv.awayGoals||[]).forEach(g=>{ if(g.name) scorers.add(surname(g.name)); });
+  }
+
+  const playerRow = (p)=>{
+    const sn = surname(p.name||"");
+    const ball = scorers.has(sn) ? ICON_BALL : '';
+    const boot = assisters.has(sn) ? ICON_BOOT : '';
+    return `<div class="sq-row">
+      <span class="sq-num">${p.number||''}</span>
+      <span class="sq-name">${p.name||''}</span>
+      <span class="sq-icons">${ball}${boot}</span>
+    </div>`;
+  };
+  const teamCol = (lu, code)=>{
+    if(!lu) return `<div class="sq-col"><div class="sq-empty">${ar?'لا توجد تشكيلة':'No lineup'}</div></div>`;
+    const xi = (lu.xi||[]).map(playerRow).join('');
+    const subs = (lu.subs||[]).map(playerRow).join('');
+    const form = lu.formation ? `<span class="sq-form">${lu.formation}</span>` : '';
+    return `<div class="sq-col">
+      <div class="sq-head">${flagImg(code)}<span class="sq-team">${teamName(code)}</span>${form}</div>
+      <div class="sq-xi">${xi}</div>
+      ${subs?`<div class="sq-subs-label">${ar?'البدلاء':'Substitutes'}</div><div class="sq-subs">${subs}</div>`:''}
+    </div>`;
+  };
+  return `<div class="squad-view">
+    ${teamCol(homeLU, ha)}
+    ${teamCol(awayLU, hb)}
+  </div>`;
+}
+function surname(name){ return (name||"").toLowerCase().replace(/\s+/g,' ').trim().split(' ').pop(); }
+function flagImg(code){ return N[code] ? `<img src="https://flagcdn.com/h24/${N[code][1]}.png" alt="">` : ''; }
+
+/* decide what the expanded panel shows: squad if lineups exist (with a toggle
+   back to goals), else just the goal timeline. mode = 'squad' | 'goals'. */
+function buildExpandedHTML(m, mode){
+  const squad = buildSquadHTML(m);
+  const goals = buildGoalsHTML(m);
+  if(!squad) return `<div class="exp-body">${goals}</div>`; /* fallback, no toggle */
+  const ar = (typeof LANG!=="undefined" && LANG==="ar");
+  const active = mode || 'squad';
+  const toggle = `<div class="exp-toggle">
+    <button class="exp-tab${active==='squad'?' on':''}" data-exp="squad">${ar?'التشكيلة':'Squad'}</button>
+    <button class="exp-tab${active==='goals'?' on':''}" data-exp="goals">${ar?'الأهداف':'Goals'}</button>
+  </div>`;
+  const body = active==='squad' ? squad : `<div class="exp-body">${goals}</div>`;
+  return toggle + body;
+}
+
+
+/* a match is expandable if it's finished or live (it can have goals), OR if we
+   have lineup/squad data for it (so the squad view is reachable pre-match too) */
 function isExpandable(m){
-  return m.classList.contains('done') || m.classList.contains('live') ||
-         m.classList.contains('ht') || m.querySelector('.ktime.score');
+  if(m.classList.contains('done') || m.classList.contains('live') ||
+     m.classList.contains('ht') || m.querySelector('.ktime.score')) return true;
+  const ex = (typeof extraFor==="function") ? extraFor(m) : null;
+  return !!(ex && ex.lineups && ((ex.lineups.home&&ex.lineups.home.xi.length)||(ex.lineups.away&&ex.lineups.away.xi.length)));
 }
 
 function collapseMatch(m){
@@ -2002,12 +2307,20 @@ function expandMatch(m){
   document.querySelectorAll('.match.open').forEach(o=>{ if(o!==m) collapseMatch(o); });
   const p = m.querySelector('.goals-panel');
   if(!p) return;
-  p.innerHTML = buildGoalsHTML(m);
+  p.innerHTML = buildExpandedHTML(m);
   p.hidden = false;
   m.classList.add('open');
 }
 
 document.getElementById('schedule').addEventListener('click',(e)=>{
+  /* Goals/Squad toggle inside an expanded match */
+  const expTab = e.target.closest('.exp-tab');
+  if(expTab){
+    const m = expTab.closest('.match');
+    const p = m && m.querySelector('.goals-panel');
+    if(p){ p.innerHTML = buildExpandedHTML(m, expTab.dataset.exp); }
+    return;
+  }
   /* group badge → switch to Standings page, then jump to that group's table.
      (Groups live on the Standings page, which is hidden while on Schedule, so
      we must switch pages first or scrollIntoView does nothing.) */
@@ -2210,11 +2523,16 @@ async function loadExtra(){
     }
     EXTRA = map;
     /* refresh anything that shows EXTRA data */
-    if(typeof renderScorers === "function") renderScorers();   /* top assists later */
-    /* refresh open goal panels so assists appear under goals */
+    if(typeof renderScorers === "function") renderScorers();
+    if(typeof renderAssisters === "function") renderAssisters();
+    if(typeof renderCards === "function") renderCards();
+    /* refresh open expanded panels so assists/squad appear with new data */
     document.querySelectorAll('.match.open').forEach(m=>{
       const p=m.querySelector('.goals-panel');
-      if(p && !p.hidden && typeof buildGoalsHTML==="function") p.innerHTML = buildGoalsHTML(m);
+      if(p && !p.hidden && typeof buildExpandedHTML==="function"){
+        const cur = p.querySelector('.exp-tab.on');
+        p.innerHTML = buildExpandedHTML(m, cur?cur.dataset.exp:null);
+      }
     });
   }catch(e){ /* keep last good EXTRA; never breaks the page */ }
 }
