@@ -1894,17 +1894,21 @@ const ALLTIME_ACTIVE = {
 function allTimeScorers(){
   /* start from the static base */
   const base = WC_ALLTIME_SCORERS.map(p=>({...p}));
+  /* accent-stripping surname helper — MUST be applied to both sides or names
+     like "Mbappé" (feed) vs "mbappe" (base key) won't match */
+  const surnameKey = (nm)=> (nm||"").toLowerCase().normalize('NFD')
+      .replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().split(' ').pop();
   /* this tournament's goals per player surname (from the live top-scorer tally,
      which already de-duplicates and repairs names) */
   const live = (typeof computeTopScorers==="function") ? computeTopScorers() : [];
   const liveBySurname = {};
   live.forEach(r=>{
-    const sn = (r.name||"").toLowerCase().replace(/\s+/g,' ').trim().split(' ').pop();
+    const sn = surnameKey(r.name);
     liveBySurname[sn] = (liveBySurname[sn]||0) + (r.goals||0);
   });
   /* add current goals only to known active all-time players */
   base.forEach(p=>{
-    const sn = p.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(' ').pop();
+    const sn = surnameKey(p.name);
     if(ALLTIME_ACTIVE[sn] && liveBySurname[sn]) p.goals += liveBySurname[sn];
   });
   base.sort((a,b)=> b.goals-a.goals || a.name.localeCompare(b.name));
