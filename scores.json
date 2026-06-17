@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-17T17:35:14.844Z",
+  "updated": "2026-06-17T19:39:55.718Z",
   "matches": [
     {
       "home": "Mexico",
@@ -165,9 +165,9 @@
       "home": "Portugal",
       "away": "Congo DR",
       "homeScore": 1,
-      "awayScore": 0,
-      "state": "LIVE",
-      "minute": 35
+      "awayScore": 1,
+      "state": "FT",
+      "minute": null
     },
     {
       "home": "England",
