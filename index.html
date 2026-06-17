@@ -1057,20 +1057,14 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
 
 <!-- ===================== PAGE: STATS ===================== -->
 <div class="page" id="page-stats" hidden>
-  <section class="favorites" id="fav-stats" data-mode="scorers" hidden>
-    <div class="fav-head">
-      <span class="fav-title fav-title-stats">Your Teams</span>
-      <button class="fav-edit fav-edit-btn" aria-label="Edit your teams">★ Edit</button>
-    </div>
-    <div class="fav-strips"></div>
-  </section>
   <section class="ko">
     <div class="ko-title" id="t-stats-title">TOURNAMENT STATS</div>
     <div class="ko-sub" id="t-stats-sub">Top scorers · Goals across the tournament</div>
+    <!-- All-time World Cup winners: always shown at the top of the Stats page -->
+    <div id="stats-winners"></div>
     <div class="sstats-tabs" role="tablist">
       <button class="sstats-tab on" id="stab-goals" data-stab="goals">Goals</button>
       <button class="sstats-tab" id="stab-assists" data-stab="assists">Assists</button>
-      <button class="sstats-tab" id="stab-cards" data-stab="cards">Cards</button>
     </div>
     <!-- GOALS tab -->
     <div class="sstats-pane" id="pane-goals">
@@ -1083,10 +1077,6 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
       <div class="scorers-wrap" id="assisters"></div>
       <div id="assists-totals"></div>
       <div id="assists-history"></div>
-    </div>
-    <!-- CARDS tab -->
-    <div class="sstats-pane" id="pane-cards" hidden>
-      <div id="cards-content"></div>
     </div>
   </section>
 </div>
@@ -1882,7 +1872,7 @@ const WC_WIN_NAME = {
   ARG:{en:'Argentina',ar:'الأرجنتين'}, FRA:{en:'France',ar:'فرنسا'}, URU:{en:'Uruguay',ar:'الأوروغواي'},
   ENG:{en:'England',ar:'إنجلترا'}, ESP:{en:'Spain',ar:'إسبانيا'}
 };
-/* all-time World Cup top scorers (settled history) */
+/* all-time World Cup top scorers (static base, pre-WC2026) */
 const WC_ALLTIME_SCORERS = [
   {name:'Miroslav Klose', flag:'de', goals:16},
   {name:'Ronaldo', flag:'br', goals:15},
@@ -1894,9 +1884,35 @@ const WC_ALLTIME_SCORERS = [
   {name:'Sándor Kocsis', flag:'hu', goals:11},
   {name:'Jürgen Klinsmann', flag:'de', goals:11}
 ];
-function renderStatsHistory(){
+/* active players still adding to their all-time tally — match this tournament's
+   goals onto them by surname so the list updates live. Retired players (Klose,
+   Pelé, etc.) are excluded from matching so a same-surname scorer can't inflate
+   their totals. */
+const ALLTIME_ACTIVE = {
+  'messi':'Lionel Messi', 'mbappe':'Kylian Mbappé'
+};
+function allTimeScorers(){
+  /* start from the static base */
+  const base = WC_ALLTIME_SCORERS.map(p=>({...p}));
+  /* this tournament's goals per player surname (from the live top-scorer tally,
+     which already de-duplicates and repairs names) */
+  const live = (typeof computeTopScorers==="function") ? computeTopScorers() : [];
+  const liveBySurname = {};
+  live.forEach(r=>{
+    const sn = (r.name||"").toLowerCase().replace(/\s+/g,' ').trim().split(' ').pop();
+    liveBySurname[sn] = (liveBySurname[sn]||0) + (r.goals||0);
+  });
+  /* add current goals only to known active all-time players */
+  base.forEach(p=>{
+    const sn = p.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(' ').pop();
+    if(ALLTIME_ACTIVE[sn] && liveBySurname[sn]) p.goals += liveBySurname[sn];
+  });
+  base.sort((a,b)=> b.goals-a.goals || a.name.localeCompare(b.name));
+  return base;
+}
+function renderStatsWinners(){
   const ar = LANG==="ar";
-  const el = document.getElementById('stats-history');
+  const el = document.getElementById('stats-winners');
   if(!el) return;
   const titleWord = (n)=> ar ? (n===1?'لقب':'ألقاب') : (n===1?'title':'titles');
   let rows='';
@@ -1908,10 +1924,19 @@ function renderStatsHistory(){
       <span class="hist-count">${w.titles} ${titleWord(w.titles)}</span>
     </div>`;
   });
-  /* all-time top scorers list */
+  el.innerHTML = `<div class="hist-wrap">
+    <div class="hist-head"><span class="hist-title">${ar?'أبطال كأس العالم عبر التاريخ':'All-Time World Cup Winners'}</span></div>
+    ${rows}
+  </div>`;
+}
+function renderStatsHistory(){
+  const ar = LANG==="ar";
+  const el = document.getElementById('stats-history');
+  if(!el) return;
+  /* all-time top scorers list (live-updated with this tournament's goals) */
   const gWord = ar?'هدف':'goals';
   let scRows='';
-  WC_ALLTIME_SCORERS.forEach((p,i)=>{
+  allTimeScorers().forEach((p,i)=>{
     scRows += `<div class="hist-row">
       <span class="t-rank">${i+1}</span>
       <img src="https://flagcdn.com/h24/${p.flag}.png" alt="">
@@ -1919,11 +1944,7 @@ function renderStatsHistory(){
       <span class="hist-count">${p.goals} ${gWord}</span>
     </div>`;
   });
-  el.innerHTML = `<div class="hist-wrap">
-    <div class="hist-head"><span class="hist-title">${ar?'أبطال كأس العالم عبر التاريخ':'World Cup Winners'}</span></div>
-    ${rows}
-  </div>
-  <div class="hist-wrap" style="margin-top:18px">
+  el.innerHTML = `<div class="hist-wrap" style="margin-top:18px">
     <div class="hist-head"><span class="hist-title">${ar?'أكثر الهدافين عبر التاريخ':'All-Time Top Scorers'}</span></div>
     ${scRows}
   </div>`;
@@ -2052,16 +2073,15 @@ function renderCards(){
     list(red,'rc', ar?'أكثر البطاقات الحمراء':'Top Red Cards');
 }
 
-/* stats sub-tab switcher: Goals | Assists | Cards */
+/* stats sub-tab switcher: Goals | Assists */
 function switchSStatsTab(tab){
-  ['goals','assists','cards'].forEach(t=>{
+  ['goals','assists'].forEach(t=>{
     const pane=document.getElementById('pane-'+t);
     const btn=document.getElementById('stab-'+t);
     if(pane) pane.hidden = (t!==tab);
     if(btn) btn.classList.toggle('on', t===tab);
   });
   if(tab==='assists') renderAssisters();
-  if(tab==='cards') renderCards();
 }
 
 /* tab switching: Groups ⇄ Top Scorers */
@@ -2076,7 +2096,7 @@ function switchStatsTab(tab){
 }
 document.getElementById('tab-groups').addEventListener('click', ()=>switchStatsTab('groups'));
 document.getElementById('tab-knockout').addEventListener('click', ()=>switchStatsTab('knockout'));
-['goals','assists','cards'].forEach(t=>{
+['goals','assists'].forEach(t=>{
   const b=document.getElementById('stab-'+t);
   if(b) b.addEventListener('click', ()=>switchSStatsTab(t));
 });
@@ -2490,6 +2510,7 @@ async function loadScores(){
     if(typeof renderScorers === "function") renderScorers();
     if(typeof renderStatsTotals === "function") renderStatsTotals();
     if(typeof renderStatsHistory === "function") renderStatsHistory();
+    if(typeof renderStatsWinners === "function") renderStatsWinners();
     const kEl = document.getElementById('knockout');
     if(kEl && !kEl.hidden && typeof renderKnockout === "function") renderKnockout();
   }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
@@ -2525,7 +2546,6 @@ async function loadExtra(){
     /* refresh anything that shows EXTRA data */
     if(typeof renderScorers === "function") renderScorers();
     if(typeof renderAssisters === "function") renderAssisters();
-    if(typeof renderCards === "function") renderCards();
     /* refresh open expanded panels so assists/squad appear with new data */
     document.querySelectorAll('.match.open').forEach(m=>{
       const p=m.querySelector('.goals-panel');
@@ -3226,7 +3246,7 @@ function showPage(page){
   document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
   /* render the page's dynamic content fresh on entry */
   if(page==='standings'){ renderGroups(); const k=document.getElementById('knockout'); if(k&&!k.hidden) renderKnockout(); }
-  if(page==='stats'){ renderScorers(); renderStatsTotals(); renderStatsHistory(); }
+  if(page==='stats'){ renderScorers(); renderStatsTotals(); renderStatsHistory(); renderStatsWinners(); }
   window.scrollTo({top:0,behavior:'instant'});
   if(typeof updateJumpButton==="function") updateJumpButton();
 }
@@ -3242,6 +3262,7 @@ setInterval(tick, 1000);
 renderScorers();
 renderStatsTotals();
 renderStatsHistory();
+renderStatsWinners();
 
 /* first-open: if no favorites saved yet, show the picker. Otherwise render them. */
 renderFavorites();
