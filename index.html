@@ -474,6 +474,9 @@ body.ar .goal-band .gb-text{font-family:'Changa',sans-serif;letter-spacing:0}
 }
 .goal-line .g-sep{color:var(--sand);font-weight:400}
 .goal-line .g-name{position:relative;z-index:1;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.goal-line .g-assist{display:block;font-size:.62rem;font-weight:400;color:var(--sand);opacity:.85;letter-spacing:.02em;margin-top:1px}
+.goal-col.away .g-assist{text-align:right}
+body.ar .goal-line .g-assist{letter-spacing:0}
 .goal-line .g-tag{
   position:relative;z-index:1;font-size:.56rem;letter-spacing:.06em;font-weight:700;
   color:var(--sand);border:1px solid rgba(201,184,150,.45);border-radius:4px;padding:1px 4px;
@@ -1959,13 +1962,23 @@ function buildGoalsHTML(m){
     }
     return order.map(k=>map[k]);
   };
+  const ex = (typeof extraFor==="function") ? extraFor(m) : null;
+  const ar = (typeof LANG!=="undefined" && LANG==="ar");
   const line = (p, pat)=>{
     const mins = p.mins.map(m=>`${m.minute}${m.pen?'<span class="g-tag pen">PEN</span>':''}`).join('<span class="g-sep">,</span>');
     const ogTag = p.og ? '<span class="g-tag og">OG</span>' : '';
+    /* assist maker (from EXTRA / Highlightly), matched by minute then surname */
+    let assistHtml = '';
+    if(ex && !p.og){
+      for(const mm of p.mins){
+        const as = (typeof assistFor==="function") ? assistFor(ex, p.name, mm.minute) : null;
+        if(as){ assistHtml = `<span class="g-assist">${ar?'صناعة':'assist'}: ${as}</span>`; break; }
+      }
+    }
     return `<div class="goal-line">
       <span class="flagbg" style="--gbg:${pat}"></span>
       <span class="g-min">${mins}</span>
-      <span class="g-name">${p.name||''}</span>${ogTag}
+      <span class="g-name">${p.name||''}${assistHtml}</span>${ogTag}
     </div>`;
   };
   const homeCol = groupGoals(homeGoals).map(p=>line(p,hPat)).join('');
@@ -2168,6 +2181,69 @@ async function loadScores(){
     if(kEl && !kEl.hidden && typeof renderKnockout === "function") renderKnockout();
   }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
 }
+
+/* =====================================================================
+   EXTRA data layer (Highlightly via second Worker): assists, cards,
+   formations. COMPLETELY separate from the scores flow above — it has
+   its own URL, its own variable, its own timer, and never touches LIVE
+   or loadScores. If it fails, nothing else is affected.
+   Set EXTRA_URL to your second Worker's URL (leave "" to disable).
+   ===================================================================== */
+const EXTRA_URL = "https://wc2026-extra.abdulelah12012.workers.dev/";      /* <-- set to your wc2026-extra Worker URL */
+let EXTRA = {};            /* keyed norm(home)+"|"+norm(away), like LIVE */
+async function loadExtra(){
+  if(!EXTRA_URL) return;
+  try{
+    const url = EXTRA_URL + (EXTRA_URL.includes('?')?'&':'?') + '_=' + Date.now();
+    const res = await fetch(url, {cache:'no-store'});
+    if(!res.ok) return;
+    const data = await res.json();
+    const map = {};
+    const src = data.matches || {};
+    for(const k in src){
+      const m = src[k];
+      /* re-key with the PAGE's norm() on the team names, so the join matches
+         the page exactly (the Worker's own key uses slightly different rules) */
+      const a = norm(m.home), b = norm(m.away);
+      map[a+"|"+b] = m;
+      map[b+"|"+a] = m; /* allow either lookup order */
+    }
+    EXTRA = map;
+    /* refresh anything that shows EXTRA data */
+    if(typeof renderScorers === "function") renderScorers();   /* top assists later */
+    /* refresh open goal panels so assists appear under goals */
+    document.querySelectorAll('.match.open').forEach(m=>{
+      const p=m.querySelector('.goals-panel');
+      if(p && !p.hidden && typeof buildGoalsHTML==="function") p.innerHTML = buildGoalsHTML(m);
+    });
+  }catch(e){ /* keep last good EXTRA; never breaks the page */ }
+}
+/* look up EXTRA data for a match element by its team codes */
+function extraFor(m){
+  if(!m || !m.dataset) return null;
+  const a = m.dataset.ha, b = m.dataset.hb;
+  if(!a || !b) return null;
+  const ka = norm(N[a] ? N[a][0] : ""), kb = norm(N[b] ? N[b][0] : "");
+  return EXTRA[ka+"|"+kb] || EXTRA[kb+"|"+ka] || null;
+}
+/* find the assist for a given scorer+minute in an EXTRA record */
+function assistFor(ex, scorerName, minute){
+  if(!ex || !Array.isArray(ex.assists)) return null;
+  const sn = (scorerName||"").toLowerCase().replace(/\s+/g,' ').trim();
+  const mn = (minute||"").toString().replace(/[^0-9+]/g,'');
+  /* match on minute first (most reliable), then loosely on scorer surname */
+  for(const a of ex.assists){
+    const am = (a.minute||"").toString().replace(/[^0-9+]/g,'');
+    if(am && mn && am===mn) return a.assist;
+  }
+  /* fallback: match on scorer surname */
+  const surname = sn.split(' ').pop();
+  for(const a of ex.assists){
+    const as = (a.scorer||"").toLowerCase();
+    if(surname && as.includes(surname)) return a.assist;
+  }
+  return null;
+}
 /* resolve a feed name to our team code, or null if unknown */
 function codeFromName(name){
   const n=norm(name);
@@ -2177,6 +2253,10 @@ function codeFromName(name){
 /* refresh every 60s; scores.json itself updates on the Action's schedule */
 loadScores();
 setInterval(loadScores, 60000);
+/* EXTRA layer (assists/cards/formations) — own timer, won't affect scores.
+   The Worker caches hard, so the page can poll modestly. */
+loadExtra();
+setInterval(loadExtra, 120000);
 
 function meccaNow(){ return new Date(Date.now() + MECCA_OFFSET); } /* read with getUTC* */
 
