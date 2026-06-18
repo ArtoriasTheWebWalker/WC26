@@ -466,6 +466,7 @@ body.ar .sq-team{font-family:'Changa',sans-serif}
 .sq-icons{flex:none;display:flex;gap:8px;align-items:center}
 .sq-mark{display:inline-flex;align-items:center;gap:3px}
 .sq-ball{width:14px;height:14px;object-fit:contain;display:inline-block;vertical-align:middle}
+.sq-boot{width:17px;height:13px;object-fit:contain;display:inline-block;vertical-align:middle;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
 .sq-icon{flex:none}
 .sq-x{font-size:.66rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
 .sq-min{font-size:.62rem;color:var(--sand);letter-spacing:.02em;font-variant-numeric:tabular-nums}
@@ -2249,7 +2250,7 @@ function buildGoalsHTML(m){
 /* squad-view markers: ball uses the app's own ball.png; boot is a clean
    minimalist glyph in the gold palette */
 const ICON_BALL = '<img class="sq-ball" src="ball.png" alt="goal" onerror="this.style.display=\'none\'">';
-const ICON_BOOT = '<svg class="sq-icon" viewBox="0 0 24 24" width="12" height="12" aria-label="assist"><path d="M4 6v7c0 1.1.9 2 2 2h9l4.5 2.2c.6.3 1.3-.1 1.3-.8V14c0-1.1-.9-2-2-2h-7V6c0-.6-.4-1-1-1H5c-.6 0-1 .4-1 1z" fill="none" stroke="var(--gold)" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+const ICON_BOOT = '<svg class="sq-boot" viewBox="0 0 32 24" width="17" height="13" aria-label="assist"><defs><linearGradient id="bootg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6DC85"/><stop offset="0.55" stop-color="#E3C567"/><stop offset="1" stop-color="#A87E28"/></linearGradient></defs><path d="M26.5 5.3c.9.5 1.4 1.6 1.4 3 0 1.5-.6 2.7-1.8 3.3-.9.5-2 .6-3.4.6-4.5.1-8.8.1-13.4.1-1.6 0-3 0-4.4.1-1.5.1-2.6.4-3.4 1.1-.2-1 0-2.1.8-2.9.7-.7 1.4-1.1 1.8-2.1.5-1.3 1.4-2.1 2.8-2.3 1.1-.2 1.9.2 2.7.7.9.5 1.6.6 2.6.3 1.1-.3 1.9-1.1 3.2-1.5 1-.3 2-.4 3-.3 1.8.1 3.4.6 4.6 1.3.5.3 1 .5 1.3.7z" fill="url(#bootg)"/><g stroke="#fff" stroke-width="0.55" opacity="0.92" stroke-linecap="round"><line x1="12.2" y1="5.2" x2="14" y2="6"/><line x1="14" y1="5.1" x2="12.1" y2="5.9"/><line x1="15.4" y1="5.5" x2="17.1" y2="6.3"/><line x1="17.1" y1="5.4" x2="15.3" y2="6.2"/></g><g fill="#9A741F"><path d="M5 12.6h1.5l-.25 2.3H5.25z"/><path d="M10 12.6h1.5l-.25 2.3h-1.25z"/><path d="M15 12.6h1.5l-.25 2.3h-1.25z"/><path d="M20 12.5h1.5l-.25 2.3h-1.25z"/><path d="M24 12.3h1.4l-.25 2.2h-1.15z"/></g></svg>';
 
 /* build the squad (lineups) view for an expanded match. Returns "" if no
    lineup data is available (caller falls back to the goal timeline). */
@@ -2301,9 +2302,14 @@ function buildSquadHTML(m){
     const xi = (lu.xi||[]).map(playerRow).join('');
     const subs = (lu.subs||[]).map(playerRow).join('');
     const form = lu.formation ? `<span class="sq-form">${lu.formation}</span>` : '';
+    /* keep subs open across the per-second re-render if the user had opened them */
+    const openNow = (()=>{ try{
+      const cur = m.querySelector(`.sq-subs-toggle[data-subs="${side}"]`);
+      return cur && cur.classList.contains('open');
+    }catch(e){ return false; } })();
     const subsBlock = subs ? `
-      <button class="sq-subs-toggle" data-subs="${side}">${ar?'البدلاء':'Subs'} <span class="sq-caret">▾</span></button>
-      <div class="sq-subs" hidden>${subs}</div>` : '';
+      <button class="sq-subs-toggle${openNow?' open':''}" data-subs="${side}">${ar?'البدلاء':'Subs'} <span class="sq-caret">▾</span></button>
+      <div class="sq-subs"${openNow?'':' hidden'}>${subs}</div>` : '';
     return `<div class="sq-col">
       <div class="sq-head">${flagImg(code)}<span class="sq-team">${teamName(code)}</span>${form}</div>
       <div class="sq-xi">${xi}</div>
