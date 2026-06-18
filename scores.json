@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-18T06:25:28.078Z",
+  "updated": "2026-06-18T10:53:08.079Z",
   "matches": [
     {
       "home": "Mexico",
@@ -182,8 +182,8 @@
       "away": "Panama",
       "homeScore": 1,
       "awayScore": 0,
-      "state": "LIVE",
-      "minute": 445
+      "state": "FT",
+      "minute": null
     },
     {
       "home": "Uzbekistan",
