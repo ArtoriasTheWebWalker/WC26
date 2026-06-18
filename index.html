@@ -463,10 +463,19 @@ body.ar .sq-team{font-family:'Changa',sans-serif}
 .sq-row:nth-child(odd){background:rgba(255,255,255,.02)}
 .sq-num{flex:none;width:18px;text-align:center;font-variant-numeric:tabular-nums;color:var(--sand);font-size:.68rem}
 .sq-name{flex:1;min-width:0;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sq-icons{flex:none;display:flex;gap:3px;align-items:center}
+.sq-icons{flex:none;display:flex;gap:8px;align-items:center}
+.sq-mark{display:inline-flex;align-items:center;gap:3px}
+.sq-ball{width:14px;height:14px;object-fit:contain;display:inline-block;vertical-align:middle}
 .sq-icon{flex:none}
-.sq-subs-label{margin:8px 6px 4px;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep);font-weight:700}
-body.ar .sq-subs-label{letter-spacing:0}
+.sq-x{font-size:.66rem;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+.sq-min{font-size:.62rem;color:var(--sand);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+body.ar .sq-min{letter-spacing:0}
+.sq-subs-toggle{display:flex;align-items:center;gap:6px;margin:8px 4px 2px;padding:5px 10px;cursor:pointer;
+  background:rgba(184,144,47,.08);border:1px solid var(--row-line-soft);border-radius:7px;
+  font-family:'Cinzel',serif;font-weight:700;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep);width:100%}
+body.ar .sq-subs-toggle{font-family:'Changa',sans-serif;letter-spacing:0}
+.sq-caret{transition:transform .2s;display:inline-block}
+.sq-subs-toggle.open .sq-caret{transform:rotate(180deg)}
 .sq-subs .sq-row{opacity:.72}
 .sq-empty{padding:14px 6px;text-align:center;color:var(--sand);font-size:.72rem;opacity:.7}
 .goal-col{display:flex;flex-direction:column;gap:5px}
@@ -2237,9 +2246,10 @@ function buildGoalsHTML(m){
   return `<div class="goal-col home">${homeCol}</div><div class="goal-col away">${awayCol}</div>`;
 }
 
-/* SVG icons for the squad view: ball next to a scorer, boot next to an assister */
-const ICON_BALL = '<svg class="sq-icon" viewBox="0 0 24 24" width="13" height="13" aria-label="goal"><circle cx="12" cy="12" r="9" fill="#fff" stroke="#1b2236" stroke-width="1.4"/><path d="M12 7l2.6 1.9-1 3.1h-3.2l-1-3.1z" fill="#1b2236"/></svg>';
-const ICON_BOOT = '<svg class="sq-icon" viewBox="0 0 24 24" width="13" height="13" aria-label="assist"><path d="M3 7h7l4 4h6a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7z" fill="var(--gold)"/><path d="M3 17h18" stroke="var(--gold)" stroke-width="1.5"/></svg>';
+/* squad-view markers: ball uses the app's own ball.png; boot is a clean
+   minimalist glyph in the gold palette */
+const ICON_BALL = '<img class="sq-ball" src="ball.png" alt="goal" onerror="this.style.display=\'none\'">';
+const ICON_BOOT = '<svg class="sq-icon" viewBox="0 0 24 24" width="12" height="12" aria-label="assist"><path d="M4 6v7c0 1.1.9 2 2 2h9l4.5 2.2c.6.3 1.3-.1 1.3-.8V14c0-1.1-.9-2-2-2h-7V6c0-.6-.4-1-1-1H5c-.6 0-1 .4-1 1z" fill="none" stroke="var(--gold)" stroke-width="1.6" stroke-linejoin="round"/></svg>';
 
 /* build the squad (lineups) view for an expanded match. Returns "" if no
    lineup data is available (caller falls back to the goal timeline). */
@@ -2249,63 +2259,83 @@ function buildSquadHTML(m){
   const lu = ex.lineups;
   const ha = m.dataset.ha, hb = m.dataset.hb;
   const ar = (typeof LANG!=="undefined" && LANG==="ar");
-  /* which side in EXTRA is our home/away? match by normalised name */
   const exHomeIsOurHome = ex.home && norm(ex.home)===norm(N[ha]?N[ha][0]:"");
   const homeLU = exHomeIsOurHome ? lu.home : lu.away;
   const awayLU = exHomeIsOurHome ? lu.away : lu.home;
 
-  /* sets of scorer / assister surnames for icon matching */
-  const scorers = new Set(), assisters = new Set();
-  (ex.assists||[]).forEach(a=>{
-    if(a.scorer) scorers.add(surname(a.scorer));
-    if(a.assist) assisters.add(surname(a.assist));
-  });
-  /* scorers also come from the goal feed (LIVE), not just assisted goals */
+  /* goals per scorer surname → {count, minutes[]}; assists per surname */
+  const goalsBy = {}, assisters = new Set();
+  const addGoal = (nm, minute)=>{
+    const sn = surname(nm); if(!sn) return;
+    if(!goalsBy[sn]) goalsBy[sn] = {count:0, mins:[]};
+    goalsBy[sn].count++;
+    if(minute) goalsBy[sn].mins.push(cleanMinute(minute));
+  };
+  /* primary scorer source: the live goal feed (has minutes) */
   const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
   if(lv){
-    (lv.homeGoals||[]).concat(lv.awayGoals||[]).forEach(g=>{ if(g.name) scorers.add(surname(g.name)); });
+    (lv.homeGoals||[]).forEach(g=>{ if(g.name) addGoal(g.name, g.minute); });
+    (lv.awayGoals||[]).forEach(g=>{ if(g.name) addGoal(g.name, g.minute); });
   }
+  /* assists from EXTRA */
+  (ex.assists||[]).forEach(a=>{ if(a.assist) assisters.add(surname(a.assist)); });
 
   const playerRow = (p)=>{
     const sn = surname(p.name||"");
-    const ball = scorers.has(sn) ? ICON_BALL : '';
-    const boot = assisters.has(sn) ? ICON_BOOT : '';
+    const g = goalsBy[sn];
+    let goalHtml = '';
+    if(g){
+      const count = g.count>1 ? `<span class="sq-x">×${g.count}</span>` : '';
+      const mins = g.mins.length ? `<span class="sq-min">${g.mins.join(', ')}</span>` : '';
+      goalHtml = `<span class="sq-mark">${ICON_BALL}${count}${mins}</span>`;
+    }
+    const boot = assisters.has(sn) ? `<span class="sq-mark">${ICON_BOOT}</span>` : '';
     return `<div class="sq-row">
       <span class="sq-num">${p.number||''}</span>
       <span class="sq-name">${p.name||''}</span>
-      <span class="sq-icons">${ball}${boot}</span>
+      <span class="sq-icons">${goalHtml}${boot}</span>
     </div>`;
   };
-  const teamCol = (lu, code)=>{
+  const teamCol = (lu, code, side)=>{
     if(!lu) return `<div class="sq-col"><div class="sq-empty">${ar?'لا توجد تشكيلة':'No lineup'}</div></div>`;
     const xi = (lu.xi||[]).map(playerRow).join('');
     const subs = (lu.subs||[]).map(playerRow).join('');
     const form = lu.formation ? `<span class="sq-form">${lu.formation}</span>` : '';
+    const subsBlock = subs ? `
+      <button class="sq-subs-toggle" data-subs="${side}">${ar?'البدلاء':'Subs'} <span class="sq-caret">▾</span></button>
+      <div class="sq-subs" hidden>${subs}</div>` : '';
     return `<div class="sq-col">
       <div class="sq-head">${flagImg(code)}<span class="sq-team">${teamName(code)}</span>${form}</div>
       <div class="sq-xi">${xi}</div>
-      ${subs?`<div class="sq-subs-label">${ar?'البدلاء':'Substitutes'}</div><div class="sq-subs">${subs}</div>`:''}
+      ${subsBlock}
     </div>`;
   };
   return `<div class="squad-view">
-    ${teamCol(homeLU, ha)}
-    ${teamCol(awayLU, hb)}
+    ${teamCol(homeLU, ha, 'h')}
+    ${teamCol(awayLU, hb, 'a')}
   </div>`;
 }
-function surname(name){ return (name||"").toLowerCase().replace(/\s+/g,' ').trim().split(' ').pop(); }
+function cleanMinute(mn){ return (mn||"").toString().replace(/\s+/g,'').replace(/'+$/,'')+"'"; }
+function surname(name){ return (name||"").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().split(' ').pop(); }
 function flagImg(code){ return N[code] ? `<img src="https://flagcdn.com/h24/${N[code][1]}.png" alt="">` : ''; }
 
-/* decide what the expanded panel shows: squad if lineups exist (with a toggle
-   back to goals), else just the goal timeline. mode = 'squad' | 'goals'. */
+/* decide what the expanded panel shows. Default = Goals; but if the match has
+   no goals yet, default to Squad. A toggle switches between them when both are
+   available. mode (when passed) overrides the default to preserve the user's
+   current choice across refreshes. */
 function buildExpandedHTML(m, mode){
   const squad = buildSquadHTML(m);
   const goals = buildGoalsHTML(m);
-  if(!squad) return `<div class="exp-body">${goals}</div>`; /* fallback, no toggle */
+  if(!squad) return `<div class="exp-body">${goals}</div>`; /* no lineup → goals only */
   const ar = (typeof LANG!=="undefined" && LANG==="ar");
-  const active = mode || 'squad';
+  /* does this match have any goals? (check the live goal feed) */
+  const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
+  const hasGoals = !!(lv && ((lv.homeGoals&&lv.homeGoals.length)||(lv.awayGoals&&lv.awayGoals.length)
+                    || (typeof lv.homeScore==="number"&&lv.homeScore>0) || (typeof lv.awayScore==="number"&&lv.awayScore>0)));
+  const active = mode || (hasGoals ? 'goals' : 'squad');
   const toggle = `<div class="exp-toggle">
-    <button class="exp-tab${active==='squad'?' on':''}" data-exp="squad">${ar?'التشكيلة':'Squad'}</button>
     <button class="exp-tab${active==='goals'?' on':''}" data-exp="goals">${ar?'الأهداف':'Goals'}</button>
+    <button class="exp-tab${active==='squad'?' on':''}" data-exp="squad">${ar?'التشكيلة':'Squad'}</button>
   </div>`;
   const body = active==='squad' ? squad : `<div class="exp-body">${goals}</div>`;
   return toggle + body;
@@ -2343,6 +2373,17 @@ document.getElementById('schedule').addEventListener('click',(e)=>{
     const m = expTab.closest('.match');
     const p = m && m.querySelector('.goals-panel');
     if(p){ p.innerHTML = buildExpandedHTML(m, expTab.dataset.exp); }
+    return;
+  }
+  /* Subs expander inside the squad view */
+  const subsBtn = e.target.closest('.sq-subs-toggle');
+  if(subsBtn){
+    const col = subsBtn.closest('.sq-col');
+    const subs = col && col.querySelector('.sq-subs');
+    if(subs){
+      subs.hidden = !subs.hidden;
+      subsBtn.classList.toggle('open', !subs.hidden);
+    }
     return;
   }
   /* group badge → switch to Standings page, then jump to that group's table.
