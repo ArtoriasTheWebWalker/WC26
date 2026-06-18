@@ -2821,10 +2821,14 @@ function tick(){
       /* a match becomes pressable once it can have goals (live/ht/done) */
       const canExpand = live || ht || done || !!m.querySelector('.ktime.score');
       m.classList.toggle('expandable', canExpand);
-      /* if this match is currently open, refresh its goal panel with new data */
+      /* if this match is currently open, refresh its panel with new data,
+         preserving whichever view (Squad/Goals) is currently active */
       if(m.classList.contains('open')){
         const p=m.querySelector('.goals-panel');
-        if(p && !p.hidden) p.innerHTML = buildGoalsHTML(m);
+        if(p && !p.hidden && typeof buildExpandedHTML==="function"){
+          const cur = p.querySelector('.exp-tab.on');
+          p.innerHTML = buildExpandedHTML(m, cur?cur.dataset.exp:null);
+        }
       }
 
       /* apply API final score + winner ring if the match has ended live */
