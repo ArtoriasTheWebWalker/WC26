@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-20T19:52:25.582Z",
+  "updated": "2026-06-20T21:00:42.598Z",
   "matches": [
     {
       "home": "Mexico",
@@ -268,9 +268,9 @@
     {
       "home": "Germany",
       "away": "Ivory Coast",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 0,
+      "awayScore": 1,
+      "state": "HT",
       "minute": null
     },
     {
