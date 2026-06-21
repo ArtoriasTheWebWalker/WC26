@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-21T22:40:57.338Z",
+  "updated": "2026-06-21T23:56:43.448Z",
   "matches": [
     {
       "home": "Mexico",
@@ -308,10 +308,10 @@
     {
       "home": "Uruguay",
       "away": "Cape Verde Islands",
-      "homeScore": 0,
-      "awayScore": 1,
+      "homeScore": 2,
+      "awayScore": 2,
       "state": "LIVE",
-      "minute": 41
+      "minute": 117
     },
     {
       "home": "New Zealand",
