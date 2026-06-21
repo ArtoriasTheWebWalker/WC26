@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-20T23:38:57.180Z",
+  "updated": "2026-06-21T02:04:20.673Z",
   "matches": [
     {
       "home": "Mexico",
@@ -276,9 +276,9 @@
     {
       "home": "Ecuador",
       "away": "Curaçao",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 0,
+      "awayScore": 0,
+      "state": "FT",
       "minute": null
     },
     {
