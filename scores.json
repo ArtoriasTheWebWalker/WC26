@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-23T20:28:17.478Z",
+  "updated": "2026-06-23T21:57:30.695Z",
   "matches": [
     {
       "home": "Mexico",
@@ -367,7 +367,7 @@
       "homeScore": 0,
       "awayScore": 0,
       "state": "LIVE",
-      "minute": 28
+      "minute": 118
     },
     {
       "home": "Panama",
@@ -594,7 +594,7 @@
       "minute": null
     },
     {
-      "home": "",
+      "home": "Germany",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -626,7 +626,7 @@
       "minute": null
     },
     {
-      "home": "",
+      "home": "Mexico",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -650,7 +650,7 @@
       "minute": null
     },
     {
-      "home": "",
+      "home": "United States",
       "away": "",
       "homeScore": null,
       "awayScore": null,
