@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-23T04:32:54.953Z",
+  "updated": "2026-06-23T08:05:35.383Z",
   "matches": [
     {
       "home": "Mexico",
@@ -349,9 +349,9 @@
       "home": "Jordan",
       "away": "Algeria",
       "homeScore": 1,
-      "awayScore": 0,
-      "state": "LIVE",
-      "minute": 93
+      "awayScore": 2,
+      "state": "FT",
+      "minute": null
     },
     {
       "home": "Portugal",
@@ -594,7 +594,23 @@
       "minute": null
     },
     {
-      "home": "Germany",
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -626,14 +642,6 @@
       "minute": null
     },
     {
-      "home": "Mexico",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
       "home": "",
       "away": "",
       "homeScore": null,
@@ -643,14 +651,6 @@
     },
     {
       "home": "",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "United States",
       "away": "",
       "homeScore": null,
       "awayScore": null,
