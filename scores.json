@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-23T21:57:30.695Z",
+  "updated": "2026-06-23T23:09:16.074Z",
   "matches": [
     {
       "home": "Mexico",
@@ -366,16 +366,16 @@
       "away": "Ghana",
       "homeScore": 0,
       "awayScore": 0,
-      "state": "LIVE",
-      "minute": 118
+      "state": "FT",
+      "minute": null
     },
     {
       "home": "Panama",
       "away": "Croatia",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 0,
+      "awayScore": 0,
+      "state": "LIVE",
+      "minute": 9
     },
     {
       "home": "Colombia",
@@ -594,7 +594,23 @@
       "minute": null
     },
     {
-      "home": "Germany",
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -626,14 +642,6 @@
       "minute": null
     },
     {
-      "home": "Mexico",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
       "home": "",
       "away": "",
       "homeScore": null,
@@ -643,14 +651,6 @@
     },
     {
       "home": "",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "United States",
       "away": "",
       "homeScore": null,
       "awayScore": null,
