@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-23T13:58:53.454Z",
+  "updated": "2026-06-23T16:28:25.957Z",
   "matches": [
     {
       "home": "Mexico",
@@ -594,7 +594,23 @@
       "minute": null
     },
     {
-      "home": "Germany",
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -626,14 +642,6 @@
       "minute": null
     },
     {
-      "home": "Mexico",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
       "home": "",
       "away": "",
       "homeScore": null,
@@ -643,14 +651,6 @@
     },
     {
       "home": "",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "United States",
       "away": "",
       "homeScore": null,
       "awayScore": null,
