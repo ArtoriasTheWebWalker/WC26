@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-24T00:10:00.447Z",
+  "updated": "2026-06-24T04:34:07.234Z",
   "matches": [
     {
       "home": "Mexico",
@@ -373,16 +373,16 @@
       "home": "Panama",
       "away": "Croatia",
       "homeScore": 0,
-      "awayScore": 0,
-      "state": "LIVE",
-      "minute": 70
+      "awayScore": 1,
+      "state": "FT",
+      "minute": null
     },
     {
       "home": "Colombia",
       "away": "Congo DR",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 1,
+      "awayScore": 0,
+      "state": "FT",
       "minute": null
     },
     {
