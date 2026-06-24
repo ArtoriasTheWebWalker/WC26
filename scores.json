@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-24T20:58:46.820Z",
+  "updated": "2026-06-24T22:21:54.895Z",
   "matches": [
     {
       "home": "Mexico",
@@ -390,32 +390,32 @@
       "away": "Canada",
       "homeScore": 2,
       "awayScore": 1,
-      "state": "LIVE",
-      "minute": 119
+      "state": "FT",
+      "minute": null
     },
     {
       "home": "Bosnia-Herzegovina",
       "away": "Qatar",
       "homeScore": 3,
       "awayScore": 1,
-      "state": "LIVE",
-      "minute": 119
+      "state": "FT",
+      "minute": null
     },
     {
       "home": "Morocco",
       "away": "Haiti",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 0,
+      "awayScore": 1,
+      "state": "LIVE",
+      "minute": 22
     },
     {
       "home": "Scotland",
       "away": "Brazil",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 0,
+      "awayScore": 1,
+      "state": "LIVE",
+      "minute": 22
     },
     {
       "home": "Czechia",
@@ -594,14 +594,6 @@
       "minute": null
     },
     {
-      "home": "Germany",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
       "home": "",
       "away": "",
       "homeScore": null,
@@ -626,31 +618,7 @@
       "minute": null
     },
     {
-      "home": "Mexico",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
       "home": "",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "United States",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -690,7 +658,39 @@
       "minute": null
     },
     {
-      "home": "Argentina",
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
       "away": "",
       "homeScore": null,
       "awayScore": null,
