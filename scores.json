@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-25T01:35:49.925Z",
+  "updated": "2026-06-25T05:49:32.102Z",
   "matches": [
     {
       "home": "Mexico",
@@ -420,17 +420,17 @@
     {
       "home": "Czechia",
       "away": "Mexico",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 0,
+      "awayScore": 3,
+      "state": "FT",
       "minute": null
     },
     {
       "home": "South Africa",
       "away": "South Korea",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 1,
+      "awayScore": 0,
+      "state": "FT",
       "minute": null
     },
     {
@@ -594,14 +594,6 @@
       "minute": null
     },
     {
-      "home": "Germany",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
       "home": "",
       "away": "",
       "homeScore": null,
@@ -626,31 +618,7 @@
       "minute": null
     },
     {
-      "home": "Mexico",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
       "home": "",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "United States",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -690,7 +658,39 @@
       "minute": null
     },
     {
-      "home": "Argentina",
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
       "away": "",
       "homeScore": null,
       "awayScore": null,
