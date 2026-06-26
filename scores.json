@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-26T22:49:05.886Z",
+  "updated": "2026-06-26T23:49:28.874Z",
   "matches": [
     {
       "home": "Mexico",
@@ -420,49 +420,49 @@
     {
       "home": "Czechia",
       "away": "Mexico",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 0,
+      "awayScore": 3,
+      "state": "FT",
       "minute": null
     },
     {
       "home": "South Africa",
       "away": "South Korea",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 1,
+      "awayScore": 0,
+      "state": "FT",
       "minute": null
     },
     {
       "home": "Ecuador",
       "away": "Germany",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 2,
+      "awayScore": 1,
+      "state": "FT",
       "minute": null
     },
     {
       "home": "Curaçao",
       "away": "Ivory Coast",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 0,
+      "awayScore": 2,
+      "state": "FT",
       "minute": null
     },
     {
       "home": "Tunisia",
       "away": "Netherlands",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 1,
+      "awayScore": 3,
+      "state": "FT",
       "minute": null
     },
     {
       "home": "Japan",
       "away": "Sweden",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 1,
+      "awayScore": 1,
+      "state": "FT",
       "minute": null
     },
     {
@@ -578,16 +578,16 @@
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "South Africa",
+      "away": "Canada",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "Brazil",
+      "away": "Japan",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -602,8 +602,8 @@
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "Netherlands",
+      "away": "Morocco",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -651,7 +651,7 @@
     },
     {
       "home": "United States",
-      "away": "",
+      "away": "Bosnia-Herzegovina",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -674,7 +674,7 @@
       "minute": null
     },
     {
-      "home": "",
+      "home": "Switzerland",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -682,7 +682,7 @@
       "minute": null
     },
     {
-      "home": "",
+      "home": "Australia",
       "away": "",
       "homeScore": null,
       "awayScore": null,
