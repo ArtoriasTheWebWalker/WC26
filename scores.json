@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-26T23:49:28.874Z",
+  "updated": "2026-06-27T01:47:29.890Z",
   "matches": [
     {
       "home": "Mexico",
@@ -500,18 +500,18 @@
     {
       "home": "Uruguay",
       "away": "Spain",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 0,
+      "awayScore": 1,
+      "state": "LIVE",
+      "minute": 108
     },
     {
       "home": "Cape Verde Islands",
       "away": "Saudi Arabia",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 0,
+      "awayScore": 0,
+      "state": "LIVE",
+      "minute": 108
     },
     {
       "home": "New Zealand",
@@ -578,38 +578,6 @@
       "minute": null
     },
     {
-      "home": "South Africa",
-      "away": "Canada",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "Brazil",
-      "away": "Japan",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "Germany",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "Netherlands",
-      "away": "Morocco",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
       "home": "",
       "away": "",
       "homeScore": null,
@@ -619,14 +587,6 @@
     },
     {
       "home": "",
-      "away": "",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
-    },
-    {
-      "home": "Mexico",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -650,8 +610,16 @@
       "minute": null
     },
     {
-      "home": "United States",
-      "away": "Bosnia-Herzegovina",
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -674,7 +642,7 @@
       "minute": null
     },
     {
-      "home": "Switzerland",
+      "home": "",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -682,7 +650,7 @@
       "minute": null
     },
     {
-      "home": "Australia",
+      "home": "",
       "away": "",
       "homeScore": null,
       "awayScore": null,
@@ -690,7 +658,39 @@
       "minute": null
     },
     {
-      "home": "Argentina",
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
+      "away": "",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
+      "minute": null
+    },
+    {
+      "home": "",
       "away": "",
       "homeScore": null,
       "awayScore": null,
