@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-27T20:45:22.784Z",
+  "updated": "2026-06-27T21:45:56.446Z",
   "matches": [
     {
       "home": "Mexico",
@@ -484,17 +484,17 @@
     {
       "home": "Norway",
       "away": "France",
-      "homeScore": 1,
-      "awayScore": 4,
-      "state": "FT",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
       "minute": null
     },
     {
       "home": "Senegal",
       "away": "Iraq",
-      "homeScore": 5,
-      "awayScore": 0,
-      "state": "FT",
+      "homeScore": null,
+      "awayScore": null,
+      "state": "NS",
       "minute": null
     },
     {
@@ -525,25 +525,25 @@
       "home": "Egypt",
       "away": "Iran",
       "homeScore": 1,
-      "awayScore": 1,
+      "awayScore": 2,
       "state": "FT",
       "minute": null
     },
     {
       "home": "Panama",
       "away": "England",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 0,
+      "awayScore": 0,
+      "state": "LIVE",
+      "minute": 46
     },
     {
       "home": "Croatia",
       "away": "Ghana",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 1,
+      "awayScore": 0,
+      "state": "LIVE",
+      "minute": 46
     },
     {
       "home": "Colombia",
@@ -610,7 +610,7 @@
       "minute": null
     },
     {
-      "home": "Ivory Coast",
+      "home": "",
       "away": "",
       "homeScore": null,
       "awayScore": null,
