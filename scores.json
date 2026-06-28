@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-28T01:53:56.738Z",
+  "updated": "2026-06-28T06:09:35.604Z",
   "matches": [
     {
       "home": "Mexico",
@@ -564,17 +564,17 @@
     {
       "home": "Jordan",
       "away": "Argentina",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 1,
+      "awayScore": 3,
+      "state": "FT",
       "minute": null
     },
     {
       "home": "Algeria",
       "away": "Austria",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
+      "homeScore": 3,
+      "awayScore": 3,
+      "state": "FT",
       "minute": null
     },
     {
@@ -595,7 +595,7 @@
     },
     {
       "home": "Germany",
-      "away": "",
+      "away": "Paraguay",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -611,15 +611,15 @@
     },
     {
       "home": "Ivory Coast",
-      "away": "",
+      "away": "Norway",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "France",
+      "away": "Sweden",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -627,23 +627,23 @@
     },
     {
       "home": "Mexico",
-      "away": "",
+      "away": "Ecuador",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "England",
+      "away": "Congo DR",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "Belgium",
+      "away": "Senegal",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -658,16 +658,16 @@
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "Spain",
+      "away": "Austria",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "Portugal",
+      "away": "Croatia",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -675,7 +675,7 @@
     },
     {
       "home": "Switzerland",
-      "away": "",
+      "away": "Algeria",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -683,7 +683,7 @@
     },
     {
       "home": "Australia",
-      "away": "",
+      "away": "Egypt",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -691,15 +691,15 @@
     },
     {
       "home": "Argentina",
-      "away": "",
+      "away": "Cape Verde Islands",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "Colombia",
+      "away": "Ghana",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
