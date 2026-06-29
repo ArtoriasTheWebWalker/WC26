@@ -597,6 +597,18 @@ body.ar .ktime.clock-only{letter-spacing:0 !important}
 footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
 
 /* ---------- KNOCKOUT SECTION ---------- */
+/* knockout day-style sections on the Schedule page */
+.ko-day{grid-column:1 / -1}
+.ko-round-badge{
+  flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+  font-family:'Cinzel',serif;font-weight:700;font-size:1rem;color:var(--letter-ink);
+  background:var(--gold-grad);box-shadow:0 0 16px -4px rgba(227,197,103,.5);
+}
+body.ar .ko-round-badge{font-family:'Changa',sans-serif}
+.ko-match .half.tbd{opacity:.8}
+.ko-match .half.tbd .tname{font-style:italic;font-weight:400}
+#ko-schedule-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:22px;grid-column:1 / -1;width:100%}
+@media (max-width:920px){ #ko-schedule-wrap{grid-template-columns:1fr} }
 .ko{margin-top:54px}
 .ko-title{
   text-align:center;font-family:'Cinzel',serif;font-weight:700;font-size:1.5rem;letter-spacing:.08em;
@@ -1423,8 +1435,252 @@ function renderSchedule(){
     html+=`</div></section>`;
   }
   document.getElementById('schedule').innerHTML=html;
+  /* append the knockout rounds beneath the group days (full match-card parity) */
+  if(typeof renderKnockoutSchedule==="function") renderKnockoutSchedule();
 }
 renderSchedule();
+
+/* ============ KNOCKOUT ON THE SCHEDULE PAGE ============
+   Renders the knockout rounds (R32 → Final) as collapsible day-style sections
+   appended beneath the group-stage days. Each tie uses the same .match markup
+   as a group game, so the live engine (tick), goal celebration, and the
+   expand-for-squad/goals panel all work identically — no special-casing.
+   Teams resolve from the bracket (resolveSlot); ties whose teams aren't decided
+   yet show TBD placeholders. Live scores flow in automatically once the feed
+   carries these fixtures. */
+
+/* ============ OFFICIAL KNOCKOUT SCHEDULE (FIFA, hardcoded) ============
+   R32 teams are hardcoded from the official FIFA draw (independent of the
+   standings math). Dates/times are Mecca time (UTC+3), venues official. Later
+   rounds feed from results via FEED[]; if the API never delivers, they simply
+   stay TBD — the structure, dates and venues still display. */
+const R32_OFFICIAL = {
+  73:['RSA','CAN'],
+  74:['GER','PAR'],
+  75:['NED','MAR'],
+  76:['BRA','JPN'],
+  77:['FRA','SWE'],
+  78:['CIV','NOR'],
+  79:['MEX','ECU'],
+  80:['ENG','COD'],
+  81:['USA','BIH'],
+  82:['BEL','SEN'],
+  83:['POR','CRO'],
+  84:['ESP','AUT'],
+  85:['SUI','ALG'],
+  86:['ARG','CPV'],
+  87:['COL','GHA'],
+  88:['AUS','EGY']
+};
+
+/* matchNo -> round, month(5=Jun/6=Jul), day, Mecca kickoff, venue + region + host flag */
+const KO_MATCH = {
+  73:{r:"r32",mo:5,d:29,t:"04:00",v:"SoFi Stadium · Inglewood",reg:"California, USA",host:"us"},
+  74:{r:"r32",mo:5,d:29,t:"23:30",v:"Gillette Stadium · Foxborough",reg:"Massachusetts, USA",host:"us"},
+  75:{r:"r32",mo:5,d:30,t:"04:00",v:"Estadio Monterrey · Guadalupe",reg:"Nuevo León, Mexico",host:"mx"},
+  76:{r:"r32",mo:5,d:29,t:"20:00",v:"NRG Stadium · Houston",reg:"Texas, USA",host:"us"},
+  77:{r:"r32",mo:6,d:1,t:"00:00",v:"MetLife Stadium · E. Rutherford",reg:"New Jersey, USA",host:"us"},
+  78:{r:"r32",mo:5,d:30,t:"20:00",v:"AT&T Stadium · Arlington",reg:"Texas, USA",host:"us"},
+  79:{r:"r32",mo:6,d:1,t:"04:00",v:"Estadio Azteca",reg:"Mexico City, Mexico",host:"mx"},
+  80:{r:"r32",mo:6,d:1,t:"19:00",v:"Mercedes-Benz Stadium",reg:"Atlanta, Georgia, USA",host:"us"},
+  81:{r:"r32",mo:6,d:2,t:"03:00",v:"Levi's Stadium · Santa Clara",reg:"California, USA",host:"us"},
+  82:{r:"r32",mo:6,d:1,t:"23:00",v:"Lumen Field · Seattle",reg:"Washington, USA",host:"us"},
+  83:{r:"r32",mo:6,d:3,t:"02:00",v:"BMO Field · Toronto",reg:"Ontario, Canada",host:"ca"},
+  84:{r:"r32",mo:6,d:2,t:"22:00",v:"SoFi Stadium · Inglewood",reg:"California, USA",host:"us"},
+  85:{r:"r32",mo:6,d:3,t:"06:00",v:"BC Place · Vancouver",reg:"British Columbia, Canada",host:"ca"},
+  86:{r:"r32",mo:6,d:4,t:"01:00",v:"Hard Rock Stadium · Miami",reg:"Florida, USA",host:"us"},
+  87:{r:"r32",mo:6,d:4,t:"04:30",v:"Arrowhead Stadium",reg:"Kansas City, Missouri, USA",host:"us"},
+  88:{r:"r32",mo:6,d:3,t:"21:00",v:"AT&T Stadium · Arlington",reg:"Texas, USA",host:"us"},
+  89:{r:"r16",mo:6,d:5,t:"00:00",v:"Lincoln Financial Field",reg:"Philadelphia, Pennsylvania, USA",host:"us"},
+  90:{r:"r16",mo:6,d:4,t:"20:00",v:"NRG Stadium · Houston",reg:"Texas, USA",host:"us"},
+  91:{r:"r16",mo:6,d:5,t:"23:00",v:"MetLife Stadium · E. Rutherford",reg:"New Jersey, USA",host:"us"},
+  92:{r:"r16",mo:6,d:6,t:"03:00",v:"Estadio Azteca",reg:"Mexico City, Mexico",host:"mx"},
+  93:{r:"r16",mo:6,d:6,t:"22:00",v:"AT&T Stadium · Arlington",reg:"Texas, USA",host:"us"},
+  94:{r:"r16",mo:6,d:7,t:"03:00",v:"Lumen Field · Seattle",reg:"Washington, USA",host:"us"},
+  95:{r:"r16",mo:6,d:7,t:"19:00",v:"Mercedes-Benz Stadium",reg:"Atlanta, Georgia, USA",host:"us"},
+  96:{r:"r16",mo:6,d:7,t:"23:00",v:"BC Place · Vancouver",reg:"British Columbia, Canada",host:"ca"},
+  97:{r:"qf",mo:6,d:9,t:"23:00",v:"Gillette Stadium · Foxborough",reg:"Massachusetts, USA",host:"us"},
+  98:{r:"qf",mo:6,d:10,t:"22:00",v:"SoFi Stadium · Inglewood",reg:"California, USA",host:"us"},
+  99:{r:"qf",mo:6,d:12,t:"00:00",v:"Hard Rock Stadium · Miami",reg:"Florida, USA",host:"us"},
+  100:{r:"qf",mo:6,d:12,t:"04:00",v:"Arrowhead Stadium",reg:"Kansas City, Missouri, USA",host:"us"},
+  101:{r:"sf",mo:6,d:14,t:"22:00",v:"AT&T Stadium · Arlington",reg:"Texas, USA",host:"us"},
+  102:{r:"sf",mo:6,d:15,t:"22:00",v:"Mercedes-Benz Stadium",reg:"Atlanta, Georgia, USA",host:"us"},
+  103:{r:"third",mo:6,d:19,t:"00:00",v:"Hard Rock Stadium · Miami",reg:"Florida, USA",host:"us"},
+  104:{r:"fin",mo:6,d:19,t:"22:00",v:"MetLife Stadium · E. Rutherford",reg:"New Jersey, USA",host:"us"}
+};
+const KO_ROUND_ORDER = ['r32','r16','qf','sf','third','fin'];
+const KO_ROUND_LABEL = {
+  r32:{en:'Round of 32', ar:'دور الـ 32'},
+  r16:{en:'Round of 16', ar:'دور الـ 16'},
+  qf: {en:'Quarter-finals', ar:'ربع النهائي'},
+  sf: {en:'Semi-finals', ar:'نصف النهائي'},
+  third:{en:'Third-place Play-off', ar:'تحديد المركز الثالث'},
+  fin:{en:'Final', ar:'النهائي'}
+};
+
+/* resolve both sides of any knockout match number → [teamCodeA, teamCodeB].
+   R32 uses the slot codes in R32[]; later rounds feed from prior winners via
+   FEED[] — those only fill once knockout results exist (koWinner), so they stay
+   TBD until then. */
+function koMatchTeams(mNo, pic, koWinner, koLoser){
+  /* R32: hardcoded official teams (no dependence on standings math) */
+  if(R32_OFFICIAL[mNo]){
+    const [a,b] = R32_OFFICIAL[mNo];
+    return [a||null, b||null];
+  }
+  /* 3rd-place play-off: losers of the two semis */
+  if(LOSER_FEED[mNo]){
+    const src = LOSER_FEED[mNo];
+    return [(koLoser&&koLoser[src[0]])||null, (koLoser&&koLoser[src[1]])||null];
+  }
+  /* later rounds: winners of the two feeder matches */
+  const src = FEED[mNo];
+  if(src){
+    return [koWinner[src[0]]||null, koWinner[src[1]]||null];
+  }
+  return [null, null];
+}
+
+/* compute the winner AND loser of each knockout match from the feed (LIVE), so
+   later rounds (and the 3rd-place match) can populate. Returns {winner, loser}
+   maps keyed by match number. */
+function koWinners(pic){
+  const winner = {}, loser = {};
+  const decide = (mNo, ca, cb)=>{
+    if(!ca||!cb) return;
+    const key = norm(N[ca][0])+"|"+norm(N[cb][0]);
+    const lv = LIVE[key];
+    if(!lv) return;
+    if(!(lv.state==="FT"||lv.state==="AET"||lv.state==="AP")) return;
+    const hs=(lv.homeScore==null)?0:lv.homeScore, as=(lv.awayScore==null)?0:lv.awayScore;
+    /* the feed may store the pair in either order; align to ca/cb via home name */
+    const homeIsCa = norm(lv.home)===norm(N[ca][0]);
+    const caScore = homeIsCa ? hs : as, cbScore = homeIsCa ? as : hs;
+    if(caScore>cbScore){ winner[mNo]=ca; loser[mNo]=cb; }
+    else if(cbScore>caScore){ winner[mNo]=cb; loser[mNo]=ca; }
+    /* a draw with no shootout info stays undecided */
+  };
+  /* R32 first (hardcoded official teams) */
+  for(const mNo in R32_OFFICIAL){
+    const [ca,cb] = koMatchTeams(+mNo, pic, winner, loser);
+    decide(+mNo, ca, cb);
+  }
+  /* then winner-feed rounds in numeric order */
+  Object.keys(FEED).map(Number).sort((a,b)=>a-b).forEach(mNo=>{
+    const [ca,cb] = koMatchTeams(mNo, pic, winner, loser);
+    decide(mNo, ca, cb);
+  });
+  /* 3rd-place play-off (uses semis' losers) */
+  Object.keys(LOSER_FEED).map(Number).forEach(mNo=>{
+    const [ca,cb] = koMatchTeams(mNo, pic, winner, loser);
+    decide(mNo, ca, cb);
+  });
+  return {winner, loser};
+}
+
+function renderKnockoutSchedule(){
+  const host = document.getElementById('schedule');
+  if(!host) return;
+  /* dependencies (GROUPS, knockoutPicture, R32, FEED) are declared later in the
+     file; the very first renderSchedule() call happens before they exist, so
+     bail out quietly until they're ready (applyLanguage re-renders afterwards) */
+  if(typeof knockoutPicture!=="function") return;
+  try{ void GROUPS; }catch(e){ return; }
+  const ar = LANG==="ar";
+  const pic = knockoutPicture();
+  if(!pic) return;
+  const ko = koWinners(pic);
+  const koWinner = ko.winner, koLoser = ko.loser;
+
+  /* group match numbers by round */
+  const byRound = {};
+  for(const mNo in KO_MATCH){
+    const r = KO_MATCH[mNo].r;
+    (byRound[r] = byRound[r] || []).push(+mNo);
+  }
+  const monthName = (mo)=> ar ? (mo===5?'يونيو':'يوليو') : (mo===5?'June':'July');
+  const tbd = ar ? 'يُحدد لاحقاً' : 'TBD';
+
+  let html = '';
+  for(const r of KO_ROUND_ORDER){
+    const nums = (byRound[r]||[]).sort((a,b)=>a-b);
+    if(!nums.length) continue;
+    const label = KO_ROUND_LABEL[r][ar?'ar':'en'];
+    /* a stable id per round section so collapse state is preserved across renders */
+    html += `<section class="day ko-day" id="ko-${r}" data-koround="${r}">
+      <div class="day-head">
+        <div class="date-block">
+          <div class="ko-round-badge">${r==='fin'?'★':nums.length}</div>
+          <div><span class="weekday">${label}</span><span class="month">${ar?'الأدوار الإقصائية':'Knockout'}</span></div>
+        </div>
+        <span class="day-summary"><span class="ds-count">${nums.length} ${ar?(nums.length===1?'مباراة':'مباريات'):(nums.length===1?'match':'matches')}</span><span class="ds-status"></span></span>
+        <span class="head-extra"></span>
+      </div>
+      <div class="matches-body">`;
+    for(const mNo of nums){
+      const info = KO_MATCH[mNo];
+      const [ca, cb] = koMatchTeams(mNo, pic, koWinner, koLoser);
+      const [hh,mm] = info.t.split(':').map(Number);
+      const utc = Date.UTC(2026, info.mo, info.d, hh-3, mm); /* Mecca wall time = UTC+3 */
+      const side = (code, cls)=>{
+        if(code){
+          const A=N[code];
+          return `<div class="half ${cls}" style="--pbg:${A[2]}">${flag(A[1])}<span class="tname">${teamName(code)}</span></div>`;
+        }
+        return `<div class="half ${cls} tbd"><span class="tname" style="opacity:.5">${tbd}</span></div>`;
+      };
+      /* data-home/away carry resolved names (or "" when TBD) so the live engine
+         can match feed rows; data-ha/hb carry team codes for squad/goal lookups */
+      const homeName = ca?N[ca][0]:'', awayName = cb?N[cb][0]:'';
+      html += `<div class="match ko-match" data-utc="${utc}" data-home="${homeName}" data-away="${awayName}" data-kick="${info.t}" data-ha="${ca||''}" data-hb="${cb||''}" data-mno="${mNo}">
+        <div class="m-row">
+          ${side(ca,'left')}
+          <div class="mid"><div class="ktime">${info.t}</div></div>
+          ${side(cb,'right')}
+        </div>
+        <div class="loc host-${info.host}"><span class="host-mark">${HOSTMARK[info.host]}</span><b>${monthName(info.mo)} ${info.d}</b> · ${info.v} — ${regionText(info.reg)}</div>
+        <div class="goals-panel" hidden></div>
+      </div>`;
+    }
+    html += `</div></section>`;
+  }
+  /* a wrapper so we can replace just the knockout block on re-renders */
+  let koWrap = document.getElementById('ko-schedule-wrap');
+  if(!koWrap){
+    koWrap = document.createElement('div');
+    koWrap.id = 'ko-schedule-wrap';
+    koWrap.style.gridColumn = '1 / -1';
+    host.appendChild(koWrap);
+  }
+  /* preserve collapse state across re-renders */
+  const openRounds = new Set([...koWrap.querySelectorAll('.ko-day:not(.collapsed)')].map(s=>s.dataset.koround));
+  koWrap.innerHTML = html;
+  koWrap.querySelectorAll('.ko-day').forEach(sec=>{
+    if(!openRounds.has(sec.dataset.koround)) sec.classList.add('collapsed');
+  });
+  /* remember the resolution signature so we only rebuild when it changes */
+  koWrap.dataset.sig = knockoutScheduleSig();
+}
+
+/* a compact signature of every knockout match's two resolved team codes, so we
+   can detect when a new result advances a team and a rebuild is actually needed */
+function knockoutScheduleSig(){
+  if(typeof knockoutPicture!=="function") return "";
+  const pic = knockoutPicture();
+  const ko = koWinners(pic);
+  let parts=[];
+  for(const mNo in KO_MATCH){
+    const [ca,cb] = koMatchTeams(+mNo, pic, ko.winner, ko.loser);
+    parts.push(mNo+":"+(ca||'')+">"+(cb||''));
+  }
+  return parts.join('|');
+}
+function refreshKnockoutScheduleIfChanged(){
+  const koWrap = document.getElementById('ko-schedule-wrap');
+  if(!koWrap){ if(typeof renderKnockoutSchedule==="function") renderKnockoutSchedule(); return; }
+  const sig = knockoutScheduleSig();
+  if(koWrap.dataset.sig !== sig) renderKnockoutSchedule();
+}
 
 /* ============ GROUPS & STANDINGS ============
    Groups (A–L) are derived from the match schedule: every match carries its
@@ -1622,7 +1878,24 @@ function knockoutPicture(){
   }
   /* rank third-placed teams: points, then GD, then GF (your logic) */
   thirds.sort((a,b)=> b.Pts-a.Pts || b.GD-a.GD || b.GF-a.GF || N[a.code][0].localeCompare(N[b.code][0]));
-  return {winners, runners, thirds};
+
+  /* --- official third-place slot assignment (FIFA Annex C, 495 combos) ---
+     Only resolvable once exactly 8 third-placed teams are settled. We take the
+     top-8 ranked thirds, confirm every group involved is settled, look up the
+     official combination, and map each third-place R32 match to a team code. */
+  const top8 = thirds.slice(0,8);
+  const allSettled = thirds.length>=12 && thirds.every(t=>t.settled) && top8.length===8;
+  let thirdSlots = null; /* { matchNo: teamCode } */
+  if(allSettled){
+    const qualGroups = top8.map(t=>t.grp);
+    const byGroup = {}; top8.forEach(t=>{ byGroup[t.grp]=t.code; });
+    const assign = thirdPlaceAssignment(qualGroups);
+    if(assign){
+      thirdSlots = {};
+      for(const mNo in assign){ thirdSlots[mNo] = byGroup[assign[mNo]] || null; }
+    }
+  }
+  return {winners, runners, thirds, thirdSlots};
 }
 
 /* official WC2026 R32 structure (FIFA). Each tie: match no, two source slots,
@@ -1657,6 +1930,35 @@ const FEED = {
   97:[89,90], 98:[93,94], 99:[91,92], 100:[95,96],
   101:[97,98], 102:[99,100], 104:[101,102]
 };
+/* the 3rd-place play-off (M103) is contested by the LOSERS of the two semis */
+const LOSER_FEED = { 103:[101,102] };
+
+/* ---- Hardcoded finished knockout results (fallback when the live API is down) ----
+   Keyed by match number; {h,a} are home/away goals in the R32_OFFICIAL orientation
+   (home listed first). These seed the LIVE map so the score, the winner ring, and
+   advancement to the next round all display even with no API. The moment the live
+   feed delivers that same match, its data overrides this seed (live always wins). */
+const KO_RESULTS = {
+  73:{h:0,a:1}   /* South Africa 0–1 Canada · FT (Round of 32, Los Angeles) */
+};
+/* merge KO_RESULTS into the LIVE map, but never clobber a match the API already
+   provided. Returns the (possibly augmented) map. */
+function seedKoResults(map){
+  map = map || {};
+  for(const mNo in KO_RESULTS){
+    const pair = R32_OFFICIAL[mNo] || (FEED[mNo] ? null : null);
+    if(!pair) continue;
+    const [ca,cb] = pair;
+    const a = norm(N[ca][0]), b = norm(N[cb][0]);
+    const r = KO_RESULTS[mNo];
+    /* if neither orientation is already present from the API, inject the seed */
+    if(!map[a+"|"+b] && !map[b+"|"+a]){
+      map[a+"|"+b] = {home:N[ca][0], away:N[cb][0], homeScore:r.h, awayScore:r.a, state:"FT"};
+      map[b+"|"+a] = {home:N[cb][0], away:N[ca][0], homeScore:r.a, awayScore:r.h, state:"FT", _flipped:true};
+    }
+  }
+  return map;
+}
 const KO_DATE = {
   89:['Jul 4','4 يوليو'],90:['Jul 4','4 يوليو'],93:['Jul 6','6 يوليو'],94:['Jul 7','7 يوليو'],
   91:['Jul 5','5 يوليو'],92:['Jul 5','5 يوليو'],95:['Jul 6','6 يوليو'],96:['Jul 7','7 يوليو'],
@@ -1664,14 +1966,533 @@ const KO_DATE = {
   101:['Jul 14','14 يوليو'],102:['Jul 15','15 يوليو'],104:['Jul 19 · MetLife','19 يوليو · ميت لايف']
 };
 
+/* THIRD_PLACE_TABLE: key = the 8 qualifying third-place groups sorted alphabetically.
+   value = 8 letters giving which group's 3rd-placed team fills each third-place
+   R32 slot, in this match order: 74,77,79,80,81,82,85,87. Official FIFA Annex C. */
+const THIRD_PLACE_TABLE = {
+  "ABCDEFGH":"CFHEBAGD",
+  "ABCDEFGI":"DFCIBAGE",
+  "ABCDEFGJ":"DFCJBAGE",
+  "ABCDEFGK":"DFCKBAGE",
+  "ABCDEFGL":"DFCEBAGL",
+  "ABCDEFHI":"CFHIBAED",
+  "ABCDEFHJ":"CFHEBAJD",
+  "ABCDEFHK":"CFHKBAED",
+  "ABCDEFHL":"CDHEBAFL",
+  "ABCDEFIJ":"DFCIBAJE",
+  "ABCDEFIK":"DFCKBAEI",
+  "ABCDEFIL":"DFCIBAEL",
+  "ABCDEFJK":"DFCKBAJE",
+  "ABCDEFJL":"DFCEBAJL",
+  "ABCDEFKL":"DFCKBAEL",
+  "ABCDEGHI":"CDHIBAGE",
+  "ABCDEGHJ":"CDHJBAGE",
+  "ABCDEGHK":"CDHKBAGE",
+  "ABCDEGHL":"CDHEBAGL",
+  "ABCDEGIJ":"CDEJBAGI",
+  "ABCDEGIK":"CDEKBAGI",
+  "ABCDEGIL":"CDEIBAGL",
+  "ABCDEGJK":"CDEKBAGJ",
+  "ABCDEGJL":"CDEJBAGL",
+  "ABCDEGKL":"CDEKBAGL",
+  "ABCDEHIJ":"CDHIBAJE",
+  "ABCDEHIK":"CDHKBAEI",
+  "ABCDEHIL":"CDHIBAEL",
+  "ABCDEHJK":"CDHKBAJE",
+  "ABCDEHJL":"CDHEBAJL",
+  "ABCDEHKL":"CDHKBAEL",
+  "ABCDEIJK":"CDEKBAJI",
+  "ABCDEIJL":"CDEIBAJL",
+  "ABCDEIKL":"CDEKBAIL",
+  "ABCDEJKL":"CDEKBAJL",
+  "ABCDFGHI":"CFHIBAGD",
+  "ABCDFGHJ":"CFHJBAGD",
+  "ABCDFGHK":"CFHKBAGD",
+  "ABCDFGHL":"DFCHBAGL",
+  "ABCDFGIJ":"DFCJBAGI",
+  "ABCDFGIK":"DFCKBAGI",
+  "ABCDFGIL":"DFCIBAGL",
+  "ABCDFGJK":"DFCKBAGJ",
+  "ABCDFGJL":"DFCJBAGL",
+  "ABCDFGKL":"DFCKBAGL",
+  "ABCDFHIJ":"CFHIBAJD",
+  "ABCDFHIK":"CDHKBAFI",
+  "ABCDFHIL":"CDHIBAFL",
+  "ABCDFHJK":"CFHKBAJD",
+  "ABCDFHJL":"DFCHBAJL",
+  "ABCDFHKL":"CDHKBAFL",
+  "ABCDFIJK":"DFCKBAJI",
+  "ABCDFIJL":"DFCIBAJL",
+  "ABCDFIKL":"DFCKBAIL",
+  "ABCDFJKL":"DFCKBAJL",
+  "ABCDGHIJ":"CDHJBAGI",
+  "ABCDGHIK":"CDHKBAGI",
+  "ABCDGHIL":"CDHIBAGL",
+  "ABCDGHJK":"CDHKBAGJ",
+  "ABCDGHJL":"CDHJBAGL",
+  "ABCDGHKL":"CDHKBAGL",
+  "ABCDGIJK":"DGCKBAJI",
+  "ABCDGIJL":"DGCIBAJL",
+  "ABCDGIKL":"CDIKBAGL",
+  "ABCDGJKL":"DGCKBAJL",
+  "ABCDHIJK":"CDHKBAJI",
+  "ABCDHIJL":"CDHIBAJL",
+  "ABCDHIKL":"CDHKBAIL",
+  "ABCDHJKL":"CDHKBAJL",
+  "ABCDIJKL":"CDIKBAJL",
+  "ABCEFGHI":"CFHIBAGE",
+  "ABCEFGHJ":"CFHJBAGE",
+  "ABCEFGHK":"CFHKBAGE",
+  "ABCEFGHL":"CFHEBAGL",
+  "ABCEFGIJ":"CFEJBAGI",
+  "ABCEFGIK":"CFEKBAGI",
+  "ABCEFGIL":"CFEIBAGL",
+  "ABCEFGJK":"CFEKBAGJ",
+  "ABCEFGJL":"CFEJBAGL",
+  "ABCEFGKL":"CFEKBAGL",
+  "ABCEFHIJ":"CFHIBAJE",
+  "ABCEFHIK":"CFHKBAEI",
+  "ABCEFHIL":"CFHIBAEL",
+  "ABCEFHJK":"CFHKBAJE",
+  "ABCEFHJL":"CFHEBAJL",
+  "ABCEFHKL":"CFHKBAEL",
+  "ABCEFIJK":"CFEKBAJI",
+  "ABCEFIJL":"CFEIBAJL",
+  "ABCEFIKL":"CFEKBAIL",
+  "ABCEFJKL":"CFEKBAJL",
+  "ABCEGHIJ":"CGHIBAJE",
+  "ABCEGHIK":"CHEKBAGI",
+  "ABCEGHIL":"CHEIBAGL",
+  "ABCEGHJK":"CGHKBAJE",
+  "ABCEGHJL":"CGHEBAJL",
+  "ABCEGHKL":"CHEKBAGL",
+  "ABCEGIJK":"CGEKBAJI",
+  "ABCEGIJL":"CGEIBAJL",
+  "ABCEGIKL":"ACEKBIGL",
+  "ABCEGJKL":"CGEKBAJL",
+  "ABCEHIJK":"CHEKBAJI",
+  "ABCEHIJL":"CHEIBAJL",
+  "ABCEHIKL":"CHEKBAIL",
+  "ABCEHJKL":"CHEKBAJL",
+  "ABCEIJKL":"ACEKBIJL",
+  "ABCFGHIJ":"CFHJBAGI",
+  "ABCFGHIK":"CFHKBAGI",
+  "ABCFGHIL":"CFHIBAGL",
+  "ABCFGHJK":"CFHKBAGJ",
+  "ABCFGHJL":"CFHJBAGL",
+  "ABCFGHKL":"CFHKBAGL",
+  "ABCFGIJK":"FGCKBAJI",
+  "ABCFGIJL":"FGCIBAJL",
+  "ABCFGIKL":"CFIKBAGL",
+  "ABCFGJKL":"FGCKBAJL",
+  "ABCFHIJK":"CFHKBAJI",
+  "ABCFHIJL":"CFHIBAJL",
+  "ABCFHIKL":"CFHKBAIL",
+  "ABCFHJKL":"CFHKBAJL",
+  "ABCFIJKL":"CFIKBAJL",
+  "ABCGHIJK":"CGHKBAJI",
+  "ABCGHIJL":"CGHIBAJL",
+  "ABCGHIKL":"CHIKBAGL",
+  "ABCGHJKL":"CGHKBAJL",
+  "ABCGIJKL":"CGIKBAJL",
+  "ABCHIJKL":"CHIKBAJL",
+  "ABDEFGHI":"DFHIBAGE",
+  "ABDEFGHJ":"DFHJBAGE",
+  "ABDEFGHK":"DFHKBAGE",
+  "ABDEFGHL":"DFHEBAGL",
+  "ABDEFGIJ":"DFEJBAGI",
+  "ABDEFGIK":"DFEKBAGI",
+  "ABDEFGIL":"DFEIBAGL",
+  "ABDEFGJK":"DFEKBAGJ",
+  "ABDEFGJL":"DFEJBAGL",
+  "ABDEFGKL":"DFEKBAGL",
+  "ABDEFHIJ":"DFHIBAJE",
+  "ABDEFHIK":"DFHKBAEI",
+  "ABDEFHIL":"DFHIBAEL",
+  "ABDEFHJK":"DFHKBAJE",
+  "ABDEFHJL":"DFHEBAJL",
+  "ABDEFHKL":"DFHKBAEL",
+  "ABDEFIJK":"DFEKBAJI",
+  "ABDEFIJL":"DFEIBAJL",
+  "ABDEFIKL":"DFEKBAIL",
+  "ABDEFJKL":"DFEKBAJL",
+  "ABDEGHIJ":"DGHIBAJE",
+  "ABDEGHIK":"DHEKBAGI",
+  "ABDEGHIL":"DHEIBAGL",
+  "ABDEGHJK":"DGHKBAJE",
+  "ABDEGHJL":"DGHEBAJL",
+  "ABDEGHKL":"DHEKBAGL",
+  "ABDEGIJK":"DGEKBAJI",
+  "ABDEGIJL":"DGEIBAJL",
+  "ABDEGIKL":"ADEKBIGL",
+  "ABDEGJKL":"DGEKBAJL",
+  "ABDEHIJK":"DHEKBAJI",
+  "ABDEHIJL":"DHEIBAJL",
+  "ABDEHIKL":"DHEKBAIL",
+  "ABDEHJKL":"DHEKBAJL",
+  "ABDEIJKL":"ADEKBIJL",
+  "ABDFGHIJ":"DFHJBAGI",
+  "ABDFGHIK":"DFHKBAGI",
+  "ABDFGHIL":"DFHIBAGL",
+  "ABDFGHJK":"DFHKBAGJ",
+  "ABDFGHJL":"DFHJBAGL",
+  "ABDFGHKL":"DFHKBAGL",
+  "ABDFGIJK":"DGFKBAJI",
+  "ABDFGIJL":"DGFIBAJL",
+  "ABDFGIKL":"DFIKBAGL",
+  "ABDFGJKL":"DGFKBAJL",
+  "ABDFHIJK":"DFHKBAJI",
+  "ABDFHIJL":"DFHIBAJL",
+  "ABDFHIKL":"DFHKBAIL",
+  "ABDFHJKL":"DFHKBAJL",
+  "ABDFIJKL":"DFIKBAJL",
+  "ABDGHIJK":"DGHKBAJI",
+  "ABDGHIJL":"DGHIBAJL",
+  "ABDGHIKL":"DHIKBAGL",
+  "ABDGHJKL":"DGHKBAJL",
+  "ABDGIJKL":"DGIKBAJL",
+  "ABDHIJKL":"DHIKBAJL",
+  "ABEFGHIJ":"FGHIBAJE",
+  "ABEFGHIK":"FHEKBAGI",
+  "ABEFGHIL":"FHEIBAGL",
+  "ABEFGHJK":"FGHKBAJE",
+  "ABEFGHJL":"FGHEBAJL",
+  "ABEFGHKL":"FHEKBAGL",
+  "ABEFGIJK":"FGEKBAJI",
+  "ABEFGIJL":"FGEIBAJL",
+  "ABEFGIKL":"AFEKBIGL",
+  "ABEFGJKL":"FGEKBAJL",
+  "ABEFHIJK":"FHEKBAJI",
+  "ABEFHIJL":"FHEIBAJL",
+  "ABEFHIKL":"FHEKBAIL",
+  "ABEFHJKL":"FHEKBAJL",
+  "ABEFIJKL":"AFEKBIJL",
+  "ABEGHIJK":"AGEKBHJI",
+  "ABEGHIJL":"AGEIBHJL",
+  "ABEGHIKL":"AHEKBIGL",
+  "ABEGHJKL":"AGEKBHJL",
+  "ABEGIJKL":"AGEKBIJL",
+  "ABEHIJKL":"AHEKBIJL",
+  "ABFGHIJK":"FGHKBAJI",
+  "ABFGHIJL":"FGHIBAJL",
+  "ABFGHIKL":"AFHKBIGL",
+  "ABFGHJKL":"FGHKBAJL",
+  "ABFGIJKL":"FGIKBAJL",
+  "ABFHIJKL":"AFHKBIJL",
+  "ABGHIJKL":"AGHKBIJL",
+  "ACDEFGHI":"CFHIEAGD",
+  "ACDEFGHJ":"CFHEJAGD",
+  "ACDEFGHK":"CFHKEAGD",
+  "ACDEFGHL":"CDHEFAGL",
+  "ACDEFGIJ":"DFCIJAGE",
+  "ACDEFGIK":"DFCKEAGI",
+  "ACDEFGIL":"DFCIEAGL",
+  "ACDEFGJK":"DFCKJAGE",
+  "ACDEFGJL":"DFCEJAGL",
+  "ACDEFGKL":"DFCKEAGL",
+  "ACDEFHIJ":"CFHIEAJD",
+  "ACDEFHIK":"CDHKFAEI",
+  "ACDEFHIL":"CDHIFAEL",
+  "ACDEFHJK":"CFHKEAJD",
+  "ACDEFHJL":"CDHEFAJL",
+  "ACDEFHKL":"CDHKFAEL",
+  "ACDEFIJK":"DFCKEAJI",
+  "ACDEFIJL":"DFCIEAJL",
+  "ACDEFIKL":"DFCKIAEL",
+  "ACDEFJKL":"DFCKEAJL",
+  "ACDEGHIJ":"CDHIJAGE",
+  "ACDEGHIK":"CDHKEAGI",
+  "ACDEGHIL":"CDHIEAGL",
+  "ACDEGHJK":"CDHKJAGE",
+  "ACDEGHJL":"CDHEJAGL",
+  "ACDEGHKL":"CDHKEAGL",
+  "ACDEGIJK":"CDEKJAGI",
+  "ACDEGIJL":"CDEIJAGL",
+  "ACDEGIKL":"CDEKIAGL",
+  "ACDEGJKL":"CDEKJAGL",
+  "ACDEHIJK":"CDHKEAJI",
+  "ACDEHIJL":"CDHIEAJL",
+  "ACDEHIKL":"CDHKIAEL",
+  "ACDEHJKL":"CDHKEAJL",
+  "ACDEIJKL":"CDEKIAJL",
+  "ACDFGHIJ":"CFHIJAGD",
+  "ACDFGHIK":"CDHKFAGI",
+  "ACDFGHIL":"CDHIFAGL",
+  "ACDFGHJK":"CFHKJAGD",
+  "ACDFGHJL":"DFCHJAGL",
+  "ACDFGHKL":"CDHKFAGL",
+  "ACDFGIJK":"DFCKJAGI",
+  "ACDFGIJL":"DFCIJAGL",
+  "ACDFGIKL":"DFCKIAGL",
+  "ACDFGJKL":"DFCKJAGL",
+  "ACDFHIJK":"CDHKFAJI",
+  "ACDFHIJL":"CDHIFAJL",
+  "ACDFHIKL":"CDHKIAFL",
+  "ACDFHJKL":"CDHKFAJL",
+  "ACDFIJKL":"DFCKIAJL",
+  "ACDGHIJK":"CDHKJAGI",
+  "ACDGHIJL":"CDHIJAGL",
+  "ACDGHIKL":"CDHKIAGL",
+  "ACDGHJKL":"CDHKJAGL",
+  "ACDGIJKL":"CDIKJAGL",
+  "ACDHIJKL":"CDHKIAJL",
+  "ACEFGHIJ":"CFHIJAGE",
+  "ACEFGHIK":"CFHKEAGI",
+  "ACEFGHIL":"CFHIEAGL",
+  "ACEFGHJK":"CFHKJAGE",
+  "ACEFGHJL":"CFHEJAGL",
+  "ACEFGHKL":"CFHKEAGL",
+  "ACEFGIJK":"CFEKJAGI",
+  "ACEFGIJL":"CFEIJAGL",
+  "ACEFGIKL":"CFEKIAGL",
+  "ACEFGJKL":"CFEKJAGL",
+  "ACEFHIJK":"CFHKEAJI",
+  "ACEFHIJL":"CFHIEAJL",
+  "ACEFHIKL":"CFHKIAEL",
+  "ACEFHJKL":"CFHKEAJL",
+  "ACEFIJKL":"CFEKIAJL",
+  "ACEGHIJK":"CHEKJAGI",
+  "ACEGHIJL":"CHEIJAGL",
+  "ACEGHIKL":"CHEKIAGL",
+  "ACEGHJKL":"CHEKJAGL",
+  "ACEGIJKL":"CGEKIAJL",
+  "ACEHIJKL":"CHEKIAJL",
+  "ACFGHIJK":"CFHKJAGI",
+  "ACFGHIJL":"CFHIJAGL",
+  "ACFGHIKL":"CFHKIAGL",
+  "ACFGHJKL":"CFHKJAGL",
+  "ACFGIJKL":"CFIKJAGL",
+  "ACFHIJKL":"CFHKIAJL",
+  "ACGHIJKL":"CGHKIAJL",
+  "ADEFGHIJ":"DFHIJAGE",
+  "ADEFGHIK":"DFHKEAGI",
+  "ADEFGHIL":"DFHIEAGL",
+  "ADEFGHJK":"DFHKJAGE",
+  "ADEFGHJL":"DFHEJAGL",
+  "ADEFGHKL":"DFHKEAGL",
+  "ADEFGIJK":"DFEKJAGI",
+  "ADEFGIJL":"DFEIJAGL",
+  "ADEFGIKL":"DFEKIAGL",
+  "ADEFGJKL":"DFEKJAGL",
+  "ADEFHIJK":"DFHKEAJI",
+  "ADEFHIJL":"DFHIEAJL",
+  "ADEFHIKL":"DFHKIAEL",
+  "ADEFHJKL":"DFHKEAJL",
+  "ADEFIJKL":"DFEKIAJL",
+  "ADEGHIJK":"DHEKJAGI",
+  "ADEGHIJL":"DHEIJAGL",
+  "ADEGHIKL":"DHEKIAGL",
+  "ADEGHJKL":"DHEKJAGL",
+  "ADEGIJKL":"DGEKIAJL",
+  "ADEHIJKL":"DHEKIAJL",
+  "ADFGHIJK":"DFHKJAGI",
+  "ADFGHIJL":"DFHIJAGL",
+  "ADFGHIKL":"DFHKIAGL",
+  "ADFGHJKL":"DFHKJAGL",
+  "ADFGIJKL":"DFIKJAGL",
+  "ADFHIJKL":"DFHKIAJL",
+  "ADGHIJKL":"DGHKIAJL",
+  "AEFGHIJK":"FHEKJAGI",
+  "AEFGHIJL":"FHEIJAGL",
+  "AEFGHIKL":"FHEKIAGL",
+  "AEFGHJKL":"FHEKJAGL",
+  "AEFGIJKL":"FGEKIAJL",
+  "AEFHIJKL":"FHEKIAJL",
+  "AEGHIJKL":"AGEKIHJL",
+  "AFGHIJKL":"FGHKIAJL",
+  "BCDEFGHI":"DFCIBHGE",
+  "BCDEFGHJ":"CFHEBJGD",
+  "BCDEFGHK":"DFCKBHGE",
+  "BCDEFGHL":"DFCEBHGL",
+  "BCDEFGIJ":"DFCIBJGE",
+  "BCDEFGIK":"DFCKBEGI",
+  "BCDEFGIL":"DFCIBEGL",
+  "BCDEFGJK":"DFCKBJGE",
+  "BCDEFGJL":"DFCEBJGL",
+  "BCDEFGKL":"DFCKBEGL",
+  "BCDEFHIJ":"DFCIBHJE",
+  "BCDEFHIK":"DFCKBHEI",
+  "BCDEFHIL":"DFCIBHEL",
+  "BCDEFHJK":"DFCKBHJE",
+  "BCDEFHJL":"DFCEBHJL",
+  "BCDEFHKL":"DFCKBHEL",
+  "BCDEFIJK":"DFCKBEJI",
+  "BCDEFIJL":"DFCIBEJL",
+  "BCDEFIKL":"DFCKBIEL",
+  "BCDEFJKL":"DFCKBEJL",
+  "BCDEGHIJ":"CDHIBJGE",
+  "BCDEGHIK":"CDEKBHGI",
+  "BCDEGHIL":"CDEIBHGL",
+  "BCDEGHJK":"CDHKBJGE",
+  "BCDEGHJL":"CDHEBJGL",
+  "BCDEGHKL":"CDEKBHGL",
+  "BCDEGIJK":"CDEKBJGI",
+  "BCDEGIJL":"CDEIBJGL",
+  "BCDEGIKL":"CDEKBIGL",
+  "BCDEGJKL":"CDEKBJGL",
+  "BCDEHIJK":"CDEKBHJI",
+  "BCDEHIJL":"CDEIBHJL",
+  "BCDEHIKL":"CDEKBHIL",
+  "BCDEHJKL":"CDEKBHJL",
+  "BCDEIJKL":"CDEKBIJL",
+  "BCDFGHIJ":"CFHIBJGD",
+  "BCDFGHIK":"DFCKBHGI",
+  "BCDFGHIL":"DFCIBHGL",
+  "BCDFGHJK":"CFHKBJGD",
+  "BCDFGHJL":"DFCJBHGL",
+  "BCDFGHKL":"DFCKBHGL",
+  "BCDFGIJK":"DFCKBJGI",
+  "BCDFGIJL":"DFCIBJGL",
+  "BCDFGIKL":"DFCKBIGL",
+  "BCDFGJKL":"DFCKBJGL",
+  "BCDFHIJK":"DFCKBHJI",
+  "BCDFHIJL":"DFCIBHJL",
+  "BCDFHIKL":"DFCKBHIL",
+  "BCDFHJKL":"DFCKBHJL",
+  "BCDFIJKL":"DFCKBIJL",
+  "BCDGHIJK":"CDHKBJGI",
+  "BCDGHIJL":"CDHIBJGL",
+  "BCDGHIKL":"CDHKBIGL",
+  "BCDGHJKL":"CDHKBJGL",
+  "BCDGIJKL":"CDIKBJGL",
+  "BCDHIJKL":"CDHKBIJL",
+  "BCEFGHIJ":"CFHIBJGE",
+  "BCEFGHIK":"CFEKBHGI",
+  "BCEFGHIL":"CFEIBHGL",
+  "BCEFGHJK":"CFHKBJGE",
+  "BCEFGHJL":"CFHEBJGL",
+  "BCEFGHKL":"CFEKBHGL",
+  "BCEFGIJK":"CFEKBJGI",
+  "BCEFGIJL":"CFEIBJGL",
+  "BCEFGIKL":"CFEKBIGL",
+  "BCEFGJKL":"CFEKBJGL",
+  "BCEFHIJK":"CFEKBHJI",
+  "BCEFHIJL":"CFEIBHJL",
+  "BCEFHIKL":"CFEKBHIL",
+  "BCEFHJKL":"CFEKBHJL",
+  "BCEFIJKL":"CFEKBIJL",
+  "BCEGHIJK":"CGEKBHJI",
+  "BCEGHIJL":"CGEIBHJL",
+  "BCEGHIKL":"CHEKBIGL",
+  "BCEGHJKL":"CGEKBHJL",
+  "BCEGIJKL":"CGEKBIJL",
+  "BCEHIJKL":"CHEKBIJL",
+  "BCFGHIJK":"CFHKBJGI",
+  "BCFGHIJL":"CFHIBJGL",
+  "BCFGHIKL":"CFHKBIGL",
+  "BCFGHJKL":"CFHKBJGL",
+  "BCFGIJKL":"CFIKBJGL",
+  "BCFHIJKL":"CFHKBIJL",
+  "BCGHIJKL":"CGHKBIJL",
+  "BDEFGHIJ":"DFHIBJGE",
+  "BDEFGHIK":"DFEKBHGI",
+  "BDEFGHIL":"DFEIBHGL",
+  "BDEFGHJK":"DFHKBJGE",
+  "BDEFGHJL":"DFHEBJGL",
+  "BDEFGHKL":"DFEKBHGL",
+  "BDEFGIJK":"DFEKBJGI",
+  "BDEFGIJL":"DFEIBJGL",
+  "BDEFGIKL":"DFEKBIGL",
+  "BDEFGJKL":"DFEKBJGL",
+  "BDEFHIJK":"DFEKBHJI",
+  "BDEFHIJL":"DFEIBHJL",
+  "BDEFHIKL":"DFEKBHIL",
+  "BDEFHJKL":"DFEKBHJL",
+  "BDEFIJKL":"DFEKBIJL",
+  "BDEGHIJK":"DGEKBHJI",
+  "BDEGHIJL":"DGEIBHJL",
+  "BDEGHIKL":"DHEKBIGL",
+  "BDEGHJKL":"DGEKBHJL",
+  "BDEGIJKL":"DGEKBIJL",
+  "BDEHIJKL":"DHEKBIJL",
+  "BDFGHIJK":"DFHKBJGI",
+  "BDFGHIJL":"DFHIBJGL",
+  "BDFGHIKL":"DFHKBIGL",
+  "BDFGHJKL":"DFHKBJGL",
+  "BDFGIJKL":"DFIKBJGL",
+  "BDFHIJKL":"DFHKBIJL",
+  "BDGHIJKL":"DGHKBIJL",
+  "BEFGHIJK":"FGEKBHJI",
+  "BEFGHIJL":"FGEIBHJL",
+  "BEFGHIKL":"FHEKBIGL",
+  "BEFGHJKL":"FGEKBHJL",
+  "BEFGIJKL":"FGEKBIJL",
+  "BEFHIJKL":"FHEKBIJL",
+  "BEGHIJKL":"BGEKIHJL",
+  "BFGHIJKL":"FGHKBIJL",
+  "CDEFGHIJ":"DFCIJHGE",
+  "CDEFGHIK":"DFCKEHGI",
+  "CDEFGHIL":"DFCIEHGL",
+  "CDEFGHJK":"DFCKJHGE",
+  "CDEFGHJL":"DFCEJHGL",
+  "CDEFGHKL":"DFCKEHGL",
+  "CDEFGIJK":"DFCKEJGI",
+  "CDEFGIJL":"DFCIEJGL",
+  "CDEFGIKL":"DFCKEIGL",
+  "CDEFGJKL":"DFCKEJGL",
+  "CDEFHIJK":"DFCKEHJI",
+  "CDEFHIJL":"DFCIEHJL",
+  "CDEFHIKL":"DFCKIHEL",
+  "CDEFHJKL":"DFCKEHJL",
+  "CDEFIJKL":"DFCKEIJL",
+  "CDEGHIJK":"CDEKJHGI",
+  "CDEGHIJL":"CDEIJHGL",
+  "CDEGHIKL":"CDEKIHGL",
+  "CDEGHJKL":"CDEKJHGL",
+  "CDEGIJKL":"CDEKIJGL",
+  "CDEHIJKL":"CDEKIHJL",
+  "CDFGHIJK":"DFCKJHGI",
+  "CDFGHIJL":"DFCIJHGL",
+  "CDFGHIKL":"DFCKIHGL",
+  "CDFGHJKL":"DFCKJHGL",
+  "CDFGIJKL":"DFCKIJGL",
+  "CDFHIJKL":"DFCKIHJL",
+  "CDGHIJKL":"CDHKIJGL",
+  "CEFGHIJK":"CFEKJHGI",
+  "CEFGHIJL":"CFEIJHGL",
+  "CEFGHIKL":"CFEKIHGL",
+  "CEFGHJKL":"CFEKJHGL",
+  "CEFGIJKL":"CFEKIJGL",
+  "CEFHIJKL":"CFEKIHJL",
+  "CEGHIJKL":"CGEKIHJL",
+  "CFGHIJKL":"CFHKIJGL",
+  "DEFGHIJK":"DFEKJHGI",
+  "DEFGHIJL":"DFEIJHGL",
+  "DEFGHIKL":"DFEKIHGL",
+  "DEFGHJKL":"DFEKJHGL",
+  "DEFGIJKL":"DFEKIJGL",
+  "DEFHIJKL":"DFEKIHJL",
+  "DEGHIJKL":"DGEKIHJL",
+  "DFGHIJKL":"DFHKIJGL",
+  "EFGHIJKL":"FGEKIHJL"
+};
+
+/* match order encoded in each THIRD_PLACE_TABLE value */
+const THIRD_SLOT_MATCHES = [74,77,79,80,81,82,85,87];
+/* Given the 8 qualifying third-place groups (array of letters), return a map
+   matchNo -> groupLetter telling which group's 3rd-placed team fills each
+   third-place R32 slot. Returns null if the combination isn't the official 8. */
+function thirdPlaceAssignment(qualGroups){
+  if(!qualGroups || qualGroups.length!==8) return null;
+  const key = [...qualGroups].sort().join('');
+  const val = THIRD_PLACE_TABLE[key];
+  if(!val) return null;
+  const map = {};
+  for(let i=0;i<THIRD_SLOT_MATCHES.length;i++) map[THIRD_SLOT_MATCHES[i]] = val[i];
+  return map; /* { 74:'C', 77:'F', ... } */
+}
+
 /* resolve a slot code to a qualified team code, or null if not yet known.
    Only fills when the source group is actually settled. Third-place slots
    need FIFA's official assignment table, so they stay empty until known. */
-function resolveSlot(code, pic){
+function resolveSlot(code, pic, matchNo){
   if(!code) return null;
   if(code[0]==='1'){ const g=code.slice(1); const w=pic.winners[g]; return (w&&w.settled)?w.code:null; }
   if(code[0]==='2'){ const g=code.slice(1); const r=pic.runners[g]; return (r&&r.settled)?r.code:null; }
-  return null; /* "3:..." third-place slots stay empty until officially assigned */
+  /* "3:..." third-place slot — filled from the official FIFA assignment table
+     once all 8 third-placed qualifiers are settled (keyed by this tie's match no) */
+  if(code[0]==='3'){ return (pic.thirdSlots && matchNo!=null) ? (pic.thirdSlots[matchNo]||null) : null; }
+  return null;
 }
 
 function renderKnockout(){
@@ -1693,7 +2514,13 @@ function renderKnockout(){
     qf: ar?'ربع':'QF', sf: ar?'نصف':'SF', fin: ar?'نهائي':'Final'
   };
   function r32Tie(t){
-    const ca = resolveSlot(t.a, pic), cb = resolveSlot(t.b, pic);
+    /* prefer the official hardcoded R32 teams; fall back to computed slots */
+    let ca, cb;
+    if(typeof R32_OFFICIAL!=="undefined" && R32_OFFICIAL[t.m]){
+      ca = R32_OFFICIAL[t.m][0]; cb = R32_OFFICIAL[t.m][1];
+    }else{
+      ca = resolveSlot(t.a, pic, t.m); cb = resolveSlot(t.b, pic, t.m);
+    }
     return `<div class="tie" data-m="${t.m}"><div class="tie-tag">${RLABEL.r32}</div>${sideHTML(ca)}${sideHTML(cb)}<div class="tie-date">${ar?t.da:t.d}</div></div>`;
   }
   function feedTie(m, round, finalCls){
@@ -2486,7 +3313,7 @@ const NAME_ALIASES = {
   "czech republic":"czechia", "czechia":"czechia",
   "turkiye":"türkiye", "türkiye":"türkiye", "turkey":"türkiye",
   "curacao":"curaçao", "curaçao":"curaçao",
-  "cape verde":"cape verde", "cabo verde":"cape verde",
+  "cape verde":"cape verde", "cabo verde":"cape verde", "cape verde islands":"cape verde",
   // long / short forms
   "bosnia & herz.":"bosnia & herzegovina", "bosnia and herzegovina":"bosnia & herzegovina",
   "bosnia-herzegovina":"bosnia & herzegovina", "bosnia & herzegovina":"bosnia & herzegovina",
@@ -2545,6 +3372,9 @@ async function loadScores(){
       }
       PREV_SCORE[id] = {h:hs, a:as};
     }
+    /* fill any hardcoded knockout results the API hasn't delivered yet (API-down
+       resilience). Live data already in `map` is never overwritten. */
+    if(typeof seedKoResults === "function") seedKoResults(map);
     LIVE = map;
     /* diagnostic: warn about any live match whose teams don't match our schedule,
        so unmatched API names are easy to spot in the browser console */
@@ -2564,6 +3394,9 @@ async function loadScores(){
     if(typeof renderStatsWinners === "function") renderStatsWinners();
     const kEl = document.getElementById('knockout');
     if(kEl && !kEl.hidden && typeof renderKnockout === "function") renderKnockout();
+    /* refresh the schedule's knockout sections only when team resolution changes
+       (a KO match finishing advances a team), so we don't wipe open panels every poll */
+    if(typeof refreshKnockoutScheduleIfChanged === "function") refreshKnockoutScheduleIfChanged();
   }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
 }
 
@@ -3289,6 +4122,11 @@ document.querySelectorAll('.favorites').forEach(sec=>{
 });
 /* edit buttons across all pages open the picker */
 document.querySelectorAll('.fav-edit-btn').forEach(b=>b.addEventListener('click', ()=>{ if(typeof openPicker==="function") openPicker(); }));
+
+/* seed the hardcoded knockout results so finished KO matches (e.g. the Canada
+   result) display even before — or entirely without — a successful API poll.
+   loadScores() re-seeds on every successful fetch, and live data always wins. */
+if(typeof seedKoResults === "function") LIVE = seedKoResults(LIVE);
 
 applyLanguage(); /* set initial EN labels + button text */
 
