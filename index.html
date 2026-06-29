@@ -665,66 +665,35 @@ body.ar .stab{font-family:'Changa',sans-serif}
   line-height:1.5;border:1px solid var(--row-line);border-radius:10px;padding:10px 14px;background:rgba(14,21,38,.4)}
 body.ar .ko-note{letter-spacing:0}
 /* best third-placed teams panel */
-.ko-thirds{max-width:620px;margin:0 auto 24px;border:1px solid rgba(185,138,46,.34);border-radius:12px;overflow:hidden;
-  background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 14px 36px -22px rgba(0,0,0,.85)}
-.ko-thirds-head{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--head-grad);border-bottom:1px solid var(--row-line)}
-.ko-thirds-title{font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.1em;color:var(--sand);text-transform:uppercase}
-body.ar .ko-thirds-title{font-family:'Changa',sans-serif;letter-spacing:0}
-.third-row{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--row-line-soft);font-size:.82rem}
-.third-row:last-child{border-bottom:none}
-.third-row .t-rank{flex:none;width:22px;font-family:'Cinzel',serif;font-weight:700;font-size:.74rem;color:var(--sand)}
-.third-row img{width:24px;height:16px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
-.third-row .t-grp{flex:none;font-size:.62rem;color:var(--gold-deep);font-weight:700;letter-spacing:.08em;width:54px}
-body.ar .third-row .t-grp{letter-spacing:0}
-.third-row .t-name{flex:1;color:var(--ink);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.third-row .t-stat{flex:none;color:var(--sand);font-size:.72rem;font-variant-numeric:lining-nums;letter-spacing:.04em}
-.third-row.qual{background:var(--q-row)}
-.third-row.qual .t-rank,.third-row.qual .t-name{color:var(--gold)}
-.third-row.out{opacity:.4}
-.third-cut{display:flex;align-items:center;gap:8px;padding:4px 14px;font-size:.56rem;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--gold-deep);font-weight:700;background:rgba(184,144,47,.06)}
-body.ar .third-cut{letter-spacing:0}
-.third-cut::before,.third-cut::after{content:"";flex:1;height:1px;background:var(--row-line)}
-/* horizontal-scroll shell with a SOLID panel so the marble vein behind the
-   page doesn't bleed through and wash out the bracket */
-.bracket-scroll{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
-  border:1px solid var(--card-border);border-radius:14px;
-  background:linear-gradient(180deg,#0C1322,#0A0F1C);
-  box-shadow:inset 0 0 60px -20px rgba(0,0,0,.9), 0 16px 40px -24px rgba(0,0,0,.8);
-  padding:16px 12px}
-body.light .bracket-scroll{background:linear-gradient(180deg,#EFE9DC,#E8E1D2)}
-.bracket2{display:flex;align-items:stretch;gap:8px;min-width:1080px;margin:0 auto}
-.kcol{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:10px;min-width:114px}
-.kcol.kconn{flex:0 0 22px;min-width:22px}
-.kcol.kcenter{flex:0 0 132px;min-width:132px;justify-content:center}
-.tie{position:relative;border:1px solid rgba(185,138,46,.34);border-radius:9px;overflow:hidden;
-  background:linear-gradient(180deg,#162038,#0F1729);box-shadow:0 6px 18px -12px rgba(0,0,0,.9)}
-body.light .tie{background:linear-gradient(180deg,#F0EADB,#E7E0D0)}
-.tie-tag{font-family:'Cinzel',serif;font-weight:700;font-size:.5rem;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--gold-deep);text-align:center;padding:3px 0 2px;background:rgba(184,144,47,.08);border-bottom:1px solid var(--row-line-soft)}
-body.ar .tie-tag{font-family:'Changa',sans-serif;letter-spacing:0}
-.tie-side{display:flex;align-items:center;gap:6px;padding:7px 8px;min-height:31px}
-.tie-side+.tie-side{border-top:1px solid var(--row-line-soft)}
-.tie-side.filled{background:rgba(227,197,103,.05)}
-.tie-side img{width:22px;height:15px;object-fit:cover;border-radius:2px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
-.tie-nm{flex:1;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.82rem}
-.tie-nm.empty{min-height:15px}
-.tie-date{text-align:center;font-size:.52rem;letter-spacing:.06em;color:var(--sand);padding:3px 0;
-  background:rgba(227,197,103,.05);border-top:1px solid var(--row-line-soft)}
-body.ar .tie-date{letter-spacing:0}
-.tie.final-tie{border-color:var(--gold);box-shadow:0 0 20px -4px rgba(227,197,103,.5)}
-/* connectors */
-.conn{position:relative;flex:1;min-height:36px}
-.conn::before{content:"";position:absolute;top:25%;bottom:25%;width:1.5px;background:var(--gold-deep);opacity:.55}
-.conn.l::after,.conn.r::after{content:"";position:absolute;top:50%;width:50%;height:1.5px;background:var(--gold-deep);opacity:.55}
-.conn.l::before{left:0}.conn.l::after{left:50%}
-.conn.r::before{right:0}.conn.r::after{right:50%}
-/* center trophy + final */
-.cup{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--gold)}
-.cup svg{filter:drop-shadow(0 0 10px rgba(227,197,103,.45))}
-.cup .tie{width:100%}
-.cup-label{font-family:'Cinzel',serif;font-weight:700;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
-body.ar .cup-label{font-family:'Changa',sans-serif;letter-spacing:0}
+/* ===== RADIAL KNOCKOUT BRACKET ===== */
+.kr-wrap{
+  width:100%;max-width:760px;margin:0 auto;border-radius:18px;
+  background:radial-gradient(circle at 50% 50%, #0E1626 0%, #0A0F1C 70%);
+  border:1px solid var(--card-border);
+  box-shadow:inset 0 0 80px -30px rgba(0,0,0,.9), 0 18px 44px -26px rgba(0,0,0,.8);
+  padding:10px;overflow:hidden;
+}
+body.light .kr-wrap{background:radial-gradient(circle at 50% 50%, #F1EBDD 0%, #E6DFCF 72%)}
+.kr-svg{width:100%;height:auto;display:block;font-family:'Outfit',sans-serif}
+body.ar .kr-svg{font-family:'Changa',sans-serif}
+.kr-line{fill:none;stroke:var(--gold-deep);stroke-width:1.4;opacity:.4}
+.kr-line.won{stroke:var(--gold);stroke-width:2.2;opacity:.95;filter:drop-shadow(0 0 4px rgba(227,197,103,.6))}
+.kr-node{fill:#0A0F1C;stroke:var(--gold-deep);stroke-width:1.4;opacity:.7}
+body.light .kr-node{fill:#E6DFCF}
+.kr-node.won{fill:var(--gold);stroke:var(--gold);opacity:1;filter:drop-shadow(0 0 5px rgba(227,197,103,.7))}
+.kr-chip .kr-flagbg{fill:#11192B;stroke:rgba(185,138,46,.4);stroke-width:1}
+body.light .kr-chip .kr-flagbg{fill:#EAE3D3}
+.kr-chip image{border-radius:3px}
+.kr-chip .kr-nm{fill:var(--ink);font-size:13px;font-weight:600}
+.kr-chip.tbd .kr-nm{fill:var(--sand);opacity:.5;font-style:italic}
+.kr-chip.tbd .kr-flagbg{stroke-dasharray:3 3;opacity:.6}
+.kr-chip.won .kr-flagbg{stroke:var(--gold);stroke-width:2;filter:drop-shadow(0 0 5px rgba(227,197,103,.55))}
+.kr-chip.won .kr-nm{fill:var(--gold);font-weight:700}
+.kr-cup{color:var(--gold)}
+.kr-cup path{filter:drop-shadow(0 0 8px rgba(227,197,103,.5))}
+.kr-champ{fill:var(--gold);font-family:'Cinzel',serif;font-weight:700;font-size:18px;letter-spacing:.04em}
+.kr-champ-lbl{fill:var(--gold-deep);font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.22em}
+body.ar .kr-champ,body.ar .kr-champ-lbl{font-family:'Changa',sans-serif;letter-spacing:0}
 .groups-wrap{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:30px;
 }
@@ -758,6 +727,18 @@ body.ar .cup-label{font-family:'Changa',sans-serif;letter-spacing:0}
 .gtable .pts{font-family:'Cinzel',serif;font-weight:700;color:var(--gold)}
 .gtable tr.q1,.gtable tr.q2{background:var(--q-row)}
 .gtable tr.q1 .rank,.gtable tr.q2 .rank{color:var(--gold);font-weight:700}
+/* qualified-third row gets the same gold treatment */
+.gtable tr.q3{background:var(--q-row)}
+.gtable tr.q3 .rank{color:var(--gold);font-weight:700}
+/* small "Qualified" badge under a qualified team's name */
+.qual-tag{
+  display:inline-block;margin-inline-start:8px;padding:1px 7px;border-radius:999px;
+  font-family:'Outfit',sans-serif;font-weight:600;font-size:.56rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--gold);background:rgba(227,197,103,.12);border:1px solid rgba(185,138,46,.5);
+  vertical-align:middle;white-space:nowrap;
+}
+.qual-tag.qual-third{color:var(--sand);background:rgba(185,138,46,.08)}
+body.ar .qual-tag{font-family:'Changa',sans-serif;letter-spacing:0;font-size:.6rem}
 .gtable .rank{color:var(--sand);font-size:.66rem;width:18px}
 /* W-D-L mini indicator */
 .wdl{display:inline-flex;gap:2px;justify-content:center}
@@ -1071,11 +1052,11 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
     <div class="ko-title" id="t-ko-title">GROUPS &amp; STANDINGS</div>
     <div class="ko-sub" id="t-ko-sub">12 Groups · Points update as matches are played</div>
     <div class="stats-tabs" role="tablist">
-      <button class="stab active" id="tab-groups" data-tab="groups">Groups</button>
-      <button class="stab" id="tab-knockout" data-tab="knockout">Knockout</button>
+      <button class="stab active" id="tab-knockout" data-tab="knockout">Knockout</button>
+      <button class="stab" id="tab-groups" data-tab="groups">Groups</button>
     </div>
-    <div class="groups-wrap" id="groups"></div>
-    <div class="knockout-wrap" id="knockout" hidden></div>
+    <div class="groups-wrap" id="groups" hidden></div>
+    <div class="knockout-wrap" id="knockout"></div>
   </section>
 </div>
 
@@ -1173,6 +1154,8 @@ const AR_UI={
   sub:"<b>دور المجموعات</b> · 72 مباراة · 12 مجموعة · 11 – 28 يونيو",
   ko_title:"المجموعات والترتيب",
   ko_sub:"12 مجموعة · النقاط تتحدث مع كل مباراة",
+  ko_title_ko:"الأدوار الإقصائية",
+  ko_sub_ko:"٣٢ منتخباً · الطريق إلى النهائي",
   footer:"دور المجموعات · الطريق إلى النهائي — ملعب ميت لايف · 19 يوليو 2026",
   month:"يونيو",
   today:"اليوم",
@@ -1800,21 +1783,28 @@ function renderGroups(){
     ? {team:"المنتخب", p:"ل", w:"ف", d:"ت", l:"خ", gd:"الفارق", pts:"نقاط"}
     : {team:"Team", p:"P", w:"W", d:"D", l:"L", gd:"GD", pts:"Pts"};
   const grpWord = ar ? "المجموعة" : "Group";
+  const qualWord = ar ? "متأهل" : "Qualified";
   let html="";
   const liveLabel = ar ? "مباشر" : "LIVE";
+  /* the 8 best third-placed teams that qualify (codes), from the bracket picture */
+  const pic = (typeof knockoutPicture==="function") ? knockoutPicture() : {thirds:[]};
+  const qualThirds = new Set((pic.thirds||[]).slice(0,8).map(t=>t.code));
   for(const g of Object.keys(GROUPS)){
     const rows=computeStandings(GROUPS[g]);
     const groupLive = rows.some(r=>r.live);
     let body="";
     rows.forEach((r,i)=>{
       const qcls = i===0?'q1':i===1?'q2':'';
+      /* a team is through if top-2 of its group, or among the 8 best thirds */
+      const isQualified = (i<2) || (i===2 && qualThirds.has(r.code));
       const live = r.live ? ' row-live' : '';
       const gd = (r.GD>0?'+':'') + r.GD;
       const wdl = r.seq.map(s=>`<i class="${s}"></i>`).join('');
       const ptsCls = r.live ? 'pts pts-live' : 'pts';
-      body+=`<tr class="${qcls}${live}">
+      const qTag = isQualified ? `<span class="qual-tag${i===2?' qual-third':''}">${qualWord}</span>` : '';
+      body+=`<tr class="${qcls}${isQualified&&i===2?' q3':''}${live}">
         <td class="rank">${i+1}</td>
-        <td><div class="team-cell">${flag(N[r.code][1])}<span class="nm">${teamName(r.code)}</span>${r.live?'<span class="row-live-dot"></span>':''}</div></td>
+        <td><div class="team-cell">${flag(N[r.code][1])}<span class="nm">${teamName(r.code)}${qTag}</span>${r.live?'<span class="row-live-dot"></span>':''}</div></td>
         <td>${r.P}</td><td>${r.W}</td><td>${r.D}</td><td>${r.L}</td>
         <td>${gd}</td><td class="${ptsCls}">${r.Pts}</td>
       </tr>`;
@@ -2526,97 +2516,171 @@ function renderKnockout(){
   const ar = LANG==="ar";
   const pic = knockoutPicture();
   const el = document.getElementById('knockout');
-  const tFlag = c => c ? `<img src="https://flagcdn.com/h24/${N[c][1]}.png" alt="">` : '';
-  const tName = c => c ? teamName(c) : '';
+  if(!el) return;
 
   /* real knockout results: winners advance through the bracket as games finish */
   const koRes = (typeof koWinners==="function") ? koWinners(pic) : {winner:{},loser:{}};
   const koWinner = koRes.winner || {};
   const koLoser = koRes.loser || {};
 
-  function sideHTML(teamCode){
-    if(teamCode) return `<div class="tie-side filled">${tFlag(teamCode)}<span class="tie-nm">${tName(teamCode)}</span></div>`;
-    return `<div class="tie-side"><span class="tie-nm empty"></span></div>`;
-  }
-  /* round tag shown on each tie card (per your choice) */
-  const RLABEL = {
-    r32: ar?'دور 32':'R32', r16: ar?'دور 16':'R16',
-    qf: ar?'ربع':'QF', sf: ar?'نصف':'SF', fin: ar?'نهائي':'Final'
-  };
-  function r32Tie(t){
-    /* prefer the official hardcoded R32 teams; fall back to computed slots */
-    let ca, cb;
-    if(typeof R32_OFFICIAL!=="undefined" && R32_OFFICIAL[t.m]){
-      ca = R32_OFFICIAL[t.m][0]; cb = R32_OFFICIAL[t.m][1];
-    }else{
-      ca = resolveSlot(t.a, pic, t.m); cb = resolveSlot(t.b, pic, t.m);
+  /* resolve the two teams of any match number (R32 hardcoded, later rounds via feed) */
+  const teamsOf = (mNo)=> (typeof koMatchTeams==="function")
+    ? koMatchTeams(mNo, pic, koWinner, koLoser)
+    : [null,null];
+  /* escape text for safe insertion into the SVG string */
+  const esc = (s)=> String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  /* ---- bracket tree (leaf order around the ring) ---- */
+  const LEFT_R32  = [74,77,73,75,83,84,81,82];
+  const RIGHT_R32 = [76,78,79,80,86,88,85,87];
+  /* feed maps for the inner rounds, left and right halves (top→bottom) */
+  const LEFT_R16=[89,90,93,94], RIGHT_R16=[91,92,95,96];
+  const LEFT_QF=[97,98],        RIGHT_QF=[99,100];
+  const LEFT_SF=[101],          RIGHT_SF=[102];
+
+  /* ---- geometry ---- */
+  const SZ=1000, CX=500, CY=500;
+  const R_TEAM=452, R_R32=372, R_R16=286, R_QF=200, R_SF=120;
+  const gapTop=16, gapBot=16;
+  const arc=(360-gapTop-gapBot)/2, sect=arc/8;
+  const D2R=Math.PI/180;
+  const pt=(r,a)=>[CX+r*Math.cos(a*D2R), CY+r*Math.sin(a*D2R)];
+
+  /* angle of each match centre, per half, top→bottom */
+  const halfAngles=(side)=>{
+    const out=[];
+    for(let i=0;i<8;i++){
+      const a = side==='L'
+        ? (270-gapTop/2) - (i+0.5)*sect
+        : (270+gapTop/2) + (i+0.5)*sect;
+      out.push(((a%360)+360)%360);
     }
-    return `<div class="tie" data-m="${t.m}"><div class="tie-tag">${RLABEL.r32}</div>${sideHTML(ca)}${sideHTML(cb)}<div class="tie-date">${ar?t.da:t.d}</div></div>`;
-  }
-  function feedTie(m, round, finalCls){
-    const src = FEED[m]||[];
-    const a = koWinner[src[0]]||null, b = koWinner[src[1]]||null;
-    const dt = KO_DATE[m]?(ar?KO_DATE[m][1]:KO_DATE[m][0]):'';
-    const tag = RLABEL[round]||'';
-    return `<div class="tie ${finalCls||''}" data-m="${m}"><div class="tie-tag">${tag}</div>${sideHTML(a)}${sideHTML(b)}${dt?`<div class="tie-date">${dt}</div>`:''}</div>`;
-  }
-  const col = (inner) => `<div class="kcol">${inner}</div>`;
-  const connCol = (n, dir) => `<div class="kcol kconn">${('<div class="conn '+dir+'"></div>').repeat(n)}</div>`;
+    return out;
+  };
+  const LA=halfAngles('L'), RA=halfAngles('R');
+  /* R16/QF/SF nodes sit at the midpoint angle of the matches they join */
+  const midAng=(a,b)=>{ /* circular midpoint */
+    let d=((b-a+540)%360)-180; return ((a+d/2)%360+360)%360;
+  };
 
-  const L=R32.left, R=R32.right;
-  const cup = `<div class="kcol kcenter">
-    <div class="cup">
-      <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z"/></svg>
-      ${feedTie(104,'fin','final-tie')}
-      <div class="cup-label">${ar?'البطل':'Champion'}</div>
-    </div>
-  </div>`;
+  /* node angle tables, keyed by match number */
+  const NODE_ANG={}, NODE_R={};
+  LEFT_R32.forEach((m,i)=>{NODE_ANG[m]=LA[i];NODE_R[m]=R_R32;});
+  RIGHT_R32.forEach((m,i)=>{NODE_ANG[m]=RA[i];NODE_R[m]=R_R32;});
+  const setInner=(arr,R)=>arr.forEach(m=>{
+    const [s0,s1]=FEED[m]; NODE_ANG[m]=midAng(NODE_ANG[s0],NODE_ANG[s1]); NODE_R[m]=R;
+  });
+  setInner(LEFT_R16,R_R16); setInner(RIGHT_R16,R_R16);
+  setInner(LEFT_QF,R_QF);   setInner(RIGHT_QF,R_QF);
+  setInner(LEFT_SF,R_SF);   setInner(RIGHT_SF,R_SF);
 
-  const bracket = `<div class="bracket2">
-    ${col(L.map(r32Tie).join(''))}
-    ${connCol(4,'l')}
-    ${col([89,90,93,94].map(m=>feedTie(m,'r16')).join(''))}
-    ${connCol(2,'l')}
-    ${col([97,98].map(m=>feedTie(m,'qf')).join(''))}
-    ${connCol(1,'l')}
-    ${col([101].map(m=>feedTie(m,'sf')).join(''))}
-    ${cup}
-    ${col([102].map(m=>feedTie(m,'sf')).join(''))}
-    ${connCol(1,'r')}
-    ${col([99,100].map(m=>feedTie(m,'qf')).join(''))}
-    ${connCol(2,'r')}
-    ${col([91,92,95,96].map(m=>feedTie(m,'r16')).join(''))}
-    ${connCol(4,'r')}
-    ${col(R.map(r32Tie).join(''))}
-  </div>`;
+  /* ---- SVG assembly ---- */
+  const NS='http://www.w3.org/2000/svg';
+  let defs = `<defs>
+    <radialGradient id="cupGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(227,197,103,.32)"/>
+      <stop offset="40%" stop-color="rgba(185,138,46,.12)"/>
+      <stop offset="100%" stop-color="rgba(185,138,46,0)"/>
+    </radialGradient>
+    <linearGradient id="goldStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f4dd8e"/><stop offset="100%" stop-color="#b8862e"/>
+    </linearGradient>
+  </defs>`;
+
+  let lines='', nodes='', chips='';
+
+  /* connector helper: a smooth line between two polar points, through the radial direction */
+  const conn=(r1,a1,r2,a2,won)=>{
+    const [x1,y1]=pt(r1,a1), [x2,y2]=pt(r2,a2);
+    const cls = won ? 'kr-line won' : 'kr-line';
+    return `<path class="${cls}" d="M${x1.toFixed(1)} ${y1.toFixed(1)} L${x2.toFixed(1)} ${y2.toFixed(1)}"/>`;
+  };
+  const node=(r,a,won,r0)=>{
+    const [x,y]=pt(r,a);
+    return `<circle class="kr-node ${won?'won':''}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r0||5}"/>`;
+  };
+
+  /* draw a match: its two teams (outer) → its node, then node → parent node */
+  function drawMatch(mNo, isR32, side){
+    const a = NODE_ANG[mNo], r = NODE_R[mNo];
+    const [ca,cb] = teamsOf(mNo);
+    const w = koWinner[mNo]||null;
+    if(isR32){
+      /* two team chip angles around the match centre */
+      const off = sect*0.30;
+      const aTop = (side==='L'? a-off : a-off), aBot=(side==='L'? a+off : a+off);
+      /* lines team→node */
+      lines += conn(R_TEAM-26, aTop, r, a, w&&w===ca);
+      lines += conn(R_TEAM-26, aBot, r, a, w&&w===cb);
+      /* team chips */
+      chips += teamChip(ca, R_TEAM, aTop, side, w&&w===ca, mNo);
+      chips += teamChip(cb, R_TEAM, aBot, side, w&&w===cb, mNo);
+    }
+    nodes += node(r,a,!!w);
+  }
+  /* feed line: child node → parent node, highlighted if child winner known */
+  function feedLine(parent){
+    const [s0,s1]=FEED[parent];
+    const wp = koWinner[parent]||null;
+    lines += conn(NODE_R[s0],NODE_ANG[s0], NODE_R[parent],NODE_ANG[parent], !!koWinner[s0]);
+    lines += conn(NODE_R[s1],NODE_ANG[s1], NODE_R[parent],NODE_ANG[parent], !!koWinner[s1]);
+  }
+
+  /* team chip = small rectangular flag + code, rotated upright, anchored on ring */
+  function teamChip(code, r, a, side, won, mNo){
+    const [x,y]=pt(r,a);
+    const flagH=22, flagW=32;
+    const nm = code ? (N[code][0]) : '';
+    const fl = code ? `<image href="https://flagcdn.com/h40/${N[code][1]}.png" x="${-flagW/2}" y="${-flagH/2}" width="${flagW}" height="${flagH}" preserveAspectRatio="xMidYMid slice"/>` : '';
+    /* text sits outside the flag, away from centre */
+    const out = side==='L' ? -1 : 1;
+    const tx = out>0 ? flagW/2+6 : -(flagW/2+6);
+    const anchor = out>0 ? 'start' : 'end';
+    const safeNm = code ? esc(teamName(code)) : (ar?'—':'—');
+    return `<g class="kr-chip ${won?'won':''} ${code?'':'tbd'}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" data-m="${mNo}">
+      <rect class="kr-flagbg" x="${-flagW/2-2}" y="${-flagH/2-2}" width="${flagW+4}" height="${flagH+4}" rx="4"/>
+      ${fl}
+      <text class="kr-nm" x="${tx}" y="1" text-anchor="${anchor}" dominant-baseline="middle">${safeNm}</text>
+    </g>`;
+  }
+
+  /* build everything */
+  LEFT_R32.forEach(m=>drawMatch(m,true,'L'));
+  RIGHT_R32.forEach(m=>drawMatch(m,true,'R'));
+  [...LEFT_R16,...RIGHT_R16,...LEFT_QF,...RIGHT_QF,...LEFT_SF,...RIGHT_SF].forEach(m=>{ drawMatch(m,false); });
+  /* feed lines for inner rounds */
+  [...LEFT_R16,...RIGHT_R16,...LEFT_QF,...RIGHT_QF,...LEFT_SF,...RIGHT_SF,104].forEach(feedLine);
+  /* SF → centre (final) lines */
+  lines += conn(NODE_R[101],NODE_ANG[101], 60, NODE_ANG[101], !!koWinner[101]);
+  lines += conn(NODE_R[102],NODE_ANG[102], 60, NODE_ANG[102], !!koWinner[102]);
+
+  /* champion (winner of 104) */
+  const champ = koWinner[104]||null;
+
+  /* centre trophy (gold SVG) */
+  const trophy = `<g class="kr-cup" transform="translate(${CX},${CY})">
+    <circle r="64" fill="url(#cupGlow)"/>
+    <g transform="translate(-26,-30) scale(2.2)">
+      <path fill="url(#goldStroke)" stroke="#7a5a1e" stroke-width=".4"
+        d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z"/>
+    </g>
+    ${champ?`<text class="kr-champ" y="44" text-anchor="middle">${esc(teamName(champ))}</text>`:`<text class="kr-champ-lbl" y="44" text-anchor="middle">${ar?'البطل':'CHAMPION'}</text>`}
+  </g>`;
+
+  const svg = `<svg class="kr-svg" viewBox="0 0 ${SZ} ${SZ}" xmlns="${NS}" role="img" aria-label="Knockout bracket">
+    ${defs}
+    <circle cx="${CX}" cy="${CY}" r="${R_TEAM-60}" fill="url(#cupGlow)"/>
+    <g class="kr-lines">${lines}</g>
+    <g class="kr-nodes">${nodes}</g>
+    ${trophy}
+    <g class="kr-chips">${chips}</g>
+  </svg>`;
 
   const note = ar
-    ? 'الشبكة بالترتيب الرسمي للفيفا. تُملأ المنتخبات تلقائياً بمجرد تأهلها من المجموعات.'
-    : 'Official FIFA bracket structure. Slots fill automatically as teams qualify from the groups.';
+    ? 'الشبكة الدائرية بالترتيب الرسمي للفيفا — البطل في المنتصف. تتقدّم المنتخبات للداخل مع كل فوز.'
+    : 'Radial bracket in official FIFA order — champion at the centre. Teams advance inward as they win.';
 
-  /* best third-placed teams (top 8 qualify) — sorted points → GD → GF */
-  const thirds = pic.thirds;
-  let thirdsBlock = '';
-  if(thirds.length){
-    let rowsHtml='';
-    thirds.forEach((t,i)=>{
-      if(i===8) rowsHtml += `<div class="third-cut">${ar?'خط التأهل':'Qualification line'}</div>`;
-      const gd=(t.GD>0?'+':'')+t.GD;
-      rowsHtml += `<div class="third-row ${i<8?'qual':'out'}">
-        <span class="t-rank">${i+1}</span>
-        <img src="https://flagcdn.com/h24/${N[t.code][1]}.png" alt="">
-        <span class="t-grp">${ar?'مجموعة':'Grp'} ${t.grp}</span>
-        <span class="t-name">${tName(t.code)}</span>
-        <span class="t-stat">${t.Pts} ${ar?'ن':'pts'} · ${gd}</span>
-      </div>`;
-    });
-    thirdsBlock = `<div class="ko-thirds">
-      <div class="ko-thirds-head"><span class="ko-thirds-title">${ar?'أفضل المراكز الثالثة':'Best Third-Placed Teams'}</span></div>
-      ${rowsHtml}
-    </div>`;
-  }
-
-  el.innerHTML = `<div class="ko-note">${note}</div>${thirdsBlock}<div class="bracket-scroll">${bracket}</div>`;
+  el.innerHTML = `<div class="ko-note">${note}</div><div class="kr-wrap">${svg}</div>`;
 }
 
 function renderScorers(){
@@ -2963,6 +3027,19 @@ function switchStatsTab(tab){
   knockoutEl.hidden = (tab!=="knockout");
   document.getElementById('tab-groups').classList.toggle('active', tab==="groups");
   document.getElementById('tab-knockout').classList.toggle('active', tab==="knockout");
+  /* swap the section title to match the active tab */
+  const ar = LANG==="ar";
+  const titleEl = document.getElementById('t-ko-title');
+  const subEl = document.getElementById('t-ko-sub');
+  if(titleEl && subEl){
+    if(tab==="knockout"){
+      titleEl.textContent = ar?AR_UI.ko_title_ko:"KNOCKOUT STAGE";
+      subEl.textContent   = ar?AR_UI.ko_sub_ko:"32 teams · The road to the Final";
+    }else{
+      titleEl.innerHTML = ar?AR_UI.ko_title:"GROUPS &amp; STANDINGS";
+      subEl.textContent = ar?AR_UI.ko_sub:"12 Groups · Points update as matches are played";
+    }
+  }
   if(tab==="knockout") renderKnockout();
 }
 document.getElementById('tab-groups').addEventListener('click', ()=>switchStatsTab('groups'));
@@ -3817,8 +3894,15 @@ function applyLanguage(){
   set('t-h1',      ar?AR_UI.h1:"WORLD CUP 2026");
   set('t-sub',     ar?AR_UI.sub:"<b>GROUP STAGE</b> · 72 Matches · 12 Groups · June 11 – 28");
   /* tz badge now holds the rotating multilingual phrase — set separately, not here */
-  set('t-ko-title',ar?AR_UI.ko_title:"GROUPS &amp; STANDINGS");
-  set('t-ko-sub',  ar?AR_UI.ko_sub:"12 Groups · Points update as matches are played");
+  /* section title depends on the active standings tab (knockout is default) */
+  const koTabActive = (()=>{ const b=document.getElementById('tab-knockout'); return !b || b.classList.contains('active'); })();
+  if(koTabActive){
+    set('t-ko-title',ar?AR_UI.ko_title_ko:"KNOCKOUT STAGE");
+    set('t-ko-sub',  ar?AR_UI.ko_sub_ko:"32 teams · The road to the Final");
+  }else{
+    set('t-ko-title',ar?AR_UI.ko_title:"GROUPS &amp; STANDINGS");
+    set('t-ko-sub',  ar?AR_UI.ko_sub:"12 Groups · Points update as matches are played");
+  }
   set('tab-groups',ar?"المجموعات":"Groups");
   set('tab-knockout',ar?"الأدوار الإقصائية":"Knockout");
   set('jump-today-label',ar?"اليوم":"Today");
