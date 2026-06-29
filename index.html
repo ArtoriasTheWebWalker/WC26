@@ -597,17 +597,19 @@ body.ar .ktime.clock-only{letter-spacing:0 !important}
 footer{margin-top:36px;text-align:center;color:#5C6A8A;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
 
 /* ---------- KNOCKOUT SECTION ---------- */
-/* knockout day-style sections on the Schedule page */
+/* knockout day-style sections on the Schedule page — flow exactly like group days */
 .ko-day{grid-column:1 / -1}
-.ko-round-badge{
-  flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
-  font-family:'Cinzel',serif;font-weight:700;font-size:1rem;color:var(--letter-ink);
-  background:var(--gold-grad);box-shadow:0 0 16px -4px rgba(227,197,103,.5);
-}
-body.ar .ko-round-badge{font-family:'Changa',sans-serif}
 .ko-match .half.tbd{opacity:.8}
 .ko-match .half.tbd .tname{font-style:italic;font-weight:400}
-#ko-schedule-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:22px;grid-column:1 / -1;width:100%}
+/* small round indicator (R32 / R16 / QF …) under the kickoff time on each tie */
+.ko-round-tag{
+  display:inline-block;margin-top:4px;padding:2px 8px;border-radius:999px;
+  font-family:'Cinzel',serif;font-weight:700;font-size:.58rem;letter-spacing:.08em;
+  color:var(--gold);border:1px solid rgba(185,138,46,.5);background:rgba(185,138,46,.12);
+  white-space:nowrap;line-height:1;
+}
+body.ar .ko-round-tag{font-family:'Changa',sans-serif;letter-spacing:0;font-size:.62rem}
+#ko-schedule-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:22px;grid-column:1 / -1;width:100%;align-items:start}
 @media (max-width:920px){ #ko-schedule-wrap{grid-template-columns:1fr} }
 .ko{margin-top:54px}
 .ko-title{
@@ -1390,6 +1392,7 @@ const regionText = (r) => {
   return r;
 };
 
+var KO_SCHED_READY = false; /* gates the in-render tick() refresh until init is done */
 function renderSchedule(){
   let html="";
   for(const day of DAYS){
@@ -1517,6 +1520,15 @@ const KO_ROUND_LABEL = {
   third:{en:'Third-place Play-off', ar:'تحديد المركز الثالث'},
   fin:{en:'Final', ar:'النهائي'}
 };
+/* short badge labels shown on each knockout match card */
+const KO_ROUND_SHORT = {
+  r32:{en:'R32', ar:'دور 32'},
+  r16:{en:'R16', ar:'دور 16'},
+  qf: {en:'QF', ar:'ربع'},
+  sf: {en:'SF', ar:'نصف'},
+  third:{en:'3rd', ar:'الثالث'},
+  fin:{en:'Final', ar:'النهائي'}
+};
 
 /* resolve both sides of any knockout match number → [teamCodeA, teamCodeB].
    R32 uses the slot codes in R32[]; later rounds feed from prior winners via
@@ -1592,28 +1604,39 @@ function renderKnockoutSchedule(){
   const ko = koWinners(pic);
   const koWinner = ko.winner, koLoser = ko.loser;
 
-  /* group match numbers by round */
-  const byRound = {};
-  for(const mNo in KO_MATCH){
-    const r = KO_MATCH[mNo].r;
-    (byRound[r] = byRound[r] || []).push(+mNo);
-  }
   const monthName = (mo)=> ar ? (mo===5?'يونيو':'يوليو') : (mo===5?'June':'July');
   const tbd = ar ? 'يُحدد لاحقاً' : 'TBD';
+  const WD = ar
+    ? ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت']
+    : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  /* group knockout match numbers by calendar day (mo-d), in chronological order */
+  const byDay = {};
+  for(const mNo in KO_MATCH){
+    const info = KO_MATCH[mNo];
+    const key = info.mo+'-'+info.d;
+    (byDay[key] = byDay[key] || []).push(+mNo);
+  }
+  const dayKeys = Object.keys(byDay).sort((A,B)=>{
+    const [am,ad]=A.split('-').map(Number), [bm,bd]=B.split('-').map(Number);
+    return am!==bm ? am-bm : ad-bd;
+  });
 
   let html = '';
-  for(const r of KO_ROUND_ORDER){
-    const nums = (byRound[r]||[]).sort((a,b)=>a-b);
-    if(!nums.length) continue;
-    const label = KO_ROUND_LABEL[r][ar?'ar':'en'];
-    /* a stable id per round section so collapse state is preserved across renders */
-    html += `<section class="day ko-day" id="ko-${r}" data-koround="${r}">
+  for(const key of dayKeys){
+    const [mo,d] = key.split('-').map(Number);
+    const nums = byDay[key].sort((a,b)=> KO_MATCH[a].t.localeCompare(KO_MATCH[b].t) || a-b);
+    const wd = WD[new Date(Date.UTC(2026,mo,d)).getUTCDay()];
+    const cnt = nums.length;
+    const cntWord = ar ? (cnt===1?'مباراة':'مباريات') : (cnt===1?'match':'matches');
+    /* a stable id per KO day so collapse + today state persist across re-renders */
+    html += `<section class="day ko-day" id="koday-${mo}-${d}" data-day="${d}" data-month="${mo}">
       <div class="day-head">
         <div class="date-block">
-          <div class="ko-round-badge">${r==='fin'?'★':nums.length}</div>
-          <div><span class="weekday">${label}</span><span class="month">${ar?'الأدوار الإقصائية':'Knockout'}</span></div>
+          <div class="date-num">${d}</div>
+          <div><span class="weekday">${wd}</span><span class="month">${monthName(mo)}</span></div>
         </div>
-        <span class="day-summary"><span class="ds-count">${nums.length} ${ar?(nums.length===1?'مباراة':'مباريات'):(nums.length===1?'match':'matches')}</span><span class="ds-status"></span></span>
+        <span class="day-summary"><span class="ds-count">${cnt} ${cntWord}</span><span class="ds-status"></span></span>
         <span class="head-extra"></span>
       </div>
       <div class="matches-body">`;
@@ -1622,6 +1645,8 @@ function renderKnockoutSchedule(){
       const [ca, cb] = koMatchTeams(mNo, pic, koWinner, koLoser);
       const [hh,mm] = info.t.split(':').map(Number);
       const utc = Date.UTC(2026, info.mo, info.d, hh-3, mm); /* Mecca wall time = UTC+3 */
+      const rlabel = KO_ROUND_LABEL[info.r][ar?'ar':'en'];
+      const rshort = KO_ROUND_SHORT[info.r][ar?'ar':'en'];
       const side = (code, cls)=>{
         if(code){
           const A=N[code];
@@ -1635,10 +1660,10 @@ function renderKnockoutSchedule(){
       html += `<div class="match ko-match" data-utc="${utc}" data-home="${homeName}" data-away="${awayName}" data-kick="${info.t}" data-ha="${ca||''}" data-hb="${cb||''}" data-mno="${mNo}">
         <div class="m-row">
           ${side(ca,'left')}
-          <div class="mid"><div class="ktime">${info.t}</div></div>
+          <div class="mid"><div class="ktime">${info.t}</div><span class="ko-round-tag" title="${rlabel}">${rshort}</span></div>
           ${side(cb,'right')}
         </div>
-        <div class="loc host-${info.host}"><span class="host-mark">${HOSTMARK[info.host]}</span><b>${monthName(info.mo)} ${info.d}</b> · ${info.v} — ${regionText(info.reg)}</div>
+        <div class="loc host-${info.host}"><span class="host-mark">${HOSTMARK[info.host]}</span><b>${info.v}</b> — ${regionText(info.reg)}</div>
         <div class="goals-panel" hidden></div>
       </div>`;
     }
@@ -1652,14 +1677,16 @@ function renderKnockoutSchedule(){
     koWrap.style.gridColumn = '1 / -1';
     host.appendChild(koWrap);
   }
-  /* preserve collapse state across re-renders */
-  const openRounds = new Set([...koWrap.querySelectorAll('.ko-day:not(.collapsed)')].map(s=>s.dataset.koround));
+  /* preserve collapse state across re-renders (keyed by day id) */
+  const openDays = new Set([...koWrap.querySelectorAll('.ko-day:not(.collapsed)')].map(s=>s.id));
   koWrap.innerHTML = html;
   koWrap.querySelectorAll('.ko-day').forEach(sec=>{
-    if(!openRounds.has(sec.dataset.koround)) sec.classList.add('collapsed');
+    if(!openDays.has(sec.id)) sec.classList.add('collapsed');
   });
   /* remember the resolution signature so we only rebuild when it changes */
   koWrap.dataset.sig = knockoutScheduleSig();
+  /* let the live engine immediately apply today/past/future + scores to new cards */
+  if(typeof tick==="function" && KO_SCHED_READY) try{ tick(); }catch(e){}
 }
 
 /* a compact signature of every knockout match's two resolved team codes, so we
@@ -2502,7 +2529,10 @@ function renderKnockout(){
   const tFlag = c => c ? `<img src="https://flagcdn.com/h24/${N[c][1]}.png" alt="">` : '';
   const tName = c => c ? teamName(c) : '';
 
-  const koWinner = {}; /* matchNo -> team code, once knockout games are played */
+  /* real knockout results: winners advance through the bracket as games finish */
+  const koRes = (typeof koWinners==="function") ? koWinners(pic) : {winner:{},loser:{}};
+  const koWinner = koRes.winner || {};
+  const koLoser = koRes.loser || {};
 
   function sideHTML(teamCode){
     if(teamCode) return `<div class="tie-side filled">${tFlag(teamCode)}<span class="tie-nm">${tName(teamCode)}</span></div>`;
@@ -3563,12 +3593,14 @@ function tick(){
 
   for(const card of dayCards()){
     const d = +card.dataset.day;
+    /* group days are June (month 5); knockout days carry data-month (5 or 6) */
+    const mo = card.dataset.month!==undefined ? +card.dataset.month : 5;
     const matches = [...card.querySelectorAll('.match')];
     const lastEnd = Math.max(...matches.map(m=>+m.dataset.utc)) + MATCH_LEN;
     const firstKo = Math.min(...matches.map(m=>+m.dataset.utc));
 
-    /* today detection (Mecca calendar) */
-    const isToday = inJune26 && d===t.d;
+    /* today detection (Mecca calendar), now month-aware */
+    const isToday = (t.y===2026) && (mo===t.mo) && (d===t.d);
     card.classList.toggle('today', isToday);
     if(isToday) todayCard = card;
 
@@ -4148,6 +4180,7 @@ document.getElementById('bottom-nav').addEventListener('click',(e)=>{
   showPage(b.dataset.page);
 });
 
+KO_SCHED_READY = true; /* allow renderKnockoutSchedule to trigger tick() on later refreshes */
 const firstToday = tick();
 setInterval(tick, 1000);
 
