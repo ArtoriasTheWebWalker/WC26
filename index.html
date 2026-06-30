@@ -370,6 +370,12 @@ h1{
 .match:last-child{border-bottom:none}
 .match:hover{background:rgba(227,197,103,.04)}
 .match.sa{box-shadow:inset 3px 0 0 var(--gold);background:linear-gradient(90deg,rgba(22,93,49,.14),transparent 30%,transparent 70%,rgba(22,93,49,.14))}
+/* a card with one of the user's followed teams: gold accent + subtle glow */
+.match.has-fav{box-shadow:inset 3px 0 0 var(--gold);background:linear-gradient(90deg,rgba(227,197,103,.08),transparent 34%)}
+.match.has-fav:hover{background:linear-gradient(90deg,rgba(227,197,103,.12),rgba(227,197,103,.03) 40%)}
+/* the followed team's own half row gets a gentle gold wash + bolder name */
+.half.fav{background:rgba(227,197,103,.1);box-shadow:inset 0 0 0 1px rgba(185,138,46,.4)}
+.half.fav .tname{color:var(--gold);font-weight:700}
 .m-row{display:flex;align-items:center;gap:6px}
 
 /* team halves with cultural pattern fading from outer edge */
@@ -445,6 +451,21 @@ body.ar .goal-band .gb-text{font-family:'Changa',sans-serif;letter-spacing:0}
 /* when goals render directly (no toggle/fallback), the panel's first child is
    the goal columns wrapper; keep the 2-col grid via exp-body */
 @keyframes goalsIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+/* penalty shootout block (expanded view) */
+.pen-shootout{margin-top:12px;border-top:1px dashed rgba(185,138,46,.4);padding-top:10px}
+.pen-sh-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pen-sh-title{font-family:'Cinzel',serif;font-weight:700;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+body.ar .pen-sh-title{font-family:'Changa',sans-serif;letter-spacing:0}
+.pen-sh-score{font-weight:700;color:var(--gold);font-size:.9rem;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
+.pen-sh-score img{width:20px;height:14px;object-fit:cover;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.5)}
+.pen-sh-body{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pk-col{min-width:0}
+.pk-team{display:flex;align-items:center;gap:6px;padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid var(--row-line-soft);font-weight:600;color:var(--ink);font-size:.74rem;white-space:nowrap;overflow:hidden}
+.pk-team img{width:18px;height:12px;object-fit:cover;border-radius:2px;flex:none}
+.pk-row{display:flex;align-items:center;gap:7px;padding:3px 0;font-size:.78rem;color:var(--ink)}
+.pk-row.missed .pk-name{color:var(--sand);opacity:.7}
+.pk-mark{flex:none;font-size:.7rem;width:16px;text-align:center}
+.pk-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* Goals/Squad toggle */
 .exp-toggle{display:flex;gap:6px;justify-content:center;margin-bottom:10px}
 .exp-tab{font-family:'Cinzel',serif;font-weight:700;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;
@@ -535,6 +556,8 @@ body.ar .goal-line .g-assist{letter-spacing:0}
 .match.live .ktime.clock-only{color:#FF7B6B;text-shadow:0 0 12px rgba(255,90,90,.5)}
 .match.ht .ktime.clock-only{color:#E3C567}
 .ktime.score small{display:block;font-size:.56rem;color:var(--sand);letter-spacing:.22em;font-weight:500;margin-top:1px}
+.ktime.score .pen-score{display:block;font-size:.6rem;color:var(--gold-deep);letter-spacing:.04em;font-weight:600;margin-top:1px;font-variant-numeric:tabular-nums}
+body.ar .ktime.score .pen-score{letter-spacing:0}
 /* ---------- GOLDEN CONFETTI ---------- */
 .confetti-piece{
   position:absolute;width:7px;height:11px;will-change:transform,opacity;
@@ -684,11 +707,19 @@ body.light .kr-node{fill:#E6DFCF}
 .kr-chip .kr-flagbg{fill:#11192B;stroke:rgba(185,138,46,.4);stroke-width:1}
 body.light .kr-chip .kr-flagbg{fill:#EAE3D3}
 .kr-chip image{border-radius:3px}
-.kr-chip .kr-nm{fill:var(--ink);font-size:13px;font-weight:600}
+.kr-chip .kr-nm{fill:var(--ink);font-size:17px;font-weight:600}
 .kr-chip.tbd .kr-nm{fill:var(--sand);opacity:.5;font-style:italic}
 .kr-chip.tbd .kr-flagbg{stroke-dasharray:3 3;opacity:.6}
-.kr-chip.won .kr-flagbg{stroke:var(--gold);stroke-width:2;filter:drop-shadow(0 0 5px rgba(227,197,103,.55))}
+.kr-chip.won .kr-flagbg{stroke:var(--gold);stroke-width:2.4;filter:drop-shadow(0 0 6px rgba(227,197,103,.6))}
 .kr-chip.won .kr-nm{fill:var(--gold);font-weight:700}
+/* eliminated teams fade so survivors stand out */
+.kr-chip.out{opacity:.34}
+.kr-chip.out image{filter:grayscale(.85)}
+.kr-chip.out .kr-nm{fill:var(--sand)}
+/* followed (user's picked) teams: gold ring + star marker */
+.kr-chip.fav .kr-flagbg{stroke:var(--gold);stroke-width:2.6;filter:drop-shadow(0 0 7px rgba(227,197,103,.7))}
+.kr-chip.fav{opacity:1}
+.kr-fav-star{fill:var(--gold);font-size:15px;filter:drop-shadow(0 0 4px rgba(227,197,103,.8))}
 .kr-cup{color:var(--gold)}
 .kr-cup path{filter:drop-shadow(0 0 8px rgba(227,197,103,.5))}
 .kr-champ{fill:var(--gold);font-family:'Cinzel',serif;font-weight:700;font-size:18px;letter-spacing:.04em}
@@ -1550,7 +1581,13 @@ function koWinners(pic){
     const hs=(lv.homeScore==null)?0:lv.homeScore, as=(lv.awayScore==null)?0:lv.awayScore;
     /* the feed may store the pair in either order; align to ca/cb via home name */
     const homeIsCa = norm(lv.home)===norm(N[ca][0]);
-    const caScore = homeIsCa ? hs : as, cbScore = homeIsCa ? as : hs;
+    let caScore = homeIsCa ? hs : as, cbScore = homeIsCa ? as : hs;
+    /* penalties: when goals are level and a shootout score exists, it decides */
+    if(lv.state==="AP" && lv.penHome!=null && lv.penAway!=null){
+      const caPk = homeIsCa ? lv.penHome : lv.penAway;
+      const cbPk = homeIsCa ? lv.penAway : lv.penHome;
+      if(caPk!==cbPk){ caScore = caPk; cbScore = cbPk; }
+    }
     if(caScore>cbScore){ winner[mNo]=ca; loser[mNo]=cb; }
     else if(cbScore>caScore){ winner[mNo]=cb; loser[mNo]=ca; }
     /* a draw with no shootout info stays undecided */
@@ -1954,9 +1991,30 @@ const LOSER_FEED = { 103:[101,102] };
    Keyed by match number; {h,a} are home/away goals in the R32_OFFICIAL orientation
    (home listed first). These seed the LIVE map so the score, the winner ring, and
    advancement to the next round all display even with no API. The moment the live
-   feed delivers that same match, its data overrides this seed (live always wins). */
+   feed delivers that same match, its data overrides this seed (live always wins).
+
+   Fields per match:
+     h, a        : goals in normal/extra time (home, away) — the scoreline shown
+     state       : "FT" (90'), "AET" (decided in extra time), "AP" (after penalties)
+     ph, pa      : shootout score (home, away) — only for state "AP"
+     pens        : kick-by-kick list, in order. Each = {t:'h'|'a', name, scored:true|false}
+   To add a result, copy the shape below. To edit M74's penalty takers, fill real
+   names into the `pens` array (t:'h' = Germany kick, t:'a' = Paraguay kick). */
 const KO_RESULTS = {
-  73:{h:0,a:1}   /* South Africa 0–1 Canada · FT (Round of 32, Los Angeles) */
+  73:{h:0,a:1,state:"FT"},  /* South Africa 0–1 Canada · FT (Los Angeles) */
+  74:{                       /* Germany 1–1 Paraguay · Paraguay win 4–3 on pens (Boston) */
+    h:1,a:1,state:"AP",ph:3,pa:4,
+    pens:[
+      {t:'h',name:'Kick 1',scored:true},
+      {t:'a',name:'Kick 1',scored:true},
+      {t:'h',name:'Kick 2',scored:true},
+      {t:'a',name:'Kick 2',scored:true},
+      {t:'h',name:'Kick 3',scored:false},
+      {t:'a',name:'Kick 3',scored:true},
+      {t:'h',name:'Kick 4',scored:true},
+      {t:'a',name:'Kick 4',scored:true}
+    ]
+  }
 };
 /* merge KO_RESULTS into the LIVE map, but never clobber a match the API already
    provided. Returns the (possibly augmented) map. */
@@ -1968,10 +2026,15 @@ function seedKoResults(map){
     const [ca,cb] = pair;
     const a = norm(N[ca][0]), b = norm(N[cb][0]);
     const r = KO_RESULTS[mNo];
+    const st = r.state || "FT";
     /* if neither orientation is already present from the API, inject the seed */
     if(!map[a+"|"+b] && !map[b+"|"+a]){
-      map[a+"|"+b] = {home:N[ca][0], away:N[cb][0], homeScore:r.h, awayScore:r.a, state:"FT"};
-      map[b+"|"+a] = {home:N[cb][0], away:N[ca][0], homeScore:r.a, awayScore:r.h, state:"FT", _flipped:true};
+      /* flip penalty kicks for the mirrored record (h<->a) */
+      const flipPens = (r.pens||[]).map(p=>({t:p.t==='h'?'a':'h',name:p.name,scored:p.scored}));
+      map[a+"|"+b] = {home:N[ca][0], away:N[cb][0], homeScore:r.h, awayScore:r.a, state:st,
+                      penHome:r.ph, penAway:r.pa, pens:r.pens||null};
+      map[b+"|"+a] = {home:N[cb][0], away:N[ca][0], homeScore:r.a, awayScore:r.h, state:st,
+                      penHome:r.pa, penAway:r.ph, pens:flipPens.length?flipPens:null, _flipped:true};
     }
   }
   return map;
@@ -2540,11 +2603,14 @@ function renderKnockout(){
 
   /* ---- geometry ---- */
   const SZ=1000, CX=500, CY=500;
-  const R_TEAM=452, R_R32=372, R_R16=286, R_QF=200, R_SF=120;
-  const gapTop=16, gapBot=16;
+  const R_TEAM=452, R_R32=366, R_R16=276, R_QF=188, R_SF=108;
+  const gapTop=15, gapBot=15;
   const arc=(360-gapTop-gapBot)/2, sect=arc/8;
   const D2R=Math.PI/180;
   const pt=(r,a)=>[CX+r*Math.cos(a*D2R), CY+r*Math.sin(a*D2R)];
+  /* crop the viewBox close to the team ring so flags/names render larger.
+     chips extend a bit beyond R_TEAM (flag + name label), so pad for that. */
+  const PAD=40, VB0=CX-(R_TEAM+PAD), VBSZ=2*(R_TEAM+PAD);
 
   /* angle of each match centre, per half, top→bottom */
   const halfAngles=(side)=>{
@@ -2626,21 +2692,31 @@ function renderKnockout(){
     lines += conn(NODE_R[s1],NODE_ANG[s1], NODE_R[parent],NODE_ANG[parent], !!koWinner[s1]);
   }
 
-  /* team chip = small rectangular flag + code, rotated upright, anchored on ring */
+  /* eliminated teams (lost any KO match) → dimmed so survivors stand out */
+  const eliminated = new Set(Object.values(koLoser).filter(Boolean));
+  /* followed teams (the user's picks) → gold ring + star marker */
+  const favSet = (typeof FAVS!=="undefined" && Array.isArray(FAVS)) ? new Set(FAVS) : new Set();
+
+  /* team chip = rectangular flag + name, anchored on the outer ring */
   function teamChip(code, r, a, side, won, mNo){
     const [x,y]=pt(r,a);
-    const flagH=22, flagW=32;
-    const nm = code ? (N[code][0]) : '';
-    const fl = code ? `<image href="https://flagcdn.com/h40/${N[code][1]}.png" x="${-flagW/2}" y="${-flagH/2}" width="${flagW}" height="${flagH}" preserveAspectRatio="xMidYMid slice"/>` : '';
-    /* text sits outside the flag, away from centre */
+    const flagH=30, flagW=44;          /* larger flags for readability */
     const out = side==='L' ? -1 : 1;
-    const tx = out>0 ? flagW/2+6 : -(flagW/2+6);
+    const fl = code ? `<image href="https://flagcdn.com/h60/${N[code][1]}.png" x="${-flagW/2}" y="${-flagH/2}" width="${flagW}" height="${flagH}" preserveAspectRatio="xMidYMid slice"/>` : '';
+    const tx = out>0 ? flagW/2+8 : -(flagW/2+8);
     const anchor = out>0 ? 'start' : 'end';
     const safeNm = code ? esc(teamName(code)) : (ar?'—':'—');
-    return `<g class="kr-chip ${won?'won':''} ${code?'':'tbd'}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" data-m="${mNo}">
-      <rect class="kr-flagbg" x="${-flagW/2-2}" y="${-flagH/2-2}" width="${flagW+4}" height="${flagH+4}" rx="4"/>
+    const out_team = code && eliminated.has(code);
+    const fav = code && favSet.has(code);
+    /* a small gold star just outside the name for followed teams */
+    const starX = out>0 ? tx + Math.min(safeNm.length*8.4+10, 150) : tx - Math.min(safeNm.length*8.4+10, 150);
+    const star = fav ? `<text class="kr-fav-star" x="${starX.toFixed(0)}" y="1" text-anchor="${anchor}" dominant-baseline="middle">★</text>` : '';
+    const cls = ['kr-chip', won?'won':'', code?'':'tbd', out_team?'out':'', fav?'fav':''].filter(Boolean).join(' ');
+    return `<g class="${cls}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})" data-m="${mNo}" data-code="${code||''}">
+      <rect class="kr-flagbg" x="${-flagW/2-3}" y="${-flagH/2-3}" width="${flagW+6}" height="${flagH+6}" rx="5"/>
       ${fl}
       <text class="kr-nm" x="${tx}" y="1" text-anchor="${anchor}" dominant-baseline="middle">${safeNm}</text>
+      ${star}
     </g>`;
   }
 
@@ -2667,7 +2743,7 @@ function renderKnockout(){
     ${champ?`<text class="kr-champ" y="44" text-anchor="middle">${esc(teamName(champ))}</text>`:`<text class="kr-champ-lbl" y="44" text-anchor="middle">${ar?'البطل':'CHAMPION'}</text>`}
   </g>`;
 
-  const svg = `<svg class="kr-svg" viewBox="0 0 ${SZ} ${SZ}" xmlns="${NS}" role="img" aria-label="Knockout bracket">
+  const svg = `<svg class="kr-svg" viewBox="${VB0.toFixed(0)} ${VB0.toFixed(0)} ${VBSZ.toFixed(0)} ${VBSZ.toFixed(0)}" xmlns="${NS}" role="img" aria-label="Knockout bracket">
     ${defs}
     <circle cx="${CX}" cy="${CY}" r="${R_TEAM-60}" fill="url(#cupGlow)"/>
     <g class="kr-lines">${lines}</g>
@@ -2676,11 +2752,7 @@ function renderKnockout(){
     <g class="kr-chips">${chips}</g>
   </svg>`;
 
-  const note = ar
-    ? 'الشبكة الدائرية بالترتيب الرسمي للفيفا — البطل في المنتصف. تتقدّم المنتخبات للداخل مع كل فوز.'
-    : 'Radial bracket in official FIFA order — champion at the centre. Teams advance inward as they win.';
-
-  el.innerHTML = `<div class="ko-note">${note}</div><div class="kr-wrap">${svg}</div>`;
+  el.innerHTML = `<div class="kr-wrap">${svg}</div>`;
 }
 
 function renderScorers(){
@@ -3263,10 +3335,43 @@ function flagImg(code){ return N[code] ? `<img src="https://flagcdn.com/h24/${N[
    no goals yet, default to Squad. A toggle switches between them when both are
    available. mode (when passed) overrides the default to preserve the user's
    current choice across refreshes. */
+/* build the kick-by-kick penalty shootout block for an expanded match.
+   Returns "" if the match wasn't decided on penalties. */
+function buildPenaltiesHTML(m){
+  const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
+  if(!lv || lv.state!=="AP" || !Array.isArray(lv.pens) || !lv.pens.length) return "";
+  const ar = (typeof LANG!=="undefined" && LANG==="ar");
+  const ha = m.dataset.ha, hb = m.dataset.hb;   /* home, away team codes */
+  const hName = ha?teamName(ha):(lv.home||''), aName = hb?teamName(hb):(lv.away||'');
+  const hFlag = ha?flag(N[ha][1]):'', aFlag = hb?flag(N[hb][1]):'';
+  const ph = (lv.penHome==null)?'':lv.penHome, pa=(lv.penAway==null)?'':lv.penAway;
+  const mark = ok => ok
+    ? `<span class="pk-mark pk-yes">✅</span>`
+    : `<span class="pk-mark pk-no">❌</span>`;
+  /* two columns: home kicks and away kicks, in order */
+  let homeRows='', awayRows='';
+  lv.pens.forEach(p=>{
+    const row = `<div class="pk-row ${p.scored?'scored':'missed'}">${mark(p.scored)}<span class="pk-name">${(p.name||'').replace(/</g,'&lt;')}</span></div>`;
+    if(p.t==='h') homeRows+=row; else awayRows+=row;
+  });
+  const title = ar?'ركلات الترجيح':'Penalty Shootout';
+  return `<div class="pen-shootout">
+    <div class="pen-sh-head">
+      <span class="pen-sh-title">${title}</span>
+      <span class="pen-sh-score">${hFlag} ${ph} – ${pa} ${aFlag}</span>
+    </div>
+    <div class="pen-sh-body">
+      <div class="pk-col"><div class="pk-team">${hFlag}<span>${hName}</span></div>${homeRows}</div>
+      <div class="pk-col"><div class="pk-team">${aFlag}<span>${aName}</span></div>${awayRows}</div>
+    </div>
+  </div>`;
+}
+
 function buildExpandedHTML(m, mode){
   const squad = buildSquadHTML(m);
   const goals = buildGoalsHTML(m);
-  if(!squad) return `<div class="exp-body">${goals}</div>`; /* no lineup → goals only */
+  const pens = buildPenaltiesHTML(m);
+  if(!squad) return `<div class="exp-body">${goals}</div>${pens}`; /* no lineup → goals (+pens) only */
   const ar = (typeof LANG!=="undefined" && LANG==="ar");
   /* does this match have any goals? (check the live goal feed) */
   const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
@@ -3277,7 +3382,7 @@ function buildExpandedHTML(m, mode){
     <button class="exp-tab${active==='goals'?' on':''}" data-exp="goals">${ar?'الأهداف':'Goals'}</button>
     <button class="exp-tab${active==='squad'?' on':''}" data-exp="squad">${ar?'التشكيلة':'Squad'}</button>
   </div>`;
-  const body = active==='squad' ? squad : `<div class="exp-body">${goals}</div>`;
+  const body = active==='squad' ? squad : `<div class="exp-body">${goals}</div>${pens}`;
   return toggle + body;
 }
 
@@ -3461,6 +3566,8 @@ async function loadScores(){
       map[a+"|"+b] = m;
       map[b+"|"+a] = {...m, homeScore:m.awayScore, awayScore:m.homeScore,
                      homeGoals:m.awayGoals, awayGoals:m.homeGoals,
+                     penHome:m.penAway, penAway:m.penHome,
+                     pens: Array.isArray(m.pens) ? m.pens.map(p=>({t:p.t==='h'?'a':'h',name:p.name,scored:p.scored})) : m.pens,
                      _flipped:true}; /* allow lookup in either order */
     }
     /* ---- goal detection: compare each match's score to what we last saw.
@@ -3601,7 +3708,7 @@ const fmt = n => String(n).padStart(2,'0');
    scoreText: e.g. "2 – 1"; liveTag: "HALF-TIME"/"45'"/etc (in-play);
    ftTag: "FT"/"AET"/"AP" (finished). If scoreText is null, restores kickoff time. */
 const CLOCK_ONLY = Symbol('clock-only');
-function setMid(m, scoreText, liveTag, ftTag){
+function setMid(m, scoreText, liveTag, ftTag, penText){
   const mid = m.querySelector('.mid');
   const grp = mid.querySelector('.grp');
   const grpHtml = grp ? grp.outerHTML : '';
@@ -3609,7 +3716,8 @@ function setMid(m, scoreText, liveTag, ftTag){
   if(scoreText==null){
     kt = `<div class="ktime">${m.dataset.kick}</div>`;
   }else if(ftTag){
-    kt = `<div class="ktime score">${scoreText}<small>${ftTag}</small></div>`;
+    const pen = penText ? `<span class="pen-score">${penText}</span>` : '';
+    kt = `<div class="ktime score">${scoreText}${pen}<small>${ftTag}</small></div>`;
   }else if(scoreText===CLOCK_ONLY){
     /* no score available (no API) — show the running clock in place of the time */
     kt = `<div class="ktime clock-only">${liveTag||'LIVE'}</div>`;
@@ -3754,8 +3862,11 @@ function tick(){
           live=false; done=false; ht=true; liveTag=(LANG==="ar"?AR_UI.ht:"HALF-TIME");
         }else if(st==="FT"||st==="AET"||st==="AP"){
           live=false; done=true;
-          finalScore = {h:lv.homeScore, a:lv.awayScore,
-                        tag: st==="AP"?"AP":st==="AET"?"AET":(LANG==="ar"?"انتهت":"FT")};
+          const tagTxt = st==="AP" ? (LANG==="ar"?"ركلات":"PENS")
+                        : st==="AET" ? (LANG==="ar"?"بعد التمديد":"AET")
+                        : (LANG==="ar"?"انتهت":"FT");
+          finalScore = {h:lv.homeScore, a:lv.awayScore, tag:tagTxt,
+                        penHome:lv.penHome, penAway:lv.penAway, isPen: st==="AP"};
         }
         /* live score line while in play / HT (null scores = 0 for a goalless live match) */
         if(live||ht){
@@ -3822,10 +3933,21 @@ function tick(){
 
       /* apply API final score + winner ring if the match has ended live */
       if(finalScore){
-        setMid(m, `${finalScore.h} – ${finalScore.a}`, null, finalScore.tag);
+        const ar = LANG==="ar";
+        let penText = null;
+        if(finalScore.isPen && finalScore.penHome!=null && finalScore.penAway!=null){
+          penText = ar ? `(${finalScore.penHome}-${finalScore.penAway} ركلات)`
+                       : `(${finalScore.penHome}-${finalScore.penAway} pens)`;
+        }
+        setMid(m, `${finalScore.h} – ${finalScore.a}`, null, finalScore.tag, penText);
         const halves=m.querySelectorAll('.half');
-        if(finalScore.h>finalScore.a){halves[0].classList.add('win');halves[1].classList.remove('win');}
-        else if(finalScore.a>finalScore.h){halves[1].classList.add('win');halves[0].classList.remove('win');}
+        /* winner = more goals, or (if level + shootout) more penalties */
+        let wh = finalScore.h, wa = finalScore.a;
+        if(finalScore.isPen && finalScore.penHome!=null && finalScore.penAway!=null && finalScore.h===finalScore.a){
+          wh = finalScore.penHome; wa = finalScore.penAway;
+        }
+        if(wh>wa){halves[0].classList.add('win');halves[1].classList.remove('win');}
+        else if(wa>wh){halves[1].classList.add('win');halves[0].classList.remove('win');}
       }
 
       if(isToday && !live && !done && !ht && !nextSet){ m.classList.add('next'); nextSet=true; nextMatchEl=m; }
@@ -3880,6 +4002,7 @@ function tick(){
   });
   persistTiming();
   if(typeof updateJumpButton === "function") updateJumpButton();
+  if(typeof markFavorites === "function") markFavorites();
   return todayCard;
 }
 
@@ -4141,6 +4264,19 @@ function favScorersFor(code){
     grab(lv.homeGoals,ch); grab(lv.awayGoals,ca);
   }
   return Object.entries(tally).map(([name,goals])=>({name,goals})).sort((a,b)=>b.goals-a.goals);
+}
+/* highlight the user's followed teams on every schedule match-day card:
+   a gold accent on the card + the followed team's half row highlighted. */
+function markFavorites(){
+  const fav = (typeof FAVS!=="undefined" && Array.isArray(FAVS)) ? new Set(FAVS) : new Set();
+  document.querySelectorAll('.match').forEach(m=>{
+    const ha = m.dataset.ha, hb = m.dataset.hb;
+    const halves = m.querySelectorAll('.half');
+    let any=false;
+    if(halves[0]){ const on = ha && fav.has(ha); halves[0].classList.toggle('fav', !!on); any = any||on; }
+    if(halves[1]){ const on = hb && fav.has(hb); halves[1].classList.toggle('fav', !!on); any = any||on; }
+    m.classList.toggle('has-fav', !!any);
+  });
 }
 function renderFavorites(){
   const ar=LANG==="ar";
