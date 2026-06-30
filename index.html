@@ -2032,9 +2032,9 @@ function seedKoResults(map){
       /* flip penalty kicks for the mirrored record (h<->a) */
       const flipPens = (r.pens||[]).map(p=>({t:p.t==='h'?'a':'h',name:p.name,scored:p.scored}));
       map[a+"|"+b] = {home:N[ca][0], away:N[cb][0], homeScore:r.h, awayScore:r.a, state:st,
-                      penHome:r.ph, penAway:r.pa, pens:r.pens||null};
+                      penHome:r.ph, penAway:r.pa, pens:r.pens||null, _seeded:true};
       map[b+"|"+a] = {home:N[cb][0], away:N[ca][0], homeScore:r.a, awayScore:r.h, state:st,
-                      penHome:r.pa, penAway:r.ph, pens:flipPens.length?flipPens:null, _flipped:true};
+                      penHome:r.pa, penAway:r.ph, pens:flipPens.length?flipPens:null, _flipped:true, _seeded:true};
     }
   }
   return map;
@@ -3641,6 +3641,45 @@ async function loadExtra(){
       map[b+"|"+a] = m; /* allow either lookup order */
     }
     EXTRA = map;
+    let penMerged = false;
+    /* merge any penalty-shootout data Highlightly provides into the LIVE map,
+       so the score card, winner ring, and kick-by-kick view pick it up via the
+       same path as the scores feed. Only fills gaps — never downgrades a result
+       the scores feed already marked, and the kick list is purely additive. */
+    if(typeof LIVE!=="undefined" && LIVE){
+      for(const k in src){
+        const m = src[k];
+        if(!m || !m.pen) continue;
+        const a = norm(m.home), b = norm(m.away);
+        const fwd = LIVE[a+"|"+b], rev = LIVE[b+"|"+a];
+        const applyPen = (rec, flip)=>{
+          if(!rec) return;
+          const p = m.pen;
+          /* seeded (hardcoded placeholder) records yield to real Highlightly data;
+             a record sourced from the live scores feed only gets gaps filled. */
+          const overwrite = !!rec._seeded;
+          /* upgrade FT→AET/AP when Highlightly knows it went further */
+          if((p.state==="AP"||p.state==="AET") && (rec.state==="FT"||!rec.state)){ rec.state = p.state; penMerged=true; }
+          if(p.state==="AP"){
+            if((overwrite||rec.penHome==null) && p.penHome!=null){ rec.penHome = flip?p.penAway:p.penHome; penMerged=true; }
+            if((overwrite||rec.penAway==null) && p.penAway!=null){ rec.penAway = flip?p.penHome:p.penAway; penMerged=true; }
+            if((overwrite || !rec.pens || !rec.pens.length) && Array.isArray(p.pens) && p.pens.length){
+              rec.pens = flip ? p.pens.map(x=>({t:x.t==='h'?'a':'h',name:x.name,scored:x.scored})) : p.pens;
+              penMerged=true;
+            }
+          }
+        };
+        applyPen(fwd, false);
+        applyPen(rev, true);
+      }
+    }
+    /* if penalties were merged, refresh the score cards + bracket immediately */
+    if(penMerged){
+      if(typeof tick==="function") try{ tick(); }catch(e){}
+      const kEl = document.getElementById('knockout');
+      if(kEl && !kEl.hidden && typeof renderKnockout==="function") renderKnockout();
+      if(typeof refreshKnockoutScheduleIfChanged==="function") refreshKnockoutScheduleIfChanged();
+    }
     /* refresh anything that shows EXTRA data */
     if(typeof renderScorers === "function") renderScorers();
     if(typeof renderAssisters === "function") renderAssisters();
