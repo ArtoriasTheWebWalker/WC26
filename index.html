@@ -3231,25 +3231,27 @@ function buildGoalsHTML(m){
   };
   const ex = (typeof extraFor==="function") ? extraFor(m) : null;
   const ar = (typeof LANG!=="undefined" && LANG==="ar");
-  const line = (p, pat)=>{
+  const line = (p, pat, side)=>{
     const mins = p.mins.map(m=>`${m.minute}${m.pen?'<span class="g-tag pen">PEN</span>':''}`).join('<span class="g-sep">,</span>');
     const ogTag = p.og ? '<span class="g-tag og">OG</span>' : '';
+    /* repair the (often garbled) scorer name against this team's squad */
+    const fixedName = (typeof repairName==="function") ? repairName(m, p.name, side) : p.name;
     /* assist maker (from EXTRA / Highlightly), matched by minute then surname */
     let assistHtml = '';
     if(ex && !p.og){
       for(const mm of p.mins){
-        const as = (typeof assistFor==="function") ? assistFor(ex, p.name, mm.minute) : null;
+        const as = (typeof assistFor==="function") ? assistFor(ex, fixedName, mm.minute) : null;
         if(as){ assistHtml = `<span class="g-assist">${ar?'صناعة':'assist'}: ${as}</span>`; break; }
       }
     }
     return `<div class="goal-line">
       <span class="flagbg" style="--gbg:${pat}"></span>
       <span class="g-min">${mins}</span>
-      <span class="g-name">${p.name||''}${assistHtml}</span>${ogTag}
+      <span class="g-name">${fixedName||''}${assistHtml}</span>${ogTag}
     </div>`;
   };
-  const homeCol = groupGoals(homeGoals).map(p=>line(p,hPat)).join('');
-  const awayCol = groupGoals(awayGoals).map(p=>line(p,aPat)).join('');
+  const homeCol = groupGoals(homeGoals).map(p=>line(p,hPat,'h')).join('');
+  const awayCol = groupGoals(awayGoals).map(p=>line(p,aPat,'a')).join('');
   return `<div class="goal-col home">${homeCol}</div><div class="goal-col away">${awayCol}</div>`;
 }
 
@@ -3331,6 +3333,120 @@ function cleanMinute(mn){ return (mn||"").toString().replace(/\s+/g,'').replace(
 function surname(name){ return (name||"").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim().split(' ').pop(); }
 function flagImg(code){ return N[code] ? `<img src="https://flagcdn.com/h24/${N[code][1]}.png" alt="">` : ''; }
 
+/* ===== NAME REPAIR =====
+   The scores feed mangles player names (a broken transliteration: vowels become
+   'v', consonants shift — e.g. "Kvdi Khakpv" = Kai Havertz, "Tvn Kvpmainrz" =
+   Teun Koopmeiners). The extra worker's lineups carry the CORRECT names. We fix
+   the garbled names at display time by fuzzy-matching each one against that same
+   match's squad list. If there's no confident match (e.g. lineup not loaded yet),
+   we keep the original so nothing is ever lost. Works for any name the worker
+   sends, including ones we've never seen, because it matches live squad data. */
+
+/* letters only, accents stripped, lowercased */
+function nameLetters(s){
+  return (s||"").toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z\s]/g,'').replace(/\s+/g,' ').trim();
+}
+/* consonant skeleton — the garbling wrecks vowels but mostly preserves
+   consonant shape, so skeletons are the reliable comparison key */
+function consonantSkel(s){ return nameLetters(s).replace(/[aeiou\s]/g,''); }
+/* length of the longest common subsequence of two strings */
+function lcsLen(a,b){
+  const m=a.length,n=b.length; if(!m||!n) return 0;
+  let prev=new Array(n+1).fill(0), cur=new Array(n+1).fill(0);
+  for(let i=1;i<=m;i++){
+    for(let j=1;j<=n;j++){
+      cur[j] = a[i-1]===b[j-1] ? prev[j-1]+1 : Math.max(prev[j],cur[j-1]);
+    }
+    [prev,cur]=[cur,prev];
+  }
+  return prev[n];
+}
+/* similarity score between a (possibly garbled) name and a candidate squad name.
+   Higher = better. Combines consonant-skeleton overlap with surname/first-letter
+   bonuses. */
+function nameSim(garbled, candidate){
+  const gs=consonantSkel(garbled), cs=consonantSkel(candidate);
+  if(!gs||!cs) return 0;
+  let sc = (2*lcsLen(gs,cs))/(gs.length+cs.length);   /* consonant-skeleton overlap 0..1 */
+  /* full-letter LCS (vowels included) as a secondary signal: garbling keeps a
+     lot of letter *order*, so this separates a true match from a coincidental
+     consonant overlap without the false positives a loose surname bonus causes */
+  const gl=nameLetters(garbled).replace(/\s/g,''), cl=nameLetters(candidate).replace(/\s/g,'');
+  if(gl&&cl) sc += 0.4*((2*lcsLen(gl,cl))/(gl.length+cl.length));
+  const gTok=nameLetters(garbled).split(' '), cTok=nameLetters(candidate).split(' ');
+  const gLast=gTok[gTok.length-1]||'', cLast=cTok[cTok.length-1]||'';
+  /* surname skeletons matching exactly is a strong signal */
+  if(consonantSkel(gLast) && consonantSkel(gLast)===consonantSkel(cLast)) sc+=0.35;
+  /* first letters of surnames agreeing is a mild signal */
+  if(gLast[0] && gLast[0]===cLast[0]) sc+=0.08;
+  /* token-count agreement */
+  if(gTok.length===cTok.length) sc+=0.05;
+  return sc;
+}
+/* pick the best squad name for a garbled name. Returns the candidate string, or
+   null if nothing clears the confidence threshold. */
+function bestSquadMatch(garbled, squadNames){
+  if(!garbled || !squadNames || !squadNames.length) return null;
+  let best=null, bestSc=-1, secondSc=-1;
+  for(const c of squadNames){
+    const s=nameSim(garbled,c);
+    if(s>bestSc){ secondSc=bestSc; bestSc=s; best=c; }
+    else if(s>secondSc){ secondSc=s; }
+  }
+  /* accept a reasonably confident match. Since we now match within a single
+     team's ~14-player lineup, the real player usually wins clearly; keep a
+     modest margin so we don't guess between two similar teammates. */
+  if(bestSc>=0.55 && (bestSc-secondSc>=0.04 || bestSc>=0.85)) return best;
+  return null;
+}
+/* gather the correct squad names for a match element from EXTRA lineups.
+   When `side` is 'h' or 'a', returns only that team's players (home/away as the
+   PAGE sees them), which is what we want when we know which side a name is on —
+   it prevents matching a name against the opponent's squad. */
+function squadNamesFor(m, side){
+  const ex = (typeof extraFor==="function") ? extraFor(m) : null;
+  if(!ex || !ex.lineups) return null;
+  /* align EXTRA's home/away to the page's home/away (they can be swapped) */
+  const ha = m.dataset.ha;
+  const exHomeIsOurHome = ex.home && norm(ex.home)===norm(N[ha]?N[ha][0]:"");
+  const pageHomeLU = exHomeIsOurHome ? ex.lineups.home : ex.lineups.away;
+  const pageAwayLU = exHomeIsOurHome ? ex.lineups.away : ex.lineups.home;
+  const collect = (lu)=>{
+    const out=[]; if(!lu) return out;
+    (lu.xi||[]).forEach(p=>{ if(p&&p.name) out.push(p.name); });
+    (lu.subs||[]).forEach(p=>{ if(p&&p.name) out.push(p.name); });
+    return out;
+  };
+  let names;
+  if(side==='h') names = collect(pageHomeLU);
+  else if(side==='a') names = collect(pageAwayLU);
+  else names = [...collect(pageHomeLU), ...collect(pageAwayLU)];
+  return names.length ? names : null;
+}
+/* repair a single garbled name against a match's squad. `side` ('h'|'a') scopes
+   the match to that team's lineup, which is both more accurate and avoids
+   matching against the opponent. Falls back to the original when there's no
+   lineup yet or no confident match. Memoised per (match,side,name). */
+const _nameRepairCache = {};
+function repairName(m, name, side){
+  if(!name) return name;
+  const mid = (m && m.dataset && m.dataset.mno) ? m.dataset.mno
+            : (m && m.dataset ? m.dataset.ha+'-'+m.dataset.hb : '?');
+  const key = mid + '|' + (side||'?') + '|' + name;
+  if(key in _nameRepairCache) return _nameRepairCache[key];
+  const squad = squadNamesFor(m, side);
+  let fixed = name;
+  if(squad){
+    const match = bestSquadMatch(name, squad);
+    if(match) fixed = match;
+  }
+  /* only cache once we actually had a squad to match against; a later tick
+     (after lineups load) can still upgrade the name */
+  if(squad) _nameRepairCache[key] = fixed;
+  return fixed;
+}
+
+
 /* decide what the expanded panel shows. Default = Goals; but if the match has
    no goals yet, default to Squad. A toggle switches between them when both are
    available. mode (when passed) overrides the default to preserve the user's
@@ -3351,7 +3467,8 @@ function buildPenaltiesHTML(m){
   /* two columns: home kicks and away kicks, in order */
   let homeRows='', awayRows='';
   lv.pens.forEach(p=>{
-    const row = `<div class="pk-row ${p.scored?'scored':'missed'}">${mark(p.scored)}<span class="pk-name">${(p.name||'').replace(/</g,'&lt;')}</span></div>`;
+    const fixedName = (typeof repairName==="function") ? repairName(m, p.name, p.t) : p.name;
+    const row = `<div class="pk-row ${p.scored?'scored':'missed'}">${mark(p.scored)}<span class="pk-name">${(fixedName||'').replace(/</g,'&lt;')}</span></div>`;
     if(p.t==='h') homeRows+=row; else awayRows+=row;
   });
   const title = ar?'ركلات الترجيح':'Penalty Shootout';
