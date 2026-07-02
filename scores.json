@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-01T23:04:59.834Z",
+  "updated": "2026-07-02T00:18:03.670Z",
   "matches": [
     {
       "home": "Mexico",
@@ -646,16 +646,16 @@
       "away": "Senegal",
       "homeScore": 3,
       "awayScore": 2,
-      "state": "FT",
+      "state": "AET",
       "minute": null
     },
     {
       "home": "United States",
       "away": "Bosnia-Herzegovina",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 0,
+      "awayScore": 0,
+      "state": "LIVE",
+      "minute": 18
     },
     {
       "home": "Spain",
