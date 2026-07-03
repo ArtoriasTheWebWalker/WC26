@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-03T21:21:39.421Z",
+  "updated": "2026-07-03T22:29:46.414Z",
   "matches": [
     {
       "home": "Mexico",
@@ -692,10 +692,10 @@
     {
       "home": "Argentina",
       "away": "Cape Verde Islands",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 0,
+      "awayScore": 0,
+      "state": "LIVE",
+      "minute": 30
     },
     {
       "home": "Colombia",
