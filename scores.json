@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-04T04:52:12.273Z",
+  "updated": "2026-07-04T07:34:04.009Z",
   "matches": [
     {
       "home": "Mexico",
@@ -738,8 +738,8 @@
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "Portugal",
+      "away": "Spain",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
@@ -754,16 +754,16 @@
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "Argentina",
+      "away": "Egypt",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
       "minute": null
     },
     {
-      "home": "",
-      "away": "",
+      "home": "Switzerland",
+      "away": "Colombia",
       "homeScore": null,
       "awayScore": null,
       "state": "NS",
