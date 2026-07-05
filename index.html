@@ -196,6 +196,9 @@ body.ar .fav-edit{font-family:'Changa',sans-serif;letter-spacing:0}
 .fav-block-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sand);font-weight:700;margin:12px 0 7px}
 .fav-match{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--row-line-soft);border-radius:8px;margin-bottom:5px;font-size:.8rem}
 .fav-match .fm-opp{flex:1;color:var(--ink)}
+.fav-match .fm-round{display:inline-block;font-size:.52rem;font-weight:700;letter-spacing:.08em;color:var(--gold-deep);border:1px solid rgba(185,138,46,.45);border-radius:4px;padding:1px 4px;margin-inline-end:6px;vertical-align:1px}
+body.ar .fav-match .fm-round{letter-spacing:0}
+.fav-match .fm-pens{font-size:.58rem;color:var(--gold-deep);font-weight:600;margin-inline-start:4px}
 .fav-match .fm-opp img{width:18px;height:12px;object-fit:cover;border-radius:2px;vertical-align:middle;margin:0 5px}
 .fav-match .fm-res{font-weight:700;color:var(--gold);font-variant-numeric:lining-nums}
 .fav-match .fm-res small{font-size:.56rem;color:var(--sand);letter-spacing:.1em;margin-left:4px}
@@ -684,9 +687,6 @@ body.ar .stab{font-family:'Changa',sans-serif}
 .knockout-wrap[hidden]{display:none !important}
 /* ---- KNOCKOUT VIEW (two-sided bracket) ---- */
 .knockout-wrap{margin-bottom:30px}
-.ko-note{max-width:760px;margin:0 auto 18px;text-align:center;color:var(--sand);font-size:.72rem;
-  line-height:1.5;border:1px solid var(--row-line);border-radius:10px;padding:10px 14px;background:rgba(14,21,38,.4)}
-body.ar .ko-note{letter-spacing:0}
 /* best third-placed teams panel */
 /* ===== RADIAL KNOCKOUT BRACKET ===== */
 .kr-wrap{
@@ -878,14 +878,6 @@ body.ar .sstats-tab{font-family:'Changa',sans-serif;letter-spacing:0}
 #stats-totals .stat-cards,#assists-totals .stat-cards{max-width:420px;margin-left:auto;margin-right:auto}
 #stats-totals .stat-value,#assists-totals .stat-value{font-size:2.3rem}
 .stat-card.empty-card{border-style:dashed;opacity:.35;background:transparent;box-shadow:none}
-/* cards leaderboard blocks */
-#cards-content{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
-.card-blk-head{display:flex;align-items:center;gap:9px;font-family:'Cinzel',serif;font-weight:700;font-size:.8rem;
-  letter-spacing:.08em;text-transform:uppercase;color:var(--sand);margin-bottom:12px}
-body.ar .card-blk-head{font-family:'Changa',sans-serif;letter-spacing:0}
-.card-chip{width:15px;height:20px;border-radius:3px;flex:none;box-shadow:0 1px 3px rgba(0,0,0,.5)}
-.card-chip.yc{background:#E9C20B}
-.card-chip.rc{background:#D32F2F}
 .hist-wrap{border:1px solid rgba(185,138,46,.34);border-radius:14px;overflow:hidden;
   background:linear-gradient(180deg,var(--card-top),var(--card-bot));box-shadow:0 14px 36px -22px rgba(0,0,0,.85)}
 .hist-head{padding:12px 16px;background:var(--head-grad);border-bottom:1px solid var(--row-line)}
@@ -1049,7 +1041,6 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
 <header>
   <div class="eyebrow" id="t-eyebrow">FIFA World Cup · Mexico – Canada – United States</div>
   <h1 id="t-h1">WORLD CUP 2026</h1>
-  <div class="sub" id="t-sub"><b>GROUP STAGE</b> · 72 Matches · 12 Groups · June 11 – 28</div>
   <div class="hosts-line">
     <img src="https://flagcdn.com/h24/mx.png" alt="Mexico">
     <img src="https://flagcdn.com/h24/ca.png" alt="Canada">
@@ -1182,7 +1173,6 @@ const AR_DAY={
 const AR_UI={
   eyebrow:"كأس العالم · المكسيك – كندا – أمريكا",
   h1:"كأس العالم 2026",
-  sub:"<b>دور المجموعات</b> · 72 مباراة · 12 مجموعة · 11 – 28 يونيو",
   ko_title:"المجموعات والترتيب",
   ko_sub:"12 مجموعة · النقاط تتحدث مع كل مباراة",
   ko_title_ko:"الأدوار الإقصائية",
@@ -1871,12 +1861,31 @@ function renderGroups(){
    credited to the scorer as a goal). Players keyed by name+team. */
 function computeTopScorers(){
   const liveData = (typeof LIVE !== "undefined" && LIVE) ? LIVE : {};
+  const extraData = (typeof EXTRA !== "undefined" && EXTRA) ? EXTRA : {};
   const tally = {}; /* "name|teamCode" -> {name, team, goals, pens} */
+  /* pull a team's squad names out of an EXTRA lineups object (one side) */
+  const squadOf = (lu)=>{
+    if(!lu) return null;
+    const out=[];
+    (lu.xi||[]).forEach(p=>{ if(p&&p.name) out.push(p.name); });
+    (lu.subs||[]).forEach(p=>{ if(p&&p.name) out.push(p.name); });
+    return out.length ? out : null;
+  };
   for(const key in liveData){
     const lv = liveData[key];
     if(lv._flipped) continue; /* count each match once */
     const ch = codeFromName(lv.home), ca = codeFromName(lv.away);
-    const add = (goals, teamCode)=>{
+    /* find this match's lineups so garbled scorer names can be repaired to a
+       single canonical spelling — otherwise the same player spelled two ways
+       across matches splits into separate rows and undercounts. */
+    const ex = extraData[norm(lv.home)+"|"+norm(lv.away)] || extraData[norm(lv.away)+"|"+norm(lv.home)] || null;
+    let homeSquad=null, awaySquad=null;
+    if(ex && ex.lineups){
+      const exHomeIsLvHome = ex.home && norm(ex.home)===norm(lv.home);
+      homeSquad = squadOf(exHomeIsLvHome ? ex.lineups.home : ex.lineups.away);
+      awaySquad = squadOf(exHomeIsLvHome ? ex.lineups.away : ex.lineups.home);
+    }
+    const add = (goals, teamCode, squad)=>{
       if(!Array.isArray(goals) || !teamCode) return;
       for(const g of goals){
         if(g.og) continue;            /* own goals credit nobody */
@@ -1890,14 +1899,20 @@ function computeTopScorers(){
           .replace(/\s+\d{1,3}\s*'?\s*$/,'')             /* trailing " 66'" / " 66"   */
           .trim();
         if(!nm) nm = g.name.trim();
+        /* repair the (garbled) scorer name to the canonical squad name so all
+           spellings of one player collapse to a single tally key */
+        if(squad && typeof bestSquadMatch==="function"){
+          const fixed = bestSquadMatch(nm, squad);
+          if(fixed) nm = fixed;
+        }
         const k = nm+"|"+teamCode;
         if(!tally[k]) tally[k] = {name:nm, team:teamCode, goals:0, pens:0};
         tally[k].goals++;
         if(g.pen) tally[k].pens++;
       }
     };
-    add(lv.homeGoals, ch);
-    add(lv.awayGoals, ca);
+    add(lv.homeGoals, ch, homeSquad);
+    add(lv.awayGoals, ca, awaySquad);
   }
   const rows = Object.values(tally);
   /* sort: most goals, then fewer penalty goals (a non-pen scorer ranks higher
@@ -1915,11 +1930,6 @@ function computeTopScorers(){
    as provisional until the official assignment after the group stage. */
 
 /* per-group: standing rows, with completion flag (all 6 group matches done) */
-function groupIsComplete(codes){
-  /* a group of 4 plays 6 matches; complete when every team has played 3 */
-  const rows = computeStandings(codes);
-  return rows.every(r=>r.P>=3);
-}
 /* gather winners, runners-up, and all third-placed teams across the 12 groups */
 function knockoutPicture(){
   const winners={}, runners={}, thirds=[];
@@ -3037,49 +3047,6 @@ function renderAssistsExtras(){
 }
 
 /* ===== CARDS leaderboard (top yellow / top red) ===== */
-function computeCardLeaders(){
-  const yellow={}, red={};
-  const ex=(typeof EXTRA!=="undefined"&&EXTRA)?EXTRA:{}; const seen=new Set();
-  for(const k in ex){
-    const m=ex[k]; if(!m||!Array.isArray(m.cards))continue;
-    const id=norm(m.home)+"~"+norm(m.away); if(seen.has(id))continue; seen.add(id);
-    for(const c of m.cards){
-      const teamCode = codeFromName(c.team) || "";
-      const key=(c.player||"").trim()+"|"+teamCode;
-      if(/red/i.test(c.card)){ if(!red[key])red[key]={name:(c.player||"").trim(),team:teamCode,n:0}; red[key].n++; }
-      else { if(!yellow[key])yellow[key]={name:(c.player||"").trim(),team:teamCode,n:0}; yellow[key].n++; }
-    }
-  }
-  const sortTop=(o)=>Object.values(o).sort((a,b)=>b.n-a.n||a.name.localeCompare(b.name)).slice(0,5);
-  return { yellow:sortTop(yellow), red:sortTop(red) };
-}
-function renderCards(){
-  const ar = LANG==="ar";
-  const el = document.getElementById('cards-content');
-  if(!el) return;
-  const {yellow, red} = computeCardLeaders();
-  const flagOf = code => N[code] ? N[code][1] : "";
-  const list = (rows, cls, label)=>{
-    if(!rows.length) return `<div class="card-block"><div class="card-blk-head"><span class="card-chip ${cls}"></span>${label}</div><div class="scorers-empty">${ar?'لا شيء بعد':'None yet'}</div></div>`;
-    let h='';
-    rows.forEach((r,i)=>{
-      h += `<div class="scorer-row">
-        <span class="s-rank">${i+1}</span>
-        <img class="s-flag" src="https://flagcdn.com/h24/${flagOf(r.team)}.png" alt="">
-        <span class="s-name">${r.name}<span class="s-team">${teamName(r.team)}</span></span>
-        <span class="s-goals">${r.n}<small>${ar?(cls==='yc'?'صفراء':'حمراء'):(cls==='yc'?'yellow':'red')}</small></span>
-      </div>`;
-    });
-    return `<div class="card-block">
-      <div class="card-blk-head"><span class="card-chip ${cls}"></span>${label}</div>
-      <div class="scorers-list">${h}</div>
-    </div>`;
-  };
-  el.innerHTML =
-    list(yellow,'yc', ar?'أكثر البطاقات الصفراء':'Top Yellow Cards') +
-    list(red,'rc', ar?'أكثر البطاقات الحمراء':'Top Red Cards');
-}
-
 /* stats sub-tab switcher: Goals | Assists */
 function switchSStatsTab(tab){
   ['goals','assists'].forEach(t=>{
@@ -4171,7 +4138,6 @@ function applyLanguage(){
   const set=(id,txt)=>{const el=document.getElementById(id); if(el) el.innerHTML=txt;};
   set('t-eyebrow', ar?AR_UI.eyebrow:"FIFA World Cup · Mexico – Canada – United States");
   set('t-h1',      ar?AR_UI.h1:"WORLD CUP 2026");
-  set('t-sub',     ar?AR_UI.sub:"<b>GROUP STAGE</b> · 72 Matches · 12 Groups · June 11 – 28");
   /* tz badge now holds the rotating multilingual phrase — set separately, not here */
   /* section title depends on the active standings tab (knockout is default) */
   const koTabActive = (()=>{ const b=document.getElementById('tab-knockout'); return !b || b.classList.contains('active'); })();
@@ -4393,9 +4359,44 @@ function favMatchesFor(code){
       }
       const [hh,mm]=t.split(":").map(Number);
       const utc=Date.UTC(2026,5,day.d,hh-3,mm); /* Mecca wall time = UTC+3 */
-      out.push({oppCode, home, day:day.d, time:t, grp, state, res, utc});
+      out.push({oppCode, home, day:day.d, mo:5, time:t, grp, state, res, utc});
     }
   }
+  /* knockout fixtures: resolve who plays each KO match and include this team's.
+     Same shape as group entries, plus a round tag and penalty results. */
+  try{
+    const pic = knockoutPicture();
+    const kw = koWinners(pic);
+    for(const mNoStr in KO_MATCH){
+      const mNo=+mNoStr, info=KO_MATCH[mNo];
+      const [ca,cb] = koMatchTeams(mNo, pic, kw.winner, kw.loser);
+      if(ca!==code && cb!==code) continue;
+      const home = ca===code, oppCode = home?cb:ca;
+      if(!oppCode) continue; /* opponent not known yet */
+      const key = norm(N[ca][0])+"|"+norm(N[cb][0]);
+      const lv = LIVE[key];
+      let res=null, state='upcoming';
+      if(lv){
+        const st=lv.state;
+        const hs=(lv.homeScore==null)?0:lv.homeScore, as=(lv.awayScore==null)?0:lv.awayScore;
+        if(st==="FT"||st==="AET"||st==="AP"){
+          state='done';
+          res={us: home?hs:as, them: home?as:hs};
+          if(st==="AP"&&lv.penHome!=null&&lv.penAway!=null){
+            res.pens = home ? `${lv.penHome}-${lv.penAway}` : `${lv.penAway}-${lv.penHome}`;
+          }
+          if(st!=="FT") res.tag = st; /* AET | AP */
+        }
+        else if(st==="LIVE"||st==="HT"||st==="ET"||st==="PEN"){ state='live'; res={us: home?hs:as, them: home?as:hs}; }
+      }
+      const [hh,mm]=info.t.split(":").map(Number);
+      const utc=Date.UTC(2026, info.mo, info.d, hh-3, mm);
+      const rTag = (typeof KO_ROUND_SHORT!=="undefined" && KO_ROUND_SHORT[info.r])
+        ? KO_ROUND_SHORT[info.r][(typeof LANG!=="undefined"&&LANG==="ar")?'ar':'en'] : info.r;
+      out.push({oppCode, home, day:info.d, mo:info.mo, time:info.t, grp:rTag, ko:true, state, res, utc});
+    }
+  }catch(e){ /* knockout picture not resolvable yet — group matches still shown */ }
+  out.sort((a,b)=>a.utc-b.utc);
   return out;
 }
 function favStatsFor(code){
@@ -4455,15 +4456,19 @@ function renderFavorites(){
       const nextM=matches.filter(m=>m.state==='upcoming'&&m.utc>now).sort((a,b)=>a.utc-b.utc)[0];
       let mHtml='';
       for(const m of matches){
-        const opp=`${ar?'ضد':'vs'} <img src="https://flagcdn.com/h24/${N[m.oppCode][1]}.png">${teamName(m.oppCode)}`;
+        const rTag = m.ko ? `<span class="fm-round">${m.grp}</span>` : '';
+        const opp=`${rTag}${ar?'ضد':'vs'} <img src="https://flagcdn.com/h24/${N[m.oppCode][1]}.png">${teamName(m.oppCode)}`;
         if(m.state==='done'){
-          mHtml+=`<div class="fav-match"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}<small>${ar?'انتهت':'FT'}</small></span></div>`;
+          const pens = m.res.pens ? `<span class="fm-pens">(${m.res.pens} ${ar?'ركلات':'pens'})</span>` : '';
+          const tag = m.res.tag==="AP" ? (ar?'ركلات':'PENS') : m.res.tag==="AET" ? (ar?'ت.إضافي':'AET') : (ar?'انتهت':'FT');
+          mHtml+=`<div class="fav-match"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}${pens}<small>${tag}</small></span></div>`;
         }else if(m.state==='live'){
           mHtml+=`<div class="fav-match fm-live"><span class="fm-opp">${opp}</span><span class="fm-res">${m.res.us} – ${m.res.them}<small>${ar?'مباشر':'LIVE'}</small></span></div>`;
         }else{
           const isNext=nextM&&m.utc===nextM.utc;
           const cd=isNext?`<span class="fm-cd" data-utc="${m.utc}"></span>`:'';
-          mHtml+=`<div class="fav-match${isNext?' fm-next':''}"><span class="fm-opp">${opp}</span><span class="fm-res">${ar?'يونيو':'Jun'} ${m.day} · ${m.time}${cd}</span></div>`;
+          const moLbl = m.mo===6 ? (ar?'يوليو':'Jul') : (ar?'يونيو':'Jun');
+          mHtml+=`<div class="fav-match${isNext?' fm-next':''}"><span class="fm-opp">${opp}</span><span class="fm-res">${moLbl} ${m.day} · ${m.time}${cd}</span></div>`;
         }
       }
       return `<div class="fav-block-label">${ar?'المباريات':'Matches'}</div>${mHtml||`<div class="fav-empty">${ar?'لا مباريات':'No matches'}</div>`}`;
