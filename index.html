@@ -756,6 +756,24 @@ body.ar .kr-svg{font-family:'Changa',sans-serif}
 .kr-node{fill:#0A0F1C;stroke:var(--gold-deep);stroke-width:1.4;opacity:.7}
 body.light .kr-node{fill:#E6DFCF}
 .kr-node.won{fill:var(--gold);stroke:#f4dd8e;stroke-width:2;opacity:1;filter:drop-shadow(0 0 7px rgba(227,197,103,.8))}
+/* fullscreen expand button on the bracket */
+.kr-wrap{position:relative}
+.kr-expand{position:absolute;top:10px;inset-inline-end:10px;width:36px;height:36px;border-radius:9px;
+  border:1px solid rgba(185,138,46,.5);background:rgba(14,21,38,.7);color:var(--gold);font-size:1rem;
+  cursor:pointer;transition:box-shadow .2s ease, transform .2s ease}
+.kr-expand:hover{box-shadow:0 0 14px rgba(227,197,103,.35);transform:scale(1.06)}
+body.light .kr-expand{background:rgba(241,235,221,.8)}
+/* fullscreen overlay: the bracket edge-to-edge with pinch-zoom + pan */
+#kr-full{position:fixed;inset:0;z-index:1000;background:radial-gradient(circle at 50% 40%, #101830 0%, #0A0F1C 75%)}
+body.light #kr-full{background:radial-gradient(circle at 50% 40%, #F1EBDD 0%, #E0D8C6 75%)}
+#kr-full[hidden]{display:none}
+#kr-full-close{position:absolute;top:14px;inset-inline-end:14px;z-index:2;width:42px;height:42px;border-radius:50%;
+  border:1px solid rgba(185,138,46,.55);background:rgba(14,21,38,.75);color:var(--gold);font-size:1.05rem;cursor:pointer}
+body.light #kr-full-close{background:rgba(241,235,221,.85)}
+#kr-full-vp{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab}
+#kr-full-vp.grabbing{cursor:grabbing}
+#kr-full-stage{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
+#kr-full-stage svg{display:block}
 /* concentric round guides + labels */
 .kr-ring{fill:none;stroke:var(--gold-deep);stroke-width:.7;opacity:.14;stroke-dasharray:2 6}
 .kr-ring-lbl{fill:var(--gold-deep);font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.2em;opacity:.55}
@@ -1180,6 +1198,12 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
       <div class="scorers-wrap" id="sheets"></div>
     </div>
   </section>
+</div>
+
+<!-- fullscreen bracket overlay: pinch-zoom + pan -->
+<div id="kr-full" hidden>
+  <button id="kr-full-close" aria-label="Close">✕</button>
+  <div id="kr-full-vp"><div id="kr-full-stage"></div></div>
 </div>
 
 <footer id="t-footer">Road to the Final — MetLife Stadium · July 19, 2026</footer>
@@ -2864,7 +2888,11 @@ function renderKnockout(){
     <g class="kr-chips">${chips}</g>
   </svg>`;
 
-  el.innerHTML = `<div class="kr-wrap">${svg}</div>`;
+  el.innerHTML = `<div class="kr-wrap">${svg}
+    <button class="kr-expand" id="kr-expand" aria-label="${ar?'ملء الشاشة':'Fullscreen'}" title="${ar?'ملء الشاشة':'Fullscreen'}">⛶</button>
+  </div>`;
+  const xb = document.getElementById('kr-expand');
+  if(xb) xb.addEventListener('click', openKrFull);
 }
 
 function renderScorers(){
@@ -3250,6 +3278,102 @@ document.getElementById('tab-knockout').addEventListener('click', ()=>switchStat
   const b=document.getElementById('stab-'+t);
   if(b) b.addEventListener('click', ()=>switchSStatsTab(t));
 });
+
+/* ===== FULLSCREEN BRACKET (tap ⛶) =====
+   Clones the current bracket SVG into a fixed overlay with pinch-zoom, pan,
+   wheel zoom, and double-tap reset. Pointer Events cover mouse + touch with
+   one code path; a Map of active pointers makes 2-finger pinch trivial. */
+const KRF = { s:1, x:0, y:0, min:0.5, max:6, pts:new Map(), lastDist:0, lastTap:0 };
+function krfApply(){
+  const st = document.getElementById('kr-full-stage');
+  if(st) st.style.transform = `translate(${KRF.x}px, ${KRF.y}px) scale(${KRF.s})`;
+}
+function krfFit(){
+  /* size the stage to the viewport's smaller edge and centre it */
+  const vp = document.getElementById('kr-full-vp'); if(!vp) return;
+  const w = vp.clientWidth, hgt = vp.clientHeight;
+  const side = Math.min(w, hgt);
+  const st = document.getElementById('kr-full-stage');
+  const svg = st && st.querySelector('svg');
+  if(svg){ svg.style.width = side+'px'; svg.style.height = side+'px'; }
+  KRF.s = 1; KRF.x = (w-side)/2; KRF.y = (hgt-side)/2;
+  krfApply();
+}
+function openKrFull(){
+  const src = document.querySelector('.kr-wrap .kr-svg'); if(!src) return;
+  const full = document.getElementById('kr-full');
+  const st = document.getElementById('kr-full-stage');
+  st.innerHTML = src.outerHTML;
+  full.hidden = false;
+  document.body.style.overflow = 'hidden';
+  krfFit();
+}
+function closeKrFull(){
+  const full = document.getElementById('kr-full');
+  full.hidden = true;
+  document.body.style.overflow = '';
+  KRF.pts.clear();
+}
+(function initKrFull(){
+  const full = document.getElementById('kr-full');
+  const vp = document.getElementById('kr-full-vp');
+  const closeBtn = document.getElementById('kr-full-close');
+  if(!full || !vp || !closeBtn) return;
+  closeBtn.addEventListener('click', closeKrFull);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && !full.hidden) closeKrFull(); });
+  window.addEventListener('resize', ()=>{ if(!full.hidden) krfFit(); });
+  /* zoom about a screen point: keep that point fixed while scale changes */
+  const zoomAt = (px, py, factor)=>{
+    const ns = Math.min(KRF.max, Math.max(KRF.min, KRF.s*factor));
+    const k = ns/KRF.s;
+    KRF.x = px - k*(px - KRF.x);
+    KRF.y = py - k*(py - KRF.y);
+    KRF.s = ns;
+    krfApply();
+  };
+  vp.addEventListener('wheel', e=>{
+    e.preventDefault();
+    zoomAt(e.clientX, e.clientY, e.deltaY<0 ? 1.15 : 1/1.15);
+  }, {passive:false});
+  vp.addEventListener('pointerdown', e=>{
+    vp.setPointerCapture(e.pointerId);
+    KRF.pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    vp.classList.add('grabbing');
+    /* double-tap / double-click resets the view */
+    const now = Date.now();
+    if(now - KRF.lastTap < 300 && KRF.pts.size===1) krfFit();
+    KRF.lastTap = now;
+    if(KRF.pts.size===2){
+      const [a,b]=[...KRF.pts.values()];
+      KRF.lastDist = Math.hypot(a.x-b.x, a.y-b.y);
+    }
+  });
+  vp.addEventListener('pointermove', e=>{
+    if(!KRF.pts.has(e.pointerId)) return;
+    const prev = KRF.pts.get(e.pointerId);
+    KRF.pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+    if(KRF.pts.size===1){
+      KRF.x += e.clientX - prev.x;
+      KRF.y += e.clientY - prev.y;
+      krfApply();
+    }else if(KRF.pts.size===2){
+      const [a,b]=[...KRF.pts.values()];
+      const dist = Math.hypot(a.x-b.x, a.y-b.y);
+      if(KRF.lastDist>0){
+        const cx=(a.x+b.x)/2, cy=(a.y+b.y)/2;
+        zoomAt(cx, cy, dist/KRF.lastDist);
+      }
+      KRF.lastDist = dist;
+    }
+  });
+  const lift = e=>{
+    KRF.pts.delete(e.pointerId);
+    if(KRF.pts.size<2) KRF.lastDist = 0;
+    if(KRF.pts.size===0) vp.classList.remove('grabbing');
+  };
+  vp.addEventListener('pointerup', lift);
+  vp.addEventListener('pointercancel', lift);
+})();
 
 /* floating "jump to today" button: scrolls to today's match card.
    Visible only when a today card exists, and hidden while it's already on screen. */
