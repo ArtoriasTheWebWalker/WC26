@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -749,11 +749,21 @@ body.ar .feed-status{letter-spacing:0}
 body.light .kr-wrap{background:radial-gradient(circle at 50% 50%, #F1EBDD 0%, #E6DFCF 72%)}
 .kr-svg{width:100%;height:auto;display:block;font-family:'Outfit',sans-serif}
 body.ar .kr-svg{font-family:'Changa',sans-serif}
-.kr-line{fill:none;stroke:var(--gold-deep);stroke-width:1.4;opacity:.4}
-.kr-line.won{stroke:var(--gold);stroke-width:2.2;opacity:.95;filter:drop-shadow(0 0 4px rgba(227,197,103,.6))}
+.kr-line{fill:none;stroke:var(--gold-deep);stroke-width:1.4;opacity:.35}
+.kr-line.won{stroke:var(--gold);stroke-width:2.6;opacity:1;filter:drop-shadow(0 0 5px rgba(227,197,103,.65));
+  stroke-dasharray:6 3;animation:pathShimmer 14s linear infinite}
+@keyframes pathShimmer{to{stroke-dashoffset:-180}}
 .kr-node{fill:#0A0F1C;stroke:var(--gold-deep);stroke-width:1.4;opacity:.7}
 body.light .kr-node{fill:#E6DFCF}
-.kr-node.won{fill:var(--gold);stroke:var(--gold);opacity:1;filter:drop-shadow(0 0 5px rgba(227,197,103,.7))}
+.kr-node.won{fill:var(--gold);stroke:#f4dd8e;stroke-width:2;opacity:1;filter:drop-shadow(0 0 7px rgba(227,197,103,.8))}
+/* concentric round guides + labels */
+.kr-ring{fill:none;stroke:var(--gold-deep);stroke-width:.7;opacity:.14;stroke-dasharray:2 6}
+.kr-ring-lbl{fill:var(--gold-deep);font-family:'Cinzel',serif;font-weight:700;font-size:12px;letter-spacing:.2em;opacity:.55}
+body.ar .kr-ring-lbl{font-family:'Changa',sans-serif;letter-spacing:0}
+/* the bracket settles in with a slow fade + slight scale */
+.kr-svg{animation:krIn .8s ease-out both}
+@keyframes krIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.kr-svg,.kr-line.won{animation:none !important}}
 .kr-chip .kr-flagbg{fill:#11192B;stroke:rgba(185,138,46,.4);stroke-width:1}
 body.light .kr-chip .kr-flagbg{fill:#EAE3D3}
 .kr-chip image{border-radius:3px}
@@ -1151,6 +1161,7 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
     <div class="sstats-tabs" role="tablist">
       <button class="sstats-tab on" id="stab-goals" data-stab="goals">Goals</button>
       <button class="sstats-tab" id="stab-assists" data-stab="assists">Assists</button>
+      <button class="sstats-tab" id="stab-sheets" data-stab="sheets">Clean Sheets</button>
     </div>
     <!-- GOALS tab -->
     <div class="sstats-pane" id="pane-goals">
@@ -1164,10 +1175,14 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
       <div id="assists-totals"></div>
       <div id="assists-history"></div>
     </div>
+    <!-- CLEAN SHEETS tab -->
+    <div class="sstats-pane" id="pane-sheets" hidden>
+      <div class="scorers-wrap" id="sheets"></div>
+    </div>
   </section>
 </div>
 
-<footer id="t-footer">Group Stage · Road to the Final — MetLife Stadium · July 19, 2026</footer>
+<footer id="t-footer">Road to the Final — MetLife Stadium · July 19, 2026</footer>
 </div>
 
 <!-- ===================== BOTTOM NAV ===================== -->
@@ -1236,7 +1251,7 @@ const AR_UI={
   ko_sub:"12 مجموعة · النقاط تتحدث مع كل مباراة",
   ko_title_ko:"الأدوار الإقصائية",
   ko_sub_ko:"٣٢ منتخباً · الطريق إلى النهائي",
-  footer:"دور المجموعات · الطريق إلى النهائي — ملعب ميت لايف · 19 يوليو 2026",
+  footer:"الطريق إلى النهائي — ملعب ميت لايف · 19 يوليو 2026",
   month:"يونيو",
   today:"اليوم",
   next_ko:"المباراة الجاية",
@@ -2833,9 +2848,16 @@ function renderKnockout(){
     :`<text class="kr-champ-lbl" y="44" text-anchor="middle">${ar?'البطل':'CHAMPION'}</text>`}
   </g>`;
 
+  /* faint concentric guide rings — one per round — give the radial layout
+     visible structure, with the round's short label sitting in the top gap */
+  const ringLbl = (r,txt)=>`<circle class="kr-ring" cx="${CX}" cy="${CY}" r="${r}"/>
+    <text class="kr-ring-lbl" x="${CX}" y="${(CY-r-6).toFixed(0)}" text-anchor="middle">${txt}</text>`;
+  const RS = (typeof KO_ROUND_SHORT!=="undefined") ? (k)=>KO_ROUND_SHORT[k][ar?'ar':'en'] : (k)=>k.toUpperCase();
+  const rings = ringLbl(R_R32,RS('r32')) + ringLbl(R_R16,RS('r16')) + ringLbl(R_QF,RS('qf')) + ringLbl(R_SF,RS('sf'));
   const svg = `<svg class="kr-svg" viewBox="${VB0.toFixed(0)} ${VB0.toFixed(0)} ${VBSZ.toFixed(0)} ${VBSZ.toFixed(0)}" xmlns="${NS}" role="img" aria-label="Knockout bracket">
     ${defs}
     <circle cx="${CX}" cy="${CY}" r="${R_TEAM-60}" fill="url(#cupGlow)"/>
+    <g class="kr-guides">${rings}</g>
     <g class="kr-lines">${lines}</g>
     <g class="kr-nodes">${nodes}</g>
     ${trophy}
@@ -3047,6 +3069,66 @@ function renderStatsHistory(){
   </div>`;
 }
 
+/* ===== CLEAN SHEETS (derived: LIVE results × EXTRA lineups) =====
+   The feed doesn't report clean sheets, but it doesn't need to — a clean sheet
+   is just "finished match, conceded zero", and the keeper's identity is in the
+   lineup. Same aggregation pattern as the top-scorers tally, inverted: credit
+   the goalkeeper when the OPPONENT scored nothing. Shootout goals don't count
+   as conceded (the score fields hold normal+extra-time goals only). */
+function computeCleanSheets(){
+  const liveData = (typeof LIVE!=="undefined" && LIVE) ? LIVE : {};
+  const extraData = (typeof EXTRA!=="undefined" && EXTRA) ? EXTRA : {};
+  const tally = {}; /* "name|teamCode" -> {name, team, sheets} */
+  const gkOf = (lu)=>{
+    if(!lu || !Array.isArray(lu.xi)) return null;
+    const gk = lu.xi.find(p=>p && /goal|^gk$/i.test(p.pos||''));
+    return gk ? gk.name : null;
+  };
+  for(const key in liveData){
+    const lv = liveData[key];
+    if(lv._flipped) continue;
+    if(!(lv.state==="FT"||lv.state==="AET"||lv.state==="AP")) continue;
+    const ex = extraData[norm(lv.home)+"|"+norm(lv.away)] || extraData[norm(lv.away)+"|"+norm(lv.home)] || null;
+    if(!ex || !ex.lineups) continue;
+    const exHomeIsLvHome = ex.home && norm(ex.home)===norm(lv.home);
+    const homeLU = exHomeIsLvHome ? ex.lineups.home : ex.lineups.away;
+    const awayLU = exHomeIsLvHome ? ex.lineups.away : ex.lineups.home;
+    const hs=(lv.homeScore==null)?0:lv.homeScore, as=(lv.awayScore==null)?0:lv.awayScore;
+    const credit = (gkName, teamName)=>{
+      if(!gkName) return;
+      const code = codeFromName(teamName) || "";
+      const k = gkName+"|"+code;
+      if(!tally[k]) tally[k] = {name:gkName, team:code, sheets:0};
+      tally[k].sheets++;
+    };
+    if(as===0) credit(gkOf(homeLU), lv.home);  /* home conceded 0 */
+    if(hs===0) credit(gkOf(awayLU), lv.away);  /* away conceded 0 */
+  }
+  const list = Object.values(tally);
+  list.sort((x,y)=> y.sheets-x.sheets || x.name.localeCompare(y.name));
+  return list.slice(0,10);
+}
+function renderCleanSheets(){
+  const ar = LANG==="ar";
+  const el = document.getElementById('sheets');
+  if(!el) return;
+  const rows = computeCleanSheets();
+  if(!rows.length){
+    el.innerHTML = `<div class="scorers-empty">${ar?'لا توجد شباك نظيفة بعد — تظهر عند توفر التشكيلات':'No clean sheets yet — appears once lineups are available'}</div>`;
+    return;
+  }
+  let html='';
+  rows.forEach((r,i)=>{
+    html += `<div class="scorer-row">
+      <span class="s-rank">${i+1}</span>
+      <img class="s-flag" src="https://flagcdn.com/h24/${N[r.team]?N[r.team][1]:''}.png" alt="">
+      <span class="s-name">${r.name}<span class="s-team">${teamName(r.team)}</span></span>
+      <span class="s-goals">${r.sheets}<small>${ar?(r.sheets===1?'شباك نظيفة':'شباك نظيفة'):(r.sheets===1?'clean sheet':'clean sheets')}</small></span>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
 /* ===== ASSISTS (from EXTRA / Highlightly) ===== */
 function computeTopAssists(limit=10){
   const tally = {};
@@ -3129,13 +3211,14 @@ function renderAssistsExtras(){
 /* ===== CARDS leaderboard (top yellow / top red) ===== */
 /* stats sub-tab switcher: Goals | Assists */
 function switchSStatsTab(tab){
-  ['goals','assists'].forEach(t=>{
+  ['goals','assists','sheets'].forEach(t=>{
     const pane=document.getElementById('pane-'+t);
     const btn=document.getElementById('stab-'+t);
     if(pane) pane.hidden = (t!==tab);
     if(btn) btn.classList.toggle('on', t===tab);
   });
   if(tab==='assists') renderAssisters();
+  if(tab==='sheets') renderCleanSheets();
 }
 
 /* tab switching: Groups ⇄ Top Scorers */
@@ -3163,7 +3246,7 @@ function switchStatsTab(tab){
 }
 document.getElementById('tab-groups').addEventListener('click', ()=>switchStatsTab('groups'));
 document.getElementById('tab-knockout').addEventListener('click', ()=>switchStatsTab('knockout'));
-['goals','assists'].forEach(t=>{
+['goals','assists','sheets'].forEach(t=>{
   const b=document.getElementById('stab-'+t);
   if(b) b.addEventListener('click', ()=>switchSStatsTab(t));
 });
@@ -3580,7 +3663,7 @@ function buildExpandedHTML(m, mode){
     <button class="exp-tab${active==='goals'?' on':''}" data-exp="goals">${ar?'الأهداف':'Goals'}</button>
     <button class="exp-tab${active==='squad'?' on':''}" data-exp="squad">${ar?'التشكيلة':'Squad'}</button>
   </div>`;
-  const body = active==='squad' ? squad : `<div class="exp-body">${goals}</div>${pens}${books}`;
+  const body = active==='squad' ? `${squad}${books}` : `<div class="exp-body">${goals}</div>${pens}`;
   return toggle + body;
 }
 
@@ -3894,6 +3977,7 @@ async function loadExtra(){
     /* refresh anything that shows EXTRA data */
     if(typeof renderScorers === "function") renderScorers();
     if(typeof renderAssisters === "function") renderAssisters();
+    if(typeof renderCleanSheets === "function"){ const p=document.getElementById('pane-sheets'); if(p && !p.hidden) renderCleanSheets(); }
     /* refresh open expanded panels so assists/squad appear with new data */
     document.querySelectorAll('.match.open').forEach(m=>{
       const p=m.querySelector('.goals-panel');
@@ -4283,7 +4367,7 @@ function applyLanguage(){
   set('bnav-schedule', ar?"المباريات":"Schedule");
   set('bnav-standings', ar?"الترتيب":"Standings");
   set('bnav-stats', ar?"إحصائيات":"Stats");
-  set('t-footer',  ar?AR_UI.footer:"Group Stage · Road to the Final — MetLife Stadium · July 19, 2026");
+  set('t-footer',  ar?AR_UI.footer:"Road to the Final — MetLife Stadium · July 19, 2026");
   /* settings dropdown labels + active states */
   set('settings-label', ar?"الإعدادات":"Settings");
   set('dd-title', ar?"الإعدادات":"Settings");
