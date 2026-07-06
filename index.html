@@ -1,9 +1,21 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>World Cup 2026 — Group Stage · Mecca Time</title>
+<title>WC26 — World Cup 2026 Live · Mecca Time</title>
+<meta name="description" content="FIFA World Cup 2026 live scores, radial knockout bracket, penalty shootouts, and top scorers — all times in Mecca time.">
+<!-- Open Graph: the "business card" social platforms read when this link is shared -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="WC26 — World Cup 2026 Live">
+<meta property="og:description" content="Live scores, radial knockout bracket, penalty shootouts, and top scorers — Mecca time.">
+<meta property="og:url" content="https://artoriasthewebwalker.github.io/WC26/">
+<meta property="og:image" content="https://artoriasthewebwalker.github.io/WC26/preview.png">
+<!-- Twitter/X reads its own card tags; "summary_large_image" = big preview -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WC26 — World Cup 2026 Live">
+<meta name="twitter:description" content="Live scores, radial knockout bracket, penalty shootouts, and top scorers — Mecca time.">
+<meta name="twitter:image" content="https://artoriasthewebwalker.github.io/WC26/preview.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&family=Changa:wght@400;500;600;700&display=swap');
 
@@ -321,6 +333,8 @@ h1{
   border:1px solid rgba(185,138,46,.4);border-radius:14px;overflow:hidden;
   background:linear-gradient(180deg,var(--card-top) 0%,var(--card-bot) 100%);
   box-shadow:0 18px 44px -22px rgba(0,0,0,.85), inset 0 0 0 1px rgba(255,255,255,.02);
+  animation:dayIn .5s ease-out both;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
 .day-head{
   display:flex;align-items:baseline;justify-content:space-between;gap:10px;
@@ -469,6 +483,18 @@ body.ar .pen-sh-title{font-family:'Changa',sans-serif;letter-spacing:0}
 .pk-row.missed .pk-name{color:var(--sand);opacity:.7}
 .pk-mark{flex:none;font-size:.7rem;width:16px;text-align:center}
 .pk-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* bookings (cards) block in the expanded view */
+.bookings{margin-top:12px;border-top:1px dashed rgba(185,138,46,.4);padding-top:10px}
+.bk-head{font-family:'Cinzel',serif;font-weight:700;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+body.ar .bk-head{font-family:'Changa',sans-serif;letter-spacing:0}
+.bk-body{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bk-row{display:flex;align-items:center;gap:7px;padding:3px 0;font-size:.76rem;color:var(--ink)}
+.bk-chip{width:9px;height:13px;border-radius:2px;flex:none;box-shadow:0 1px 2px rgba(0,0,0,.5)}
+.bk-chip.yc{background:#E9C20B}
+.bk-chip.rc{background:#D32F2F}
+.bk-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.bk-min{color:var(--sand);font-size:.68rem;font-variant-numeric:tabular-nums}
+.bk-none{color:var(--sand);opacity:.5;font-size:.74rem;padding:3px 0}
 /* Goals/Squad toggle */
 .exp-toggle{display:flex;gap:6px;justify-content:center;margin-bottom:10px}
 .exp-tab{font-family:'Cinzel',serif;font-weight:700;font-size:.64rem;letter-spacing:.08em;text-transform:uppercase;
@@ -561,6 +587,21 @@ body.ar .goal-line .g-assist{letter-spacing:0}
 .ktime.score small{display:block;font-size:.56rem;color:var(--sand);letter-spacing:.22em;font-weight:500;margin-top:1px}
 .ktime.score .pen-score{display:block;font-size:.6rem;color:var(--gold-deep);letter-spacing:.04em;font-weight:600;margin-top:1px;font-variant-numeric:tabular-nums}
 body.ar .ktime.score .pen-score{letter-spacing:0}
+/* ---------- VISUAL POLISH (motion is subtle and honours reduced-motion) ---------- */
+@keyframes dayIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* stagger the first few cards so the page settles in a gentle wave */
+.grid .day:nth-child(1){animation-delay:.03s}.grid .day:nth-child(2){animation-delay:.09s}
+.grid .day:nth-child(3){animation-delay:.15s}.grid .day:nth-child(4){animation-delay:.21s}
+.grid .day:nth-child(5){animation-delay:.27s}.grid .day:nth-child(6){animation-delay:.33s}
+.day:hover{transform:translateY(-3px);border-color:rgba(227,197,103,.55);
+  box-shadow:0 24px 54px -22px rgba(0,0,0,.9), 0 0 24px -8px rgba(227,197,103,.25), inset 0 0 0 1px rgba(255,255,255,.03)}
+/* live matches breathe softly so the eye finds them */
+.match.live{animation:liveBreathe 2.6s ease-in-out infinite}
+@keyframes liveBreathe{0%,100%{background:rgba(255,90,90,.03)}50%{background:rgba(255,90,90,.09)}}
+@media (prefers-reduced-motion: reduce){
+  .day,.match.live,.kr-ray,.kr-cup.crowned path,.feed-status{animation:none !important}
+  .day:hover{transform:none}
+}
 /* ---------- GOLDEN CONFETTI ---------- */
 .confetti-piece{
   position:absolute;width:7px;height:11px;will-change:transform,opacity;
@@ -686,6 +727,15 @@ body.ar .stab{font-family:'Changa',sans-serif}
 .scorers-empty{text-align:center;color:var(--sand);padding:30px;font-size:.9rem}
 .knockout-wrap[hidden]{display:none !important}
 /* ---- KNOCKOUT VIEW (two-sided bracket) ---- */
+/* live-feed status pill: shows while the first scores fetch is pending,
+   turns into a quiet retry note on failure, disappears once data lands */
+.feed-status{max-width:360px;margin:0 auto 16px;text-align:center;font-size:.68rem;letter-spacing:.08em;
+  color:var(--sand);border:1px solid var(--row-line);border-radius:999px;padding:6px 14px;
+  background:rgba(14,21,38,.5);animation:fsPulse 1.6s ease-in-out infinite}
+.feed-status.err{color:#E08A7A;border-color:rgba(224,138,122,.35);animation:none}
+.feed-status[hidden]{display:none}
+body.ar .feed-status{letter-spacing:0}
+@keyframes fsPulse{0%,100%{opacity:.55}50%{opacity:1}}
 .knockout-wrap{margin-bottom:30px}
 /* best third-placed teams panel */
 /* ===== RADIAL KNOCKOUT BRACKET ===== */
@@ -725,6 +775,14 @@ body.light .kr-chip .kr-flagbg{fill:#EAE3D3}
 .kr-champ{fill:var(--gold);font-family:'Cinzel',serif;font-weight:700;font-size:18px;letter-spacing:.04em}
 .kr-champ-lbl{fill:var(--gold-deep);font-family:'Cinzel',serif;font-weight:700;font-size:11px;letter-spacing:.22em}
 body.ar .kr-champ,body.ar .kr-champ-lbl{font-family:'Changa',sans-serif;letter-spacing:0}
+/* champion celebration: pulsing trophy glow + rotating rays once the Final is decided */
+.kr-cup.crowned path{animation:cupGlowPulse 2.4s ease-in-out infinite}
+.kr-ray{stroke:var(--gold);stroke-width:2.4;stroke-linecap:round;opacity:.55;
+  transform-origin:0 0;animation:rayPulse 2.4s ease-in-out infinite}
+.kr-ray:nth-child(odd){animation-delay:1.2s}
+.kr-cup.crowned .kr-champ{font-size:22px;filter:drop-shadow(0 0 8px rgba(227,197,103,.8))}
+@keyframes cupGlowPulse{0%,100%{filter:drop-shadow(0 0 8px rgba(227,197,103,.5))}50%{filter:drop-shadow(0 0 22px rgba(227,197,103,.95))}}
+@keyframes rayPulse{0%,100%{opacity:.25}50%{opacity:.8}}
 .groups-wrap{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-bottom:30px;
 }
@@ -1051,6 +1109,7 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
 
 <!-- ===================== PAGE: SCHEDULE ===================== -->
 <div class="page" id="page-schedule">
+  <div class="feed-status" id="feed-status" role="status">Loading live scores…</div>
   <section class="favorites" id="fav-schedule" data-mode="matches" hidden>
     <div class="fav-head">
       <span class="fav-title fav-title-schedule">Your Teams</span>
@@ -1915,9 +1974,19 @@ function computeTopScorers(){
     add(lv.awayGoals, ca, awaySquad);
   }
   const rows = Object.values(tally);
-  /* sort: most goals, then fewer penalty goals (a non-pen scorer ranks higher
-     when goals are level), then name */
-  rows.sort((a,b)=> b.goals-a.goals || (a.pens||0)-(b.pens||0) || a.name.localeCompare(b.name));
+  /* Golden Boot ordering (FIFA rule): most goals, then most assists, then
+     fewer penalty goals, then name. Assists come from the extra worker; the
+     two sources spell names differently, so join by surname + team code. */
+  let assistsOf = ()=>0;
+  if(typeof computeTopAssists==="function" && typeof surname==="function"){
+    try{
+      const aBy = {};
+      computeTopAssists(Infinity).forEach(a=>{ aBy[surname(a.name)+"|"+a.team] = a.assists; });
+      assistsOf = (r)=> aBy[surname(r.name)+"|"+r.team] || 0;
+    }catch(e){}
+  }
+  rows.forEach(r=>{ r.assists = assistsOf(r); });
+  rows.sort((a,b)=> b.goals-a.goals || (b.assists||0)-(a.assists||0) || (a.pens||0)-(b.pens||0) || a.name.localeCompare(b.name));
   return rows.slice(0,10);
 }
 
@@ -2743,14 +2812,25 @@ function renderKnockout(){
   /* champion (winner of 104) */
   const champ = koWinner[104]||null;
 
-  /* centre trophy (gold SVG) */
-  const trophy = `<g class="kr-cup" transform="translate(${CX},${CY})">
+  /* centre trophy (gold SVG). When the Final is decided the centre becomes a
+     celebration: radiating rays, the champion's flag, and a crowned title. */
+  const rays = champ ? Array.from({length:12},(_,i)=>{
+    const a=i*30, r1=70, r2=96;
+    const x1=(r1*Math.cos(a*D2R)).toFixed(1), y1=(r1*Math.sin(a*D2R)).toFixed(1);
+    const x2=(r2*Math.cos(a*D2R)).toFixed(1), y2=(r2*Math.sin(a*D2R)).toFixed(1);
+    return `<line class="kr-ray" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`;
+  }).join('') : '';
+  const champFlag = champ ? `<image href="https://flagcdn.com/h60/${N[champ][1]}.png" x="-22" y="52" width="44" height="30" preserveAspectRatio="xMidYMid slice"/>` : '';
+  const trophy = `<g class="kr-cup${champ?' crowned':''}" transform="translate(${CX},${CY})">
     <circle r="64" fill="url(#cupGlow)"/>
+    ${rays}
     <g transform="translate(-26,-30) scale(2.2)">
       <path fill="url(#goldStroke)" stroke="#7a5a1e" stroke-width=".4"
         d="M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5ZM19 19c0 .55-.45 1-1 1H6c-.55 0-1-.45-1-1v-1h14v1z"/>
     </g>
-    ${champ?`<text class="kr-champ" y="44" text-anchor="middle">${esc(teamName(champ))}</text>`:`<text class="kr-champ-lbl" y="44" text-anchor="middle">${ar?'البطل':'CHAMPION'}</text>`}
+    ${champ?`<text class="kr-champ-lbl" y="-46" text-anchor="middle">${ar?'بطل العالم ٢٠٢٦':'2026 WORLD CHAMPION'}</text>
+    <text class="kr-champ" y="44" text-anchor="middle">${esc(teamName(champ))}</text>${champFlag}`
+    :`<text class="kr-champ-lbl" y="44" text-anchor="middle">${ar?'البطل':'CHAMPION'}</text>`}
   </g>`;
 
   const svg = `<svg class="kr-svg" viewBox="${VB0.toFixed(0)} ${VB0.toFixed(0)} ${VBSZ.toFixed(0)} ${VBSZ.toFixed(0)}" xmlns="${NS}" role="img" aria-label="Knockout bracket">
@@ -2968,7 +3048,7 @@ function renderStatsHistory(){
 }
 
 /* ===== ASSISTS (from EXTRA / Highlightly) ===== */
-function computeTopAssists(){
+function computeTopAssists(limit=10){
   const tally = {};
   const ex = (typeof EXTRA!=="undefined" && EXTRA) ? EXTRA : {};
   const seen = new Set();
@@ -2988,7 +3068,7 @@ function computeTopAssists(){
   }
   const list = Object.values(tally);
   list.sort((x,y)=> y.assists-x.assists || x.name.localeCompare(y.name));
-  return list.slice(0,10);
+  return list.slice(0,limit);
 }
 function renderAssisters(){
   const ar = LANG==="ar";
@@ -3247,11 +3327,15 @@ function buildSquadHTML(m){
     goalsBy[sn].count++;
     if(minute) goalsBy[sn].mins.push(cleanMinute(minute));
   };
-  /* primary scorer source: the live goal feed (has minutes) */
+  /* primary scorer source: the live goal feed (has minutes). Names arrive
+     garbled from the feed, so repair each against this side's lineup first —
+     otherwise the surname never matches a squad player and the ball icon
+     silently goes missing. */
   const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
   if(lv){
-    (lv.homeGoals||[]).forEach(g=>{ if(g.name) addGoal(g.name, g.minute); });
-    (lv.awayGoals||[]).forEach(g=>{ if(g.name) addGoal(g.name, g.minute); });
+    const fix = (nm, side)=> (typeof repairName==="function") ? repairName(m, nm, side) : nm;
+    (lv.homeGoals||[]).forEach(g=>{ if(g.name) addGoal(fix(g.name,'h'), g.minute); });
+    (lv.awayGoals||[]).forEach(g=>{ if(g.name) addGoal(fix(g.name,'a'), g.minute); });
   }
   /* assists from EXTRA */
   (ex.assists||[]).forEach(a=>{ if(a.assist) assisters.add(surname(a.assist)); });
@@ -3451,11 +3535,41 @@ function buildPenaltiesHTML(m){
   </div>`;
 }
 
+/* build the bookings (yellow/red cards) block for an expanded match, from the
+   extra worker's card events. Returns "" when there are none. */
+function buildCardsHTML(m){
+  const ex = (typeof extraFor==="function") ? extraFor(m) : null;
+  if(!ex || !Array.isArray(ex.cards) || !ex.cards.length) return "";
+  const ar = (typeof LANG!=="undefined" && LANG==="ar");
+  const ha = m.dataset.ha, hb = m.dataset.hb;
+  const homeName = ha?N[ha][0]:'', awayName = hb?N[hb][0]:'';
+  const rows = {h:'', a:''};
+  const sorted = [...ex.cards].sort((x,y)=>parseInt(x.minute||999,10)-parseInt(y.minute||999,10));
+  for(const c of sorted){
+    const side = norm(c.team)===norm(homeName) ? 'h' : norm(c.team)===norm(awayName) ? 'a' : null;
+    if(!side) continue;
+    const chip = /red/i.test(c.card) ? '<span class="bk-chip rc"></span>'
+               : /second/i.test(c.card) ? '<span class="bk-chip yc"></span><span class="bk-chip rc"></span>'
+               : '<span class="bk-chip yc"></span>';
+    rows[side] += `<div class="bk-row">${chip}<span class="bk-name">${(c.player||'').replace(/</g,'&lt;')}</span><span class="bk-min">${cleanMinute(c.minute)}</span></div>`;
+  }
+  if(!rows.h && !rows.a) return "";
+  const title = ar?'البطاقات':'Bookings';
+  return `<div class="bookings">
+    <div class="bk-head">${title}</div>
+    <div class="bk-body">
+      <div class="bk-col">${rows.h||'<div class="bk-none">—</div>'}</div>
+      <div class="bk-col">${rows.a||'<div class="bk-none">—</div>'}</div>
+    </div>
+  </div>`;
+}
+
 function buildExpandedHTML(m, mode){
   const squad = buildSquadHTML(m);
   const goals = buildGoalsHTML(m);
   const pens = buildPenaltiesHTML(m);
-  if(!squad) return `<div class="exp-body">${goals}</div>${pens}`; /* no lineup → goals (+pens) only */
+  const books = buildCardsHTML(m);
+  if(!squad) return `<div class="exp-body">${goals}</div>${pens}${books}`; /* no lineup → goals (+pens) only */
   const ar = (typeof LANG!=="undefined" && LANG==="ar");
   /* does this match have any goals? (check the live goal feed) */
   const lv = LIVE[norm(m.dataset.home)+"|"+norm(m.dataset.away)];
@@ -3466,7 +3580,7 @@ function buildExpandedHTML(m, mode){
     <button class="exp-tab${active==='goals'?' on':''}" data-exp="goals">${ar?'الأهداف':'Goals'}</button>
     <button class="exp-tab${active==='squad'?' on':''}" data-exp="squad">${ar?'التشكيلة':'Squad'}</button>
   </div>`;
-  const body = active==='squad' ? squad : `<div class="exp-body">${goals}</div>${pens}`;
+  const body = active==='squad' ? squad : `<div class="exp-body">${goals}</div>${pens}${books}`;
   return toggle + body;
 }
 
@@ -3633,6 +3747,18 @@ const norm = s => {
   return xa; /* canonical = accent-stripped lower-case */
 };
 
+/* live-feed status pill: pending → hidden on first good load; error → retry note.
+   The 60s polling loop is the "retrying", so the message is honest. */
+let FEED_OK = false;
+function feedStatus(state){
+  const el = document.getElementById('feed-status'); if(!el) return;
+  const ar = (typeof LANG!=="undefined" && LANG==="ar");
+  if(state==='ok'){ FEED_OK = true; el.hidden = true; return; }
+  if(FEED_OK) return;             /* had data once — keep last good silently */
+  if(state==='err'){ el.classList.add('err'); el.textContent = ar?'تعذّر تحميل النتائج — تتم إعادة المحاولة':'Live scores unavailable — retrying'; }
+  else { el.classList.remove('err'); el.textContent = ar?'جارٍ تحميل النتائج المباشرة…':'Loading live scores…'; }
+  el.hidden = false;
+}
 async function loadScores(){
   try{
     /* Live data comes from the Cloudflare Worker (polls football-data.org every
@@ -3642,7 +3768,7 @@ async function loadScores(){
       ? SCORES_URL + (SCORES_URL.includes('?')?'&':'?') + '_=' + Date.now()
       : 'scores.json?_=' + Date.now();
     const res = await fetch(url, {cache:'no-store'});
-    if(!res.ok) return;
+    if(!res.ok){ feedStatus('err'); return; }
     const data = await res.json();
     const map = {};
     for(const m of (data.matches||[])){
@@ -3674,6 +3800,7 @@ async function loadScores(){
        resilience). Live data already in `map` is never overwritten. */
     if(typeof seedKoResults === "function") seedKoResults(map);
     LIVE = map;
+    feedStatus('ok');
     /* diagnostic: warn about any live match whose teams don't match our schedule,
        so unmatched API names are easy to spot in the browser console */
     for(const m of (data.matches||[])){
@@ -3695,7 +3822,7 @@ async function loadScores(){
     /* refresh the schedule's knockout sections only when team resolution changes
        (a KO match finishing advances a team), so we don't wipe open panels every poll */
     if(typeof refreshKnockoutScheduleIfChanged === "function") refreshKnockoutScheduleIfChanged();
-  }catch(e){ /* keep last good LIVE; fall back to built-in RESULTS */ }
+  }catch(e){ feedStatus('err'); /* keep last good LIVE; fall back to built-in RESULTS */ }
 }
 
 /* =====================================================================
@@ -3712,7 +3839,7 @@ async function loadExtra(){
   try{
     const url = EXTRA_URL + (EXTRA_URL.includes('?')?'&':'?') + '_=' + Date.now();
     const res = await fetch(url, {cache:'no-store'});
-    if(!res.ok) return;
+    if(!res.ok){ feedStatus('err'); return; }
     const data = await res.json();
     const map = {};
     const src = data.matches || {};
