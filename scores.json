@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-09T21:51:04.729Z",
+  "updated": "2026-07-09T22:59:07.918Z",
   "matches": [
     {
       "home": "Mexico",
@@ -774,8 +774,8 @@
       "away": "Morocco",
       "homeScore": 2,
       "awayScore": 0,
-      "state": "LIVE",
-      "minute": 111
+      "state": "FT",
+      "minute": null
     },
     {
       "home": "Spain",
