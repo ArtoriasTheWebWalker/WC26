@@ -132,8 +132,18 @@ body.ar #jump-today{font-family:'Changa',sans-serif}
   background:var(--bg);
 }
 .brand{display:flex;align-items:center;margin-right:auto}
-.nav-logo{height:52px;width:auto;display:block;object-fit:contain}
-@media (max-width:520px){ .nav-logo{height:42px} }
+/* the logo's colours sit close to the page background, so give it a "plinth":
+   a soft badge with a faint gold border and inner glow — same trick as the
+   flag backplates in the radial bracket */
+.brand{padding:6px 14px;border-radius:12px;border:1px solid rgba(185,138,46,.38);
+  background:radial-gradient(circle at 50% 40%, rgba(227,197,103,.10) 0%, rgba(17,26,46,.65) 78%);
+  box-shadow:0 4px 16px -8px rgba(0,0,0,.7), inset 0 0 18px -6px rgba(227,197,103,.15)}
+body.light .brand{background:radial-gradient(circle at 50% 40%, rgba(255,255,255,.85) 0%, rgba(234,227,211,.9) 78%);
+  box-shadow:0 4px 14px -8px rgba(0,0,0,.25), inset 0 0 14px -6px rgba(185,138,46,.18)}
+.nav-logo{height:52px;width:auto;display:block;object-fit:contain;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.55))}
+body.light .nav-logo{filter:drop-shadow(0 2px 5px rgba(0,0,0,.25))}
+@media (max-width:520px){ .nav-logo{height:42px} .brand{padding:5px 10px} }
 .nav-item{
   display:inline-flex;align-items:center;gap:7px;cursor:pointer;border:none;background:transparent;
   color:var(--gold);font-family:'Cinzel',serif;font-weight:600;font-size:.82rem;letter-spacing:.05em;
@@ -1073,7 +1083,7 @@ body.ar .hist-count{font-family:'Changa',sans-serif}
 </svg>
 </div>
 <div id="wc-ball" aria-hidden="true">
-<img src="ball.png" alt="" width="50" height="50" style="display:block" onerror="this.style.display='none'">
+<img src="ball.png" alt="" width="50" height="50" style="display:block" onerror="this.closest('.brand').style.display='none'">
 </div>
 <div class="wrap">
 
@@ -4290,7 +4300,16 @@ function tick(){
       let ht=false, finalScore=null, liveTag=null;
 
       if(lv){
-        const st = lv.state;
+        let st = lv.state;
+        /* PREMATURE-LIVE GUARD: the upstream feed sometimes flips a match to
+           LIVE hours before real kickoff (a timezone bug on their side).
+           Matches can start late but never early — so if the feed claims the
+           match is underway while our scheduled kickoff is still in the
+           future (beyond a small grace), treat it as not started. The guard
+           releases automatically the moment kickoff arrives. */
+        if((st==="LIVE"||st==="HT"||st==="ET"||st==="PEN") && now < ko - 10*60000){
+          st = "NS";
+        }
         const mkey = norm(m.dataset.home)+"|"+norm(m.dataset.away);
         /* detect the half-time → play restart: if we previously saw HT and now
            it's live again, anchor the second half to this moment (once) */
@@ -4689,8 +4708,13 @@ function favMatchesFor(code){
       if(lv){
         const st=lv.state;
         const hs=(lv.homeScore==null)?0:lv.homeScore, as=(lv.awayScore==null)?0:lv.awayScore;
+        const [hh0,mm0]=t.split(":").map(Number);
+        const koUtc=Date.UTC(2026,5,day.d,hh0-3,mm0);
         if(st==="FT"||st==="AET"||st==="AP"){ state='done'; res={us: home?hs:as, them: home?as:hs}; }
-        else if(st==="LIVE"||st==="HT"||st==="ET"||st==="PEN"){ state='live'; res={us: home?hs:as, them: home?as:hs}; }
+        else if((st==="LIVE"||st==="HT"||st==="ET"||st==="PEN") && Date.now() >= koUtc - 10*60000){
+          /* premature-live guard: ignore a feed LIVE flag before real kickoff */
+          state='live'; res={us: home?hs:as, them: home?as:hs};
+        }
       }
       const [hh,mm]=t.split(":").map(Number);
       const utc=Date.UTC(2026,5,day.d,hh-3,mm); /* Mecca wall time = UTC+3 */
@@ -4722,7 +4746,12 @@ function favMatchesFor(code){
           }
           if(st!=="FT") res.tag = st; /* AET | AP */
         }
-        else if(st==="LIVE"||st==="HT"||st==="ET"||st==="PEN"){ state='live'; res={us: home?hs:as, them: home?as:hs}; }
+        else if(st==="LIVE"||st==="HT"||st==="ET"||st==="PEN"){
+          const [hh0,mm0]=info.t.split(":").map(Number);
+          const koUtc=Date.UTC(2026, info.mo, info.d, hh0-3, mm0);
+          /* premature-live guard: ignore a feed LIVE flag before real kickoff */
+          if(Date.now() >= koUtc - 10*60000){ state='live'; res={us: home?hs:as, them: home?as:hs}; }
+        }
       }
       const [hh,mm]=info.t.split(":").map(Number);
       const utc=Date.UTC(2026, info.mo, info.d, hh-3, mm);
