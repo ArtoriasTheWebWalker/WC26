@@ -1,5 +1,5 @@
 {
-  "updated": "2026-07-11T20:24:15.509Z",
+  "updated": "2026-07-11T21:11:52.517Z",
   "matches": [
     {
       "home": "Mexico",
@@ -788,10 +788,10 @@
     {
       "home": "Norway",
       "away": "England",
-      "homeScore": null,
-      "awayScore": null,
-      "state": "NS",
-      "minute": null
+      "homeScore": 0,
+      "awayScore": 0,
+      "state": "LIVE",
+      "minute": 12
     },
     {
       "home": "Argentina",
